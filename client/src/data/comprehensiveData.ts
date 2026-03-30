@@ -1,10 +1,10 @@
-import allScenariosData from './all_scenarios_corrected.json';
-import productRankingData from './product_ranking_corrected.json';
+import allScenariosData from './all_scenarios_fixed.json';
+import productRankingData from './product_ranking_fixed.json';
 
 export interface Scenario {
   item_name: string;
   selling_price: number;
-  actual_margin_pct: number;
+  base_margin_pct: number;
   cpm_scenario: string;
   cpm: number;
   audience_size: number;
@@ -36,7 +36,7 @@ export interface ProductRanking {
   rank: number;
   item_name: string;
   selling_price: number;
-  actual_margin_pct: number;
+  base_margin_pct: number;
   median_revenue: number;
   median_profit: number;
   median_roas: number;
