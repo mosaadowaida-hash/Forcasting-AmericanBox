@@ -1,0 +1,3322 @@
+[
+  {
+    "rank": 1,
+    "product_name": "Sports Research MCT Oil 946ml",
+    "item_type": "product",
+    "selling_price": 5550.0,
+    "url": "https://www.americanbox-eg.com/products/sports-research-mct-oil-946-ml",
+    "avg_profit": 3575.0,
+    "median_profit": 3538.0,
+    "max_profit": 4870.0,
+    "min_profit": 1684.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 25.06,
+    "median_roas": 21.58,
+    "max_roas": 75.52,
+    "min_roas": 5.14,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 4870.0,
+      "cpa": 124.0,
+      "roas": 75.52,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 1684.0,
+      "cpa": 1400.0,
+      "roas": 5.14,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 4870.0,
+      "cpa": 124.0,
+      "roas": 75.52,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 2960.0,
+      "cpa": 124.0,
+      "roas": 58.09,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 3977.0,
+      "cpa": 380.0,
+      "roas": 22.71,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 2,
+    "product_name": "Carlson Chelated Zinc",
+    "item_type": "product",
+    "selling_price": 4350.0,
+    "url": "https://www.americanbox-eg.com/products/Carlson-chelated-zinc",
+    "avg_profit": 2682.0,
+    "median_profit": 2680.0,
+    "max_profit": 3771.0,
+    "min_profit": 998.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 19.64,
+    "median_roas": 16.91,
+    "max_roas": 59.19,
+    "min_roas": 4.03,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3771.0,
+      "cpa": 124.0,
+      "roas": 59.19,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 998.0,
+      "cpa": 1400.0,
+      "roas": 4.03,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3771.0,
+      "cpa": 124.0,
+      "roas": 59.19,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 2274.0,
+      "cpa": 124.0,
+      "roas": 45.53,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 3016.0,
+      "cpa": 380.0,
+      "roas": 17.8,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 3,
+    "product_name": "Mary Ruth's Liquid Morning",
+    "item_type": "product",
+    "selling_price": 4100.0,
+    "url": "https://www.americanbox-eg.com/products/Liquid-Morning-Hair-Growth",
+    "avg_profit": 2496.0,
+    "median_profit": 2502.0,
+    "max_profit": 3542.0,
+    "min_profit": 855.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 18.51,
+    "median_roas": 15.94,
+    "max_roas": 55.79,
+    "min_roas": 3.8,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3542.0,
+      "cpa": 124.0,
+      "roas": 55.79,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 855.0,
+      "cpa": 1400.0,
+      "roas": 3.8,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3542.0,
+      "cpa": 124.0,
+      "roas": 55.79,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 2131.0,
+      "cpa": 124.0,
+      "roas": 42.92,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2816.0,
+      "cpa": 380.0,
+      "roas": 16.78,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 4,
+    "product_name": "باندل صحة المرأة",
+    "item_type": "bundle",
+    "selling_price": 7650.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-WOMAN-HEALTH",
+    "avg_profit": 2530.0,
+    "median_profit": 2477.0,
+    "max_profit": 3871.0,
+    "min_profit": 593.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 26.27,
+    "median_roas": 22.62,
+    "max_roas": 79.16,
+    "min_roas": 5.39,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3871.0,
+      "cpa": 124.0,
+      "roas": 79.16,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 593.0,
+      "cpa": 1400.0,
+      "roas": 5.39,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3871.0,
+      "cpa": 124.0,
+      "roas": 79.16,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1869.0,
+      "cpa": 124.0,
+      "roas": 60.89,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2948.0,
+      "cpa": 380.0,
+      "roas": 23.81,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 5,
+    "product_name": "باندل مكافحة الشيخوخة",
+    "item_type": "bundle",
+    "selling_price": 10840.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-anti-aging",
+    "avg_profit": 2525.0,
+    "median_profit": 2358.0,
+    "max_profit": 4284.0,
+    "min_profit": 171.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 37.22,
+    "median_roas": 32.05,
+    "max_roas": 112.17,
+    "min_roas": 7.63,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 4284.0,
+      "cpa": 124.0,
+      "roas": 112.17,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 171.0,
+      "cpa": 1400.0,
+      "roas": 7.63,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 4284.0,
+      "cpa": 124.0,
+      "roas": 112.17,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1447.0,
+      "cpa": 124.0,
+      "roas": 86.28,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 3082.0,
+      "cpa": 380.0,
+      "roas": 33.74,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 6,
+    "product_name": "Champix 1mg",
+    "item_type": "product",
+    "selling_price": 3900.0,
+    "url": "https://www.americanbox-eg.com/products/Champix-1mg",
+    "avg_profit": 2348.0,
+    "median_profit": 2350.0,
+    "max_profit": 3359.0,
+    "min_profit": 741.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 17.61,
+    "median_roas": 15.16,
+    "max_roas": 53.07,
+    "min_roas": 3.61,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3359.0,
+      "cpa": 124.0,
+      "roas": 53.07,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 741.0,
+      "cpa": 1400.0,
+      "roas": 3.61,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3359.0,
+      "cpa": 124.0,
+      "roas": 53.07,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 2017.0,
+      "cpa": 124.0,
+      "roas": 40.82,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2656.0,
+      "cpa": 380.0,
+      "roas": 15.96,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 7,
+    "product_name": "Nature’s Way Organic MCT Oil",
+    "item_type": "product",
+    "selling_price": 3900.0,
+    "url": "https://www.americanbox-eg.com/products/natures-way-organic-mct-oil",
+    "avg_profit": 2348.0,
+    "median_profit": 2350.0,
+    "max_profit": 3359.0,
+    "min_profit": 741.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 17.61,
+    "median_roas": 15.16,
+    "max_roas": 53.07,
+    "min_roas": 3.61,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3359.0,
+      "cpa": 124.0,
+      "roas": 53.07,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 741.0,
+      "cpa": 1400.0,
+      "roas": 3.61,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3359.0,
+      "cpa": 124.0,
+      "roas": 53.07,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 2017.0,
+      "cpa": 124.0,
+      "roas": 40.82,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2656.0,
+      "cpa": 380.0,
+      "roas": 15.96,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 8,
+    "product_name": "Nature’s Bounty Advanced Hair, Skin & Nails",
+    "item_type": "product",
+    "selling_price": 3900.0,
+    "url": "https://www.americanbox-eg.com/products/Nature-Bounty-Advanced-Hair-Skin-Nails",
+    "avg_profit": 2348.0,
+    "median_profit": 2350.0,
+    "max_profit": 3359.0,
+    "min_profit": 741.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 17.61,
+    "median_roas": 15.16,
+    "max_roas": 53.07,
+    "min_roas": 3.61,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3359.0,
+      "cpa": 124.0,
+      "roas": 53.07,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 741.0,
+      "cpa": 1400.0,
+      "roas": 3.61,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3359.0,
+      "cpa": 124.0,
+      "roas": 53.07,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 2017.0,
+      "cpa": 124.0,
+      "roas": 40.82,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2656.0,
+      "cpa": 380.0,
+      "roas": 15.96,
+      "status": "Profit"
+    },
+    "market_category": "Hair, Skin & Nails",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~120M EGP",
+      "growth": "32% YoY",
+      "target_audience": [
+        "Women (70%)",
+        "Beauty-conscious"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.3-1.7%",
+      "average_cvr": "1.0-1.5%"
+    }
+  },
+  {
+    "rank": 9,
+    "product_name": "Master Bundle",
+    "item_type": "bundle",
+    "selling_price": 10520.0,
+    "url": "https://www.americanbox-eg.com/products/Master-Bundle",
+    "avg_profit": 2434.0,
+    "median_profit": 2280.0,
+    "max_profit": 4151.0,
+    "min_profit": 122.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 36.12,
+    "median_roas": 31.1,
+    "max_roas": 108.86,
+    "min_roas": 7.41,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 4151.0,
+      "cpa": 124.0,
+      "roas": 108.86,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 122.0,
+      "cpa": 1400.0,
+      "roas": 7.41,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 4151.0,
+      "cpa": 124.0,
+      "roas": 108.86,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1398.0,
+      "cpa": 124.0,
+      "roas": 83.74,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2977.0,
+      "cpa": 380.0,
+      "roas": 32.74,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 10,
+    "product_name": "باندل صحة العظام",
+    "item_type": "bundle",
+    "selling_price": 10400.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-bone-health",
+    "avg_profit": 2400.0,
+    "median_profit": 2252.0,
+    "max_profit": 4101.0,
+    "min_profit": 104.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 35.71,
+    "median_roas": 30.75,
+    "max_roas": 107.62,
+    "min_roas": 7.32,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 4101.0,
+      "cpa": 124.0,
+      "roas": 107.62,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 104.0,
+      "cpa": 1400.0,
+      "roas": 7.32,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 4101.0,
+      "cpa": 124.0,
+      "roas": 107.62,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1380.0,
+      "cpa": 124.0,
+      "roas": 82.78,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2938.0,
+      "cpa": 380.0,
+      "roas": 32.37,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 11,
+    "product_name": "Nordic naturals Children’s DHA 473ml",
+    "item_type": "product",
+    "selling_price": 3750.0,
+    "url": "https://www.americanbox-eg.com/products/Nordic-Naturals-Children-DHA",
+    "avg_profit": 2236.0,
+    "median_profit": 2228.0,
+    "max_profit": 3222.0,
+    "min_profit": 655.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 16.93,
+    "median_roas": 14.58,
+    "max_roas": 51.03,
+    "min_roas": 3.47,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3222.0,
+      "cpa": 124.0,
+      "roas": 51.03,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 655.0,
+      "cpa": 1400.0,
+      "roas": 3.47,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3222.0,
+      "cpa": 124.0,
+      "roas": 51.03,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1931.0,
+      "cpa": 124.0,
+      "roas": 39.25,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2535.0,
+      "cpa": 380.0,
+      "roas": 15.35,
+      "status": "Profit"
+    },
+    "market_category": "Children's Health",
+    "market_research": {
+      "demand": "High",
+      "market_size": "~70M EGP",
+      "growth": "30% YoY",
+      "target_audience": [
+        "Mothers (25-45)"
+      ],
+      "price_sensitivity": "Low",
+      "competition": "Medium",
+      "average_ctr": "1.0-1.3%",
+      "average_cvr": "1.2-1.6%"
+    }
+  },
+  {
+    "rank": 12,
+    "product_name": "Viviscal Hair Growth Supplement",
+    "item_type": "product",
+    "selling_price": 3550.0,
+    "url": "https://www.americanbox-eg.com/products/viviscal-hair-growth-60-tabs",
+    "avg_profit": 2087.0,
+    "median_profit": 2092.0,
+    "max_profit": 3038.0,
+    "min_profit": 541.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 16.03,
+    "median_roas": 13.8,
+    "max_roas": 48.31,
+    "min_roas": 3.29,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3038.0,
+      "cpa": 124.0,
+      "roas": 48.31,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 541.0,
+      "cpa": 1400.0,
+      "roas": 3.29,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3038.0,
+      "cpa": 124.0,
+      "roas": 48.31,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1817.0,
+      "cpa": 124.0,
+      "roas": 37.16,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2375.0,
+      "cpa": 380.0,
+      "roas": 14.53,
+      "status": "Profit"
+    },
+    "market_category": "Hair, Skin & Nails",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~120M EGP",
+      "growth": "32% YoY",
+      "target_audience": [
+        "Women (70%)",
+        "Beauty-conscious"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.3-1.7%",
+      "average_cvr": "1.0-1.5%"
+    }
+  },
+  {
+    "rank": 13,
+    "product_name": "Now Mct oil",
+    "item_type": "product",
+    "selling_price": 3550.0,
+    "url": "https://www.americanbox-eg.com/products/Now-Mct-oil",
+    "avg_profit": 2087.0,
+    "median_profit": 2092.0,
+    "max_profit": 3038.0,
+    "min_profit": 541.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 16.03,
+    "median_roas": 13.8,
+    "max_roas": 48.31,
+    "min_roas": 3.29,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 3038.0,
+      "cpa": 124.0,
+      "roas": 48.31,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 541.0,
+      "cpa": 1400.0,
+      "roas": 3.29,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3038.0,
+      "cpa": 124.0,
+      "roas": 48.31,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1817.0,
+      "cpa": 124.0,
+      "roas": 37.16,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2375.0,
+      "cpa": 380.0,
+      "roas": 14.53,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 14,
+    "product_name": "Vitamin D3 + K2",
+    "item_type": "product",
+    "selling_price": 3450.0,
+    "url": "https://www.americanbox-eg.com/products/Deal-Supplement-Vitamin-D3--K2",
+    "avg_profit": 2013.0,
+    "median_profit": 2022.0,
+    "max_profit": 2947.0,
+    "min_profit": 484.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 15.58,
+    "median_roas": 13.41,
+    "max_roas": 46.95,
+    "min_roas": 3.19,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 2947.0,
+      "cpa": 124.0,
+      "roas": 46.95,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 484.0,
+      "cpa": 1400.0,
+      "roas": 3.19,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2947.0,
+      "cpa": 124.0,
+      "roas": 46.95,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1760.0,
+      "cpa": 124.0,
+      "roas": 36.11,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2295.0,
+      "cpa": 380.0,
+      "roas": 14.12,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 15,
+    "product_name": "باندل العناية بالبشرة",
+    "item_type": "bundle",
+    "selling_price": 9440.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-skin-care",
+    "avg_profit": 2128.0,
+    "median_profit": 2022.0,
+    "max_profit": 3703.0,
+    "min_profit": -43.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 32.42,
+    "median_roas": 27.91,
+    "max_roas": 97.68,
+    "min_roas": 6.65,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 3703.0,
+      "cpa": 124.0,
+      "roas": 97.68,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -43.0,
+      "cpa": 1400.0,
+      "roas": 6.65,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3703.0,
+      "cpa": 124.0,
+      "roas": 97.68,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1233.0,
+      "cpa": 124.0,
+      "roas": 75.14,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2623.0,
+      "cpa": 380.0,
+      "roas": 29.38,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 16,
+    "product_name": "Solgar Coq-10 200 Mg",
+    "item_type": "product",
+    "selling_price": 3250.0,
+    "url": "https://www.americanbox-eg.com/products/Solgar-Coq-10-100-Mg",
+    "avg_profit": 1864.0,
+    "median_profit": 1878.0,
+    "max_profit": 2764.0,
+    "min_profit": 369.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 14.68,
+    "median_roas": 12.64,
+    "max_roas": 44.22,
+    "min_roas": 3.01,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 2764.0,
+      "cpa": 124.0,
+      "roas": 44.22,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 369.0,
+      "cpa": 1400.0,
+      "roas": 3.01,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2764.0,
+      "cpa": 124.0,
+      "roas": 44.22,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1646.0,
+      "cpa": 124.0,
+      "roas": 34.02,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2135.0,
+      "cpa": 380.0,
+      "roas": 13.3,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 17,
+    "product_name": "باندل صحة القلب",
+    "item_type": "bundle",
+    "selling_price": 8240.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-heart-supplement",
+    "avg_profit": 1787.0,
+    "median_profit": 1708.0,
+    "max_profit": 3205.0,
+    "min_profit": -227.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 28.3,
+    "median_roas": 24.36,
+    "max_roas": 85.27,
+    "min_roas": 5.8,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 1,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 3205.0,
+      "cpa": 124.0,
+      "roas": 85.27,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -227.0,
+      "cpa": 1400.0,
+      "roas": 5.8,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 3205.0,
+      "cpa": 124.0,
+      "roas": 85.27,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1049.0,
+      "cpa": 124.0,
+      "roas": 65.59,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 2230.0,
+      "cpa": 380.0,
+      "roas": 25.64,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 18,
+    "product_name": "EVL Evlution nutrition LeanMode",
+    "item_type": "product",
+    "selling_price": 2900.0,
+    "url": "https://www.americanbox-eg.com/products/EVL-Evlution-nutrition",
+    "avg_profit": 1604.0,
+    "median_profit": 1624.0,
+    "max_profit": 2443.0,
+    "min_profit": 169.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 13.1,
+    "median_roas": 11.27,
+    "max_roas": 39.46,
+    "min_roas": 2.68,
+    "profitable_scenarios": 144,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 100.0,
+    "best_scenario": {
+      "profit": 2443.0,
+      "cpa": 124.0,
+      "roas": 39.46,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 169.0,
+      "cpa": 1400.0,
+      "roas": 2.68,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2443.0,
+      "cpa": 124.0,
+      "roas": 39.46,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1445.0,
+      "cpa": 124.0,
+      "roas": 30.35,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1854.0,
+      "cpa": 380.0,
+      "roas": 11.87,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 19,
+    "product_name": "Nature’s Way Liquid Chlorofresh",
+    "item_type": "product",
+    "selling_price": 2650.0,
+    "url": "https://www.americanbox-eg.com/products/natures-way-liquid-chlorofresh-mint",
+    "avg_profit": 1418.0,
+    "median_profit": 1416.0,
+    "max_profit": 2214.0,
+    "min_profit": 26.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 11.97,
+    "median_roas": 10.3,
+    "max_roas": 36.06,
+    "min_roas": 2.45,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 2214.0,
+      "cpa": 124.0,
+      "roas": 36.06,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": 26.0,
+      "cpa": 1400.0,
+      "roas": 2.45,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2214.0,
+      "cpa": 124.0,
+      "roas": 36.06,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1303.0,
+      "cpa": 124.0,
+      "roas": 27.74,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1654.0,
+      "cpa": 380.0,
+      "roas": 10.84,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 20,
+    "product_name": "Nature’s Way Chlorofresh 60 caps",
+    "item_type": "product",
+    "selling_price": 2600.0,
+    "url": "https://www.americanbox-eg.com/products/natures-way-chlorofresh",
+    "avg_profit": 1381.0,
+    "median_profit": 1382.0,
+    "max_profit": 2169.0,
+    "min_profit": -2.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 11.74,
+    "median_roas": 10.11,
+    "max_roas": 35.38,
+    "min_roas": 2.41,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 2169.0,
+      "cpa": 124.0,
+      "roas": 35.38,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -2.0,
+      "cpa": 1400.0,
+      "roas": 2.41,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2169.0,
+      "cpa": 124.0,
+      "roas": 35.38,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1274.0,
+      "cpa": 124.0,
+      "roas": 27.21,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1614.0,
+      "cpa": 380.0,
+      "roas": 10.64,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 21,
+    "product_name": "Nature’s Way D3 1000 120",
+    "item_type": "product",
+    "selling_price": 2600.0,
+    "url": "https://www.americanbox-eg.com/products/natures-way-d3-1000-120-gummies",
+    "avg_profit": 1381.0,
+    "median_profit": 1382.0,
+    "max_profit": 2169.0,
+    "min_profit": -2.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 11.74,
+    "median_roas": 10.11,
+    "max_roas": 35.38,
+    "min_roas": 2.41,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 0,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 2169.0,
+      "cpa": 124.0,
+      "roas": 35.38,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -2.0,
+      "cpa": 1400.0,
+      "roas": 2.41,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2169.0,
+      "cpa": 124.0,
+      "roas": 35.38,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1274.0,
+      "cpa": 124.0,
+      "roas": 27.21,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1614.0,
+      "cpa": 380.0,
+      "roas": 10.64,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 22,
+    "product_name": "Nature’s Bounty Ginkgo Biloba",
+    "item_type": "product",
+    "selling_price": 2500.0,
+    "url": "https://www.americanbox-eg.com/products/natures-bounty-ginkgo-biloba-60-mg-200-caps",
+    "avg_profit": 1307.0,
+    "median_profit": 1314.0,
+    "max_profit": 2077.0,
+    "min_profit": -59.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 11.29,
+    "median_roas": 9.72,
+    "max_roas": 34.02,
+    "min_roas": 2.31,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 1,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 2077.0,
+      "cpa": 124.0,
+      "roas": 34.02,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -59.0,
+      "cpa": 1400.0,
+      "roas": 2.31,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2077.0,
+      "cpa": 124.0,
+      "roas": 34.02,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1217.0,
+      "cpa": 124.0,
+      "roas": 26.17,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1534.0,
+      "cpa": 380.0,
+      "roas": 10.23,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 23,
+    "product_name": "باندل فقدان الوزن",
+    "item_type": "bundle",
+    "selling_price": 6640.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-weight-loss",
+    "avg_profit": 1333.0,
+    "median_profit": 1294.0,
+    "max_profit": 2542.0,
+    "min_profit": -472.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 22.8,
+    "median_roas": 19.63,
+    "max_roas": 68.71,
+    "min_roas": 4.67,
+    "profitable_scenarios": 140,
+    "break_even_scenarios": 2,
+    "loss_scenarios": 2,
+    "total_scenarios": 144,
+    "profitability_rate": 97.2,
+    "best_scenario": {
+      "profit": 2542.0,
+      "cpa": 124.0,
+      "roas": 68.71,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -472.0,
+      "cpa": 1400.0,
+      "roas": 4.67,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2542.0,
+      "cpa": 124.0,
+      "roas": 68.71,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 804.0,
+      "cpa": 124.0,
+      "roas": 52.85,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1706.0,
+      "cpa": 380.0,
+      "roas": 20.66,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 24,
+    "product_name": "باندل المكملات الرياضية",
+    "item_type": "bundle",
+    "selling_price": 6624.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-sport-products",
+    "avg_profit": 1328.0,
+    "median_profit": 1290.0,
+    "max_profit": 2535.0,
+    "min_profit": -474.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 22.75,
+    "median_roas": 19.58,
+    "max_roas": 68.54,
+    "min_roas": 4.66,
+    "profitable_scenarios": 140,
+    "break_even_scenarios": 2,
+    "loss_scenarios": 2,
+    "total_scenarios": 144,
+    "profitability_rate": 97.2,
+    "best_scenario": {
+      "profit": 2535.0,
+      "cpa": 124.0,
+      "roas": 68.54,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -474.0,
+      "cpa": 1400.0,
+      "roas": 4.66,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2535.0,
+      "cpa": 124.0,
+      "roas": 68.54,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 802.0,
+      "cpa": 124.0,
+      "roas": 52.73,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1701.0,
+      "cpa": 380.0,
+      "roas": 20.61,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 25,
+    "product_name": "NOW Foods Liquid Chlorophyll 473 ml",
+    "item_type": "product",
+    "selling_price": 2450.0,
+    "url": "https://www.americanbox-eg.com/products/NOW-Foods-Liquid-Chlorophyll",
+    "avg_profit": 1269.0,
+    "median_profit": 1279.0,
+    "max_profit": 2031.0,
+    "min_profit": -88.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 11.06,
+    "median_roas": 9.53,
+    "max_roas": 33.34,
+    "min_roas": 2.27,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 1,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 2031.0,
+      "cpa": 124.0,
+      "roas": 33.34,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -88.0,
+      "cpa": 1400.0,
+      "roas": 2.27,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2031.0,
+      "cpa": 124.0,
+      "roas": 33.34,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1188.0,
+      "cpa": 124.0,
+      "roas": 25.64,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1494.0,
+      "cpa": 380.0,
+      "roas": 10.03,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 26,
+    "product_name": "باندل الصحة النفسية",
+    "item_type": "bundle",
+    "selling_price": 6440.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-mental-health",
+    "avg_profit": 1276.0,
+    "median_profit": 1246.0,
+    "max_profit": 2459.0,
+    "min_profit": -503.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 22.11,
+    "median_roas": 19.04,
+    "max_roas": 66.64,
+    "min_roas": 4.53,
+    "profitable_scenarios": 140,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 3,
+    "total_scenarios": 144,
+    "profitability_rate": 97.2,
+    "best_scenario": {
+      "profit": 2459.0,
+      "cpa": 124.0,
+      "roas": 66.64,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -503.0,
+      "cpa": 1400.0,
+      "roas": 4.53,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2459.0,
+      "cpa": 124.0,
+      "roas": 66.64,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 774.0,
+      "cpa": 124.0,
+      "roas": 51.26,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1641.0,
+      "cpa": 380.0,
+      "roas": 20.04,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 27,
+    "product_name": "Double Wood Magnesium Glycinate",
+    "item_type": "product",
+    "selling_price": 2400.0,
+    "url": "https://www.americanbox-eg.com/products/-Wood-Magnesium-Glycinate",
+    "avg_profit": 1232.0,
+    "median_profit": 1245.0,
+    "max_profit": 1985.0,
+    "min_profit": -117.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 10.84,
+    "median_roas": 9.33,
+    "max_roas": 32.66,
+    "min_roas": 2.22,
+    "profitable_scenarios": 143,
+    "break_even_scenarios": 0,
+    "loss_scenarios": 1,
+    "total_scenarios": 144,
+    "profitability_rate": 99.3,
+    "best_scenario": {
+      "profit": 1985.0,
+      "cpa": 124.0,
+      "roas": 32.66,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -117.0,
+      "cpa": 1400.0,
+      "roas": 2.22,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1985.0,
+      "cpa": 124.0,
+      "roas": 32.66,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1160.0,
+      "cpa": 124.0,
+      "roas": 25.12,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1454.0,
+      "cpa": 380.0,
+      "roas": 9.82,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 28,
+    "product_name": "NaturesPlus Hema-Plex",
+    "item_type": "product",
+    "selling_price": 2100.0,
+    "url": "https://www.americanbox-eg.com/products/NaturesPlus-Hema-Plex",
+    "avg_profit": 1053.0,
+    "median_profit": 1074.0,
+    "max_profit": 1711.0,
+    "min_profit": -200.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 9.48,
+    "median_roas": 8.16,
+    "max_roas": 28.58,
+    "min_roas": 1.94,
+    "profitable_scenarios": 142,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 1,
+    "total_scenarios": 144,
+    "profitability_rate": 98.6,
+    "best_scenario": {
+      "profit": 1711.0,
+      "cpa": 124.0,
+      "roas": 28.58,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -200.0,
+      "cpa": 1400.0,
+      "roas": 1.94,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1711.0,
+      "cpa": 124.0,
+      "roas": 28.58,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1077.0,
+      "cpa": 124.0,
+      "roas": 21.98,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1214.0,
+      "cpa": 380.0,
+      "roas": 8.59,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 29,
+    "product_name": "Nature’s way whole thallus KELP 180 capsule",
+    "item_type": "product",
+    "selling_price": 2100.0,
+    "url": "https://www.americanbox-eg.com/products/Natures-Way-Whole-Thallus-Kelp",
+    "avg_profit": 1053.0,
+    "median_profit": 1074.0,
+    "max_profit": 1711.0,
+    "min_profit": -200.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 9.48,
+    "median_roas": 8.16,
+    "max_roas": 28.58,
+    "min_roas": 1.94,
+    "profitable_scenarios": 142,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 1,
+    "total_scenarios": 144,
+    "profitability_rate": 98.6,
+    "best_scenario": {
+      "profit": 1711.0,
+      "cpa": 124.0,
+      "roas": 28.58,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -200.0,
+      "cpa": 1400.0,
+      "roas": 1.94,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1711.0,
+      "cpa": 124.0,
+      "roas": 28.58,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 1077.0,
+      "cpa": 124.0,
+      "roas": 21.98,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1214.0,
+      "cpa": 380.0,
+      "roas": 8.59,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 30,
+    "product_name": "باندل صحة الطفل",
+    "item_type": "bundle",
+    "selling_price": 5640.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-child-health",
+    "avg_profit": 1049.0,
+    "median_profit": 1050.0,
+    "max_profit": 2127.0,
+    "min_profit": -625.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 19.37,
+    "median_roas": 16.67,
+    "max_roas": 58.36,
+    "min_roas": 3.97,
+    "profitable_scenarios": 137,
+    "break_even_scenarios": 2,
+    "loss_scenarios": 5,
+    "total_scenarios": 144,
+    "profitability_rate": 95.1,
+    "best_scenario": {
+      "profit": 2127.0,
+      "cpa": 124.0,
+      "roas": 58.36,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -625.0,
+      "cpa": 1400.0,
+      "roas": 3.97,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 2127.0,
+      "cpa": 124.0,
+      "roas": 58.36,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 651.0,
+      "cpa": 124.0,
+      "roas": 44.89,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1379.0,
+      "cpa": 380.0,
+      "roas": 17.55,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 31,
+    "product_name": "Nature’s Bounty Ginseng Complex",
+    "item_type": "product",
+    "selling_price": 1900.0,
+    "url": "https://www.americanbox-eg.com/products/natures-bounty-ginseng-complex",
+    "avg_profit": 927.0,
+    "median_profit": 962.0,
+    "max_profit": 1528.0,
+    "min_profit": -314.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 8.58,
+    "median_roas": 7.39,
+    "max_roas": 25.85,
+    "min_roas": 1.76,
+    "profitable_scenarios": 141,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 2,
+    "total_scenarios": 144,
+    "profitability_rate": 97.9,
+    "best_scenario": {
+      "profit": 1528.0,
+      "cpa": 124.0,
+      "roas": 25.85,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -314.0,
+      "cpa": 1400.0,
+      "roas": 1.76,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1528.0,
+      "cpa": 124.0,
+      "roas": 25.85,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 962.0,
+      "cpa": 124.0,
+      "roas": 19.89,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1142.0,
+      "cpa": 380.0,
+      "roas": 7.78,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 32,
+    "product_name": "باندل العناية بالشعر",
+    "item_type": "bundle",
+    "selling_price": 5228.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-hare-care",
+    "avg_profit": 932.0,
+    "median_profit": 938.0,
+    "max_profit": 1956.0,
+    "min_profit": -688.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 17.95,
+    "median_roas": 15.46,
+    "max_roas": 54.1,
+    "min_roas": 3.68,
+    "profitable_scenarios": 135,
+    "break_even_scenarios": 3,
+    "loss_scenarios": 6,
+    "total_scenarios": 144,
+    "profitability_rate": 93.8,
+    "best_scenario": {
+      "profit": 1956.0,
+      "cpa": 124.0,
+      "roas": 54.1,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -688.0,
+      "cpa": 1400.0,
+      "roas": 3.68,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1956.0,
+      "cpa": 124.0,
+      "roas": 54.1,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 588.0,
+      "cpa": 124.0,
+      "roas": 41.61,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1244.0,
+      "cpa": 380.0,
+      "roas": 16.27,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 33,
+    "product_name": "باندل دعم المناعة",
+    "item_type": "bundle",
+    "selling_price": 5040.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-immunity",
+    "avg_profit": 878.0,
+    "median_profit": 876.0,
+    "max_profit": 1878.0,
+    "min_profit": -717.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 17.31,
+    "median_roas": 14.9,
+    "max_roas": 52.15,
+    "min_roas": 3.55,
+    "profitable_scenarios": 133,
+    "break_even_scenarios": 4,
+    "loss_scenarios": 7,
+    "total_scenarios": 144,
+    "profitability_rate": 92.4,
+    "best_scenario": {
+      "profit": 1878.0,
+      "cpa": 124.0,
+      "roas": 52.15,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -717.0,
+      "cpa": 1400.0,
+      "roas": 3.55,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1878.0,
+      "cpa": 124.0,
+      "roas": 52.15,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 559.0,
+      "cpa": 124.0,
+      "roas": 40.12,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1182.0,
+      "cpa": 380.0,
+      "roas": 15.69,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 34,
+    "product_name": "Nutricost Lithium Orotate",
+    "item_type": "product",
+    "selling_price": 1750.0,
+    "url": "https://www.americanbox-eg.com/products/Nutricost-Lithium-Orotate",
+    "avg_profit": 837.0,
+    "median_profit": 868.0,
+    "max_profit": 1479.0,
+    "min_profit": -400.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 7.9,
+    "median_roas": 6.8,
+    "max_roas": 23.81,
+    "min_roas": 1.62,
+    "profitable_scenarios": 140,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 3,
+    "total_scenarios": 144,
+    "profitability_rate": 97.2,
+    "best_scenario": {
+      "profit": 1479.0,
+      "cpa": 124.0,
+      "roas": 23.81,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -400.0,
+      "cpa": 1400.0,
+      "roas": 1.62,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1479.0,
+      "cpa": 124.0,
+      "roas": 23.81,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 877.0,
+      "cpa": 124.0,
+      "roas": 18.32,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1022.0,
+      "cpa": 380.0,
+      "roas": 7.16,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 35,
+    "product_name": "Solgar Chelated Copper 100 cap",
+    "item_type": "product",
+    "selling_price": 1750.0,
+    "url": "https://www.americanbox-eg.com/products/Solgar-Chelated-Copper",
+    "avg_profit": 837.0,
+    "median_profit": 868.0,
+    "max_profit": 1479.0,
+    "min_profit": -400.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 7.9,
+    "median_roas": 6.8,
+    "max_roas": 23.81,
+    "min_roas": 1.62,
+    "profitable_scenarios": 140,
+    "break_even_scenarios": 1,
+    "loss_scenarios": 3,
+    "total_scenarios": 144,
+    "profitability_rate": 97.2,
+    "best_scenario": {
+      "profit": 1479.0,
+      "cpa": 124.0,
+      "roas": 23.81,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -400.0,
+      "cpa": 1400.0,
+      "roas": 1.62,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1479.0,
+      "cpa": 124.0,
+      "roas": 23.81,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 877.0,
+      "cpa": 124.0,
+      "roas": 18.32,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1022.0,
+      "cpa": 380.0,
+      "roas": 7.16,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 36,
+    "product_name": "باندل صحة الرجل",
+    "item_type": "bundle",
+    "selling_price": 4900.0,
+    "url": "https://www.americanbox-eg.com/products/bundle-bundle-man-health",
+    "avg_profit": 836.0,
+    "median_profit": 830.0,
+    "max_profit": 1817.0,
+    "min_profit": -741.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 16.83,
+    "median_roas": 14.49,
+    "max_roas": 50.7,
+    "min_roas": 3.45,
+    "profitable_scenarios": 133,
+    "break_even_scenarios": 4,
+    "loss_scenarios": 7,
+    "total_scenarios": 144,
+    "profitability_rate": 92.4,
+    "best_scenario": {
+      "profit": 1817.0,
+      "cpa": 124.0,
+      "roas": 50.7,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -741.0,
+      "cpa": 1400.0,
+      "roas": 3.45,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1817.0,
+      "cpa": 124.0,
+      "roas": 50.7,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 535.0,
+      "cpa": 124.0,
+      "roas": 39.0,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 1134.0,
+      "cpa": 380.0,
+      "roas": 15.25,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 37,
+    "product_name": "Nature’s way whole thallus KELP 100 capsules",
+    "item_type": "product",
+    "selling_price": 1650.0,
+    "url": "https://www.americanbox-eg.com/products/Natures-Way-Whole-Thallus-Kelpp",
+    "avg_profit": 763.0,
+    "median_profit": 800.0,
+    "max_profit": 1387.0,
+    "min_profit": -457.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 7.45,
+    "median_roas": 6.41,
+    "max_roas": 22.45,
+    "min_roas": 1.53,
+    "profitable_scenarios": 137,
+    "break_even_scenarios": 3,
+    "loss_scenarios": 4,
+    "total_scenarios": 144,
+    "profitability_rate": 95.1,
+    "best_scenario": {
+      "profit": 1387.0,
+      "cpa": 124.0,
+      "roas": 22.45,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -457.0,
+      "cpa": 1400.0,
+      "roas": 1.53,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1387.0,
+      "cpa": 124.0,
+      "roas": 22.45,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 819.0,
+      "cpa": 124.0,
+      "roas": 17.27,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 942.0,
+      "cpa": 380.0,
+      "roas": 6.75,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 38,
+    "product_name": "Vitamatic Berberine 500MG 60 capsules",
+    "item_type": "product",
+    "selling_price": 1550.0,
+    "url": "https://www.americanbox-eg.com/products/Vitaminic-Berberinec-500MG",
+    "avg_profit": 689.0,
+    "median_profit": 720.0,
+    "max_profit": 1296.0,
+    "min_profit": -514.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 7.0,
+    "median_roas": 6.03,
+    "max_roas": 21.09,
+    "min_roas": 1.43,
+    "profitable_scenarios": 136,
+    "break_even_scenarios": 2,
+    "loss_scenarios": 6,
+    "total_scenarios": 144,
+    "profitability_rate": 94.4,
+    "best_scenario": {
+      "profit": 1296.0,
+      "cpa": 124.0,
+      "roas": 21.09,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -514.0,
+      "cpa": 1400.0,
+      "roas": 1.43,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1296.0,
+      "cpa": 124.0,
+      "roas": 21.09,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 762.0,
+      "cpa": 124.0,
+      "roas": 16.22,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 862.0,
+      "cpa": 380.0,
+      "roas": 6.34,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 39,
+    "product_name": "Solgar chelated zinc",
+    "item_type": "product",
+    "selling_price": 1450.0,
+    "url": "https://www.americanbox-eg.com/products/Solgar-chelated-zinc",
+    "avg_profit": 614.0,
+    "median_profit": 652.0,
+    "max_profit": 1204.0,
+    "min_profit": -571.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 6.55,
+    "median_roas": 5.64,
+    "max_roas": 19.73,
+    "min_roas": 1.34,
+    "profitable_scenarios": 133,
+    "break_even_scenarios": 3,
+    "loss_scenarios": 8,
+    "total_scenarios": 144,
+    "profitability_rate": 92.4,
+    "best_scenario": {
+      "profit": 1204.0,
+      "cpa": 124.0,
+      "roas": 19.73,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -571.0,
+      "cpa": 1400.0,
+      "roas": 1.34,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1204.0,
+      "cpa": 124.0,
+      "roas": 19.73,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 705.0,
+      "cpa": 124.0,
+      "roas": 15.18,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 781.0,
+      "cpa": 380.0,
+      "roas": 5.93,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 40,
+    "product_name": "Nature’s Way Vitex Fruit",
+    "item_type": "product",
+    "selling_price": 1275.0,
+    "url": "https://www.americanbox-eg.com/products/Nature-Way-Vitex-Fruit",
+    "avg_profit": 484.0,
+    "median_profit": 538.0,
+    "max_profit": 1044.0,
+    "min_profit": -671.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 5.76,
+    "median_roas": 4.96,
+    "max_roas": 17.35,
+    "min_roas": 1.18,
+    "profitable_scenarios": 129,
+    "break_even_scenarios": 3,
+    "loss_scenarios": 12,
+    "total_scenarios": 144,
+    "profitability_rate": 89.6,
+    "best_scenario": {
+      "profit": 1044.0,
+      "cpa": 124.0,
+      "roas": 17.35,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -671.0,
+      "cpa": 1400.0,
+      "roas": 1.18,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 1044.0,
+      "cpa": 124.0,
+      "roas": 17.35,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 605.0,
+      "cpa": 124.0,
+      "roas": 13.35,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 641.0,
+      "cpa": 380.0,
+      "roas": 5.22,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  },
+  {
+    "rank": 41,
+    "product_name": "Kids Smart Vita Gummies Brain Booster",
+    "item_type": "product",
+    "selling_price": 1200.0,
+    "url": "https://www.americanbox-eg.com/products/Kids-Smart-Brain-Booster-Gummies",
+    "avg_profit": 428.0,
+    "median_profit": 480.0,
+    "max_profit": 975.0,
+    "min_profit": -714.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 5.42,
+    "median_roas": 4.67,
+    "max_roas": 16.33,
+    "min_roas": 1.11,
+    "profitable_scenarios": 125,
+    "break_even_scenarios": 6,
+    "loss_scenarios": 13,
+    "total_scenarios": 144,
+    "profitability_rate": 86.8,
+    "best_scenario": {
+      "profit": 975.0,
+      "cpa": 124.0,
+      "roas": 16.33,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -714.0,
+      "cpa": 1400.0,
+      "roas": 1.11,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 975.0,
+      "cpa": 124.0,
+      "roas": 16.33,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 562.0,
+      "cpa": 124.0,
+      "roas": 12.56,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 581.0,
+      "cpa": 380.0,
+      "roas": 4.91,
+      "status": "Profit"
+    },
+    "market_category": "Children's Health",
+    "market_research": {
+      "demand": "High",
+      "market_size": "~70M EGP",
+      "growth": "30% YoY",
+      "target_audience": [
+        "Mothers (25-45)"
+      ],
+      "price_sensitivity": "Low",
+      "competition": "Medium",
+      "average_ctr": "1.0-1.3%",
+      "average_cvr": "1.2-1.6%"
+    }
+  },
+  {
+    "rank": 42,
+    "product_name": "Solgar Zinc Picolinate",
+    "item_type": "product",
+    "selling_price": 1200.0,
+    "url": "https://www.americanbox-eg.com/products/Solgar-Zinc-Picolinate",
+    "avg_profit": 428.0,
+    "median_profit": 480.0,
+    "max_profit": 975.0,
+    "min_profit": -714.0,
+    "avg_cpa": 464.0,
+    "median_cpa": 376.0,
+    "min_cpa": 124.0,
+    "max_cpa": 1400.0,
+    "avg_roas": 5.42,
+    "median_roas": 4.67,
+    "max_roas": 16.33,
+    "min_roas": 1.11,
+    "profitable_scenarios": 125,
+    "break_even_scenarios": 6,
+    "loss_scenarios": 13,
+    "total_scenarios": 144,
+    "profitability_rate": 86.8,
+    "best_scenario": {
+      "profit": 975.0,
+      "cpa": 124.0,
+      "roas": 16.33,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "worst_scenario": {
+      "profit": -714.0,
+      "cpa": 1400.0,
+      "roas": 1.11,
+      "cpm": "High CPM Cost",
+      "ctr": "Low CTR",
+      "cvr": "Low CVR",
+      "basket": "Single Item"
+    },
+    "best_roas_scenario": {
+      "profit": 975.0,
+      "cpa": 124.0,
+      "roas": 16.33,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Healthy Basket Size"
+    },
+    "lowest_cpa_scenario": {
+      "profit": 562.0,
+      "cpa": 124.0,
+      "roas": 12.56,
+      "cpm": "Low CPM Cost",
+      "ctr": "Excellent CTR",
+      "cvr": "Excellent CVR",
+      "basket": "Single Item"
+    },
+    "likely_scenario": {
+      "profit": 581.0,
+      "cpa": 380.0,
+      "roas": 4.91,
+      "status": "Profit"
+    },
+    "market_category": "General Immunity",
+    "market_research": {
+      "demand": "Very High",
+      "market_size": "~85M EGP",
+      "growth": "34% YoY",
+      "target_audience": [
+        "All ages"
+      ],
+      "price_sensitivity": "Medium",
+      "competition": "Very High",
+      "average_ctr": "1.2-1.5%",
+      "average_cvr": "0.9-1.3%"
+    }
+  }
+]
