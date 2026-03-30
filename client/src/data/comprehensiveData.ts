@@ -6,6 +6,8 @@ export interface Scenario {
   item_name: string;
   item_type: string;
   selling_price: number;
+  base_margin: number;
+  actual_margin: number;
   cpm: number;
   ctr: number;
   cvr: number;
@@ -14,11 +16,11 @@ export interface Scenario {
   cpa_dashboard: number;
   cpa_delivered: number;
   aov: number;
+  revenue_per_order: number;  // العائد (Revenue)
   roas: number;
   delivered_roas: number;
-  profit_per_order: number;
-  margin: number;
-  revenue_per_order: number;
+  profit_per_order: number;  // الربح الفعلي (Profit)
+  profit_margin: number;  // نسبة الربح
   max_cpa_allowed: number;
   break_even_cpa: number;
   status: 'Profit' | 'Break Even' | 'Loss';

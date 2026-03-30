@@ -272,7 +272,7 @@ export default function ComprehensiveDashboard() {
                         <td className="px-4 py-2">{scenario.item_name.substring(0, 30)}</td>
                         <td className="px-4 py-2">{scenario.cpa_dashboard} ج.م</td>
                         <td className="px-4 py-2 font-semibold">{scenario.roas}x</td>
-                        <td className="px-4 py-2 text-green-600 font-semibold">{scenario.profit_per_order} ج.م</td>
+                        <td className="px-4 py-2 text-green-600 font-semibold">{scenario.profit_per_order} ج.م (ربح)</td>
                         <td className="px-4 py-2">
                           <Badge variant={scenario.status === 'Profit' ? 'default' : scenario.status === 'Break Even' ? 'secondary' : 'destructive'}>
                             {scenario.status}
@@ -302,7 +302,7 @@ export default function ComprehensiveDashboard() {
                       <th className="px-4 py-2 text-right font-medium">المنتج</th>
                       <th className="px-4 py-2 text-right font-medium">الربح الوسيط</th>
                       <th className="px-4 py-2 text-right font-medium">ROAS الوسيط</th>
-                      <th className="px-4 py-2 text-right font-medium">معدل الربحية</th>
+                      <th className="px-4 py-2 text-right font-medium">معدل الربحية %</th>
                       <th className="px-4 py-2 text-right font-medium">السعر</th>
                     </tr>
                   </thead>
@@ -360,6 +360,7 @@ export default function ComprehensiveDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-green-600">{selectedProductRanking.median_profit} ج.م</div>
+                    <p className="text-xs text-slate-500 mt-1">الربح الفعلي بعد التكاليف</p>
                   </CardContent>
                 </Card>
                 <Card className="border-0 shadow-lg">
