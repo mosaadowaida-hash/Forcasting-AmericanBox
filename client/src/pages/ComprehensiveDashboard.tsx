@@ -300,6 +300,7 @@ export default function ComprehensiveDashboard() {
                     <tr>
                       <th className="px-4 py-2 text-right font-medium">الترتيب</th>
                       <th className="px-4 py-2 text-right font-medium">المنتج</th>
+                      <th className="px-4 py-2 text-right font-medium">العائد الوسيط</th>
                       <th className="px-4 py-2 text-right font-medium">الربح الوسيط</th>
                       <th className="px-4 py-2 text-right font-medium">ROAS الوسيط</th>
                       <th className="px-4 py-2 text-right font-medium">معدل الربحية %</th>
@@ -311,6 +312,7 @@ export default function ComprehensiveDashboard() {
                       <tr key={product.rank} className="border-b border-slate-100 hover:bg-slate-50">
                         <td className="px-4 py-2 font-bold text-blue-600">#{product.rank}</td>
                         <td className="px-4 py-2">{product.product_name.substring(0, 40)}</td>
+                        <td className="px-4 py-2 text-blue-600 font-semibold">{product.median_revenue} ج.م</td>
                         <td className="px-4 py-2 text-green-600 font-semibold">{product.median_profit} ج.م</td>
                         <td className="px-4 py-2 font-semibold">{product.median_roas}x</td>
                         <td className="px-4 py-2">
@@ -356,11 +358,20 @@ export default function ComprehensiveDashboard() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="border-0 shadow-lg">
                   <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">العائد الوسيط</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-blue-600">{selectedProductRanking.median_revenue} ج.م</div>
+                    <p className="text-xs text-slate-500 mt-1">ما يدفعه العميل</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-lg">
+                  <CardHeader className="pb-2">
                     <CardTitle className="text-sm">الربح الوسيط</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-green-600">{selectedProductRanking.median_profit} ج.م</div>
-                    <p className="text-xs text-slate-500 mt-1">الربح الفعلي بعد التكاليف</p>
+                    <p className="text-xs text-slate-500 mt-1">بعد التكاليف</p>
                   </CardContent>
                 </Card>
                 <Card className="border-0 shadow-lg">
@@ -371,22 +382,7 @@ export default function ComprehensiveDashboard() {
                     <div className="text-2xl font-bold text-blue-600">{selectedProductRanking.median_roas}x</div>
                   </CardContent>
                 </Card>
-                <Card className="border-0 shadow-lg">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">CPA الوسيط</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{selectedProductRanking.median_cpa} ج.م</div>
-                  </CardContent>
-                </Card>
-                <Card className="border-0 shadow-lg">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">معدل الربحية</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-green-600">{selectedProductRanking.profitability_rate}%</div>
-                  </CardContent>
-                </Card>
+
               </div>
 
               {/* Market Category */}

@@ -35,10 +35,21 @@ export interface ProductRanking {
   product_name: string;
   item_type: string;
   selling_price: number;
+  base_margin: number;
+  actual_margin: number;
+  
+  // Revenue metrics
+  avg_revenue: number;
+  median_revenue: number;
+  max_revenue: number;
+  min_revenue: number;
+  
+  // Profit metrics
   avg_profit: number;
   median_profit: number;
   max_profit: number;
   min_profit: number;
+  
   avg_cpa: number;
   median_cpa: number;
   min_cpa: number;
@@ -56,7 +67,6 @@ export interface ProductRanking {
   worst_scenario: any;
   best_roas_scenario: any;
   lowest_cpa_scenario: any;
-  likely_scenario: any;
   market_category: string;
   market_research: any;
 }
