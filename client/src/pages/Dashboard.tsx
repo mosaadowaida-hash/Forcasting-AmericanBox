@@ -8,10 +8,26 @@ import { allScenarios, allItems, getTopPerformers, getAudienceStats } from "@/da
 import { TrendingUp, DollarSign, Target, Zap, Package } from "lucide-react";
 
 export default function Dashboard() {
+  // Ensure we have data before rendering
+  if (!allItems || allItems.length === 0 || !allScenarios || allScenarios.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle>جاري تحميل البيانات...</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-slate-600">يرجى الانتظار قليلاً</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const [selectedItem, setSelectedItem] = useState(allItems[0]?.item_name || "");
   
   const itemScenarios = allScenarios.filter(s => s.item_name === selectedItem);
-  const topPerformers = getTopPerformers("500k", 5);
+  const topPerformers = getTopPerformers("500k", 5) || [];
   
   // Get audience comparison data
   const audienceComparison = itemScenarios.map(s => ({
@@ -60,7 +76,15 @@ export default function Dashboard() {
     },
   ];
 
-  const stats500k = getAudienceStats("500k");
+  const stats500k = getAudienceStats("500k") || {
+    totalItems: 0,
+    avgCPA: 0,
+    avgROAS: 0,
+    avgMargin: 0,
+    avgProfit: 0,
+    bestROAS: 0,
+    lowestCPA: 0,
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -104,7 +128,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-slate-900">
-                    {Math.max(...allScenarios.map(s => s.roas)).toFixed(2)}x
+                    {allScenarios && allScenarios.length > 0 ? Math.max(...allScenarios.map(s => s.roas)).toFixed(2) : '0'}x
                   </div>
                   <p className="text-xs text-slate-500 mt-1">في سيناريو 1M</p>
                 </CardContent>
@@ -119,7 +143,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-slate-900">
-                    {Math.round(allScenarios.reduce((sum, s) => sum + s.profit_per_order, 0) / allScenarios.length)} ج.م
+                    {allScenarios && allScenarios.length > 0 ? Math.round(allScenarios.reduce((sum, s) => sum + s.profit_per_order, 0) / allScenarios.length) : '0'} ج.م
                   </div>
                   <p className="text-xs text-slate-500 mt-1">لكل طلب</p>
                 </CardContent>
@@ -134,7 +158,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-slate-900">
-                    {Math.round(allScenarios.reduce((sum, s) => sum + s.margin, 0) / allScenarios.length)}%
+                    {allScenarios && allScenarios.length > 0 ? Math.round(allScenarios.reduce((sum, s) => sum + s.margin, 0) / allScenarios.length) : '0'}%
                   </div>
                   <p className="text-xs text-slate-500 mt-1">من إجمالي الإيرادات</p>
                 </CardContent>
@@ -149,7 +173,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-slate-900">
-                    {Math.min(...allScenarios.map(s => s.cpa_dashboard)).toFixed(0)} ج.م
+                    {allScenarios && allScenarios.length > 0 ? Math.min(...allScenarios.map(s => s.cpa_dashboard)).toFixed(0) : '0'} ج.م
                   </div>
                   <p className="text-xs text-slate-500 mt-1">في سيناريو 1M</p>
                 </CardContent>
