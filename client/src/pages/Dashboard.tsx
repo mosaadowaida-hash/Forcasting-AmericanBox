@@ -306,98 +306,208 @@ export default function Dashboard() {
           <TabsContent value="comparison" className="space-y-6">
             <Card className="border-0 shadow-md">
               <CardHeader>
-                <CardTitle>مقارنة السيناريوهات الثلاثة</CardTitle>
-                <CardDescription>تحليل تأثير حجم الجمهور على الأداء</CardDescription>
+                <CardTitle>اختر منتج للمقارنة</CardTitle>
+                <CardDescription>مقارنة السيناريوهات الثلاثة للمنتج المختار</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="rounded-lg border border-slate-200 p-4 bg-gradient-to-br from-blue-50 to-blue-100">
-                    <h4 className="font-semibold text-slate-900 mb-4">السيناريو 1: 250k</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">CPM:</span>
-                        <span className="font-semibold">50-90 ج.م</span>
+                <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {products.map((p) => (
+                      <SelectItem key={p.name} value={p.name}>
+                        {p.name} ({p.price} ج.م)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+
+            {/* Product-Specific Comparison */}
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle>مقارنة السيناريوهات الثلاثة: {selectedProduct}</CardTitle>
+                <CardDescription>تأثير حجم الجمهور على جميع المقاييس الرئيسية</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Three Scenario Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {productScenarios.map((scenario) => (
+                    <div key={scenario.audience} className={`rounded-lg border-2 p-4 ${
+                      scenario.audience === "250k" ? "border-blue-200 bg-blue-50" :
+                      scenario.audience === "500k" ? "border-amber-200 bg-amber-50" :
+                      "border-green-200 bg-green-50"
+                    }`}>
+                      <h4 className="font-bold text-slate-900 mb-4 text-lg">
+                        {scenario.audience === "250k" && "السيناريو 1: 250k"}
+                        {scenario.audience === "500k" && "السيناريو 2: 500k ⭐"}
+                        {scenario.audience === "1M" && "السيناريو 3: 1M"}
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">CPM</span>
+                          <span className="text-lg font-bold text-slate-900">{scenario.cpm.toFixed(1)} ج.م</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">CPC</span>
+                          <span className="text-lg font-bold text-slate-900">{scenario.cpc.toFixed(2)} ج.م</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">CPA Dashboard</span>
+                          <span className="text-lg font-bold text-blue-600">{scenario.cpaDashboard.toFixed(0)} ج.م</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">CPA Delivered</span>
+                          <span className="text-lg font-bold text-blue-600">{scenario.cpaDelivered.toFixed(0)} ج.م</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">AOV</span>
+                          <span className="text-lg font-bold text-slate-900">{scenario.aov.toFixed(0)} ج.م</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">ROAS</span>
+                          <span className="text-lg font-bold text-green-600">{scenario.roas.toFixed(2)}x</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">Delivered ROAS</span>
+                          <span className="text-lg font-bold text-green-600">{scenario.deliveredRoas.toFixed(2)}x</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-300">
+                          <span className="text-slate-700 font-medium">الربح/الطلب</span>
+                          <span className="text-lg font-bold text-emerald-600">{scenario.profitPerOrder.toFixed(0)} ج.م</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-700 font-medium">الهامش</span>
+                          <span className="text-lg font-bold text-purple-600">{scenario.margin.toFixed(1)}%</span>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">متوسط CPA:</span>
-                        <span className="font-semibold text-blue-600">{Math.round(allScenarios.filter(s => s.audience === "250k").reduce((sum, s) => sum + s.cpaDashboard, 0) / allScenarios.filter(s => s.audience === "250k").length)} ج.م</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">متوسط ROAS:</span>
-                        <span className="font-semibold text-green-600">{(allScenarios.filter(s => s.audience === "250k").reduce((sum, s) => sum + s.roas, 0) / allScenarios.filter(s => s.audience === "250k").length).toFixed(2)}x</span>
-                      </div>
-                      <p className="text-xs text-slate-600 pt-2 border-t border-slate-200 mt-2">جمهور مستهدف بدقة، تكلفة أعلى</p>
                     </div>
+                  ))}
+                </div>
+
+                {/* Comparison Charts */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                  {/* CPA Comparison */}
+                  <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+                    <h4 className="font-semibold text-slate-900 mb-4">مقارنة CPA</h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={productScenarios}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="audience" />
+                        <YAxis />
+                        <Tooltip contentStyle={{ backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }} />
+                        <Bar dataKey="cpaDashboard" fill="#0066cc" name="CPA Dashboard" radius={[8, 8, 0, 0]} />
+                        <Bar dataKey="cpaDelivered" fill="#0052a3" name="CPA Delivered" radius={[8, 8, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
 
-                  <div className="rounded-lg border border-slate-200 p-4 bg-gradient-to-br from-amber-50 to-amber-100">
-                    <h4 className="font-semibold text-slate-900 mb-4">السيناريو 2: 500k ⭐</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">CPM:</span>
-                        <span className="font-semibold">35-60 ج.م</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">متوسط CPA:</span>
-                        <span className="font-semibold text-blue-600">{Math.round(allScenarios.filter(s => s.audience === "500k").reduce((sum, s) => sum + s.cpaDashboard, 0) / allScenarios.filter(s => s.audience === "500k").length)} ج.م</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">متوسط ROAS:</span>
-                        <span className="font-semibold text-green-600">{(allScenarios.filter(s => s.audience === "500k").reduce((sum, s) => sum + s.roas, 0) / allScenarios.filter(s => s.audience === "500k").length).toFixed(2)}x</span>
-                      </div>
-                      <p className="text-xs text-slate-600 pt-2 border-t border-slate-200 mt-2">التوازن الأمثل</p>
-                    </div>
+                  {/* ROAS Comparison */}
+                  <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+                    <h4 className="font-semibold text-slate-900 mb-4">مقارنة ROAS</h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={productScenarios}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="audience" />
+                        <YAxis />
+                        <Tooltip contentStyle={{ backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }} />
+                        <Bar dataKey="roas" fill="#10b981" name="ROAS" radius={[8, 8, 0, 0]} />
+                        <Bar dataKey="deliveredRoas" fill="#059669" name="Delivered ROAS" radius={[8, 8, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
 
-                  <div className="rounded-lg border border-slate-200 p-4 bg-gradient-to-br from-green-50 to-green-100">
-                    <h4 className="font-semibold text-slate-900 mb-4">السيناريو 3: 1M</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">CPM:</span>
-                        <span className="font-semibold">25-40 ج.م</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">متوسط CPA:</span>
-                        <span className="font-semibold text-blue-600">{Math.round(allScenarios.filter(s => s.audience === "1M").reduce((sum, s) => sum + s.cpaDashboard, 0) / allScenarios.filter(s => s.audience === "1M").length)} ج.م</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">متوسط ROAS:</span>
-                        <span className="font-semibold text-green-600">{(allScenarios.filter(s => s.audience === "1M").reduce((sum, s) => sum + s.roas, 0) / allScenarios.filter(s => s.audience === "1M").length).toFixed(2)}x</span>
-                      </div>
-                      <p className="text-xs text-slate-600 pt-2 border-t border-slate-200 mt-2">جمهور واسع، تكلفة أقل</p>
-                    </div>
+                  {/* Profit Comparison */}
+                  <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+                    <h4 className="font-semibold text-slate-900 mb-4">مقارنة الربح والهامش</h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={productScenarios}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="audience" />
+                        <YAxis yAxisId="left" />
+                        <YAxis yAxisId="right" orientation="right" />
+                        <Tooltip contentStyle={{ backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }} />
+                        <Legend />
+                        <Bar yAxisId="left" dataKey="profitPerOrder" fill="#8b5cf6" name="الربح (ج.م)" radius={[8, 8, 0, 0]} />
+                        <Bar yAxisId="right" dataKey="margin" fill="#f59e0b" name="الهامش (%)" radius={[8, 8, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* AOV vs CPA */}
+                  <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+                    <h4 className="font-semibold text-slate-900 mb-4">العلاقة بين AOV و CPA</h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis type="number" dataKey="aov" name="AOV" />
+                        <YAxis type="number" dataKey="cpaDashboard" name="CPA" />
+                        <Tooltip contentStyle={{ backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }} />
+                        <Scatter name={selectedProduct} data={productScenarios} fill="#0066cc" />
+                      </ScatterChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
 
-                {/* Comparison Chart */}
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={[
-                    {
-                      name: "250k",
-                      cpa: Math.round(allScenarios.filter(s => s.audience === "250k").reduce((sum, s) => sum + s.cpaDashboard, 0) / allScenarios.filter(s => s.audience === "250k").length),
-                      roas: Math.round((allScenarios.filter(s => s.audience === "250k").reduce((sum, s) => sum + s.roas, 0) / allScenarios.filter(s => s.audience === "250k").length) * 100) / 100,
-                    },
-                    {
-                      name: "500k",
-                      cpa: Math.round(allScenarios.filter(s => s.audience === "500k").reduce((sum, s) => sum + s.cpaDashboard, 0) / allScenarios.filter(s => s.audience === "500k").length),
-                      roas: Math.round((allScenarios.filter(s => s.audience === "500k").reduce((sum, s) => sum + s.roas, 0) / allScenarios.filter(s => s.audience === "500k").length) * 100) / 100,
-                    },
-                    {
-                      name: "1M",
-                      cpa: Math.round(allScenarios.filter(s => s.audience === "1M").reduce((sum, s) => sum + s.cpaDashboard, 0) / allScenarios.filter(s => s.audience === "1M").length),
-                      roas: Math.round((allScenarios.filter(s => s.audience === "1M").reduce((sum, s) => sum + s.roas, 0) / allScenarios.filter(s => s.audience === "1M").length) * 100) / 100,
-                    },
-                  ]}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="name" />
-                    <YAxis yAxisId="left" />
-                    <YAxis yAxisId="right" orientation="right" />
-                    <Tooltip contentStyle={{ backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }} />
-                    <Legend />
-                    <Bar yAxisId="left" dataKey="cpa" fill="#0066cc" name="متوسط CPA (ج.م)" radius={[8, 8, 0, 0]} />
-                    <Bar yAxisId="right" dataKey="roas" fill="#10b981" name="متوسط ROAS" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                {/* Detailed Comparison Table */}
+                <div className="mt-8 rounded-lg border border-slate-200 overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-slate-100 border-b border-slate-200">
+                        <th className="text-left py-3 px-4 font-semibold text-slate-700">المقياس</th>
+                        <th className="text-right py-3 px-4 font-semibold text-slate-700">250k</th>
+                        <th className="text-right py-3 px-4 font-semibold text-slate-700">500k</th>
+                        <th className="text-right py-3 px-4 font-semibold text-slate-700">1M</th>
+                        <th className="text-right py-3 px-4 font-semibold text-slate-700">الفرق (500k - 250k)</th>
+                        <th className="text-right py-3 px-4 font-semibold text-slate-700">الفرق (1M - 500k)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-slate-100 hover:bg-slate-50">
+                        <td className="py-3 px-4 font-medium text-slate-900">CPM</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[0]?.cpm.toFixed(1)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[1]?.cpm.toFixed(1)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[2]?.cpm.toFixed(1)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-red-600 font-semibold">{((productScenarios[1]?.cpm || 0) - (productScenarios[0]?.cpm || 0)).toFixed(1)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-red-600 font-semibold">{((productScenarios[2]?.cpm || 0) - (productScenarios[1]?.cpm || 0)).toFixed(1)} ج.م</td>
+                      </tr>
+                      <tr className="border-b border-slate-100 hover:bg-slate-50">
+                        <td className="py-3 px-4 font-medium text-slate-900">CPA Dashboard</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[0]?.cpaDashboard.toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[1]?.cpaDashboard.toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[2]?.cpaDashboard.toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-red-600 font-semibold">{((productScenarios[1]?.cpaDashboard || 0) - (productScenarios[0]?.cpaDashboard || 0)).toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-red-600 font-semibold">{((productScenarios[2]?.cpaDashboard || 0) - (productScenarios[1]?.cpaDashboard || 0)).toFixed(0)} ج.م</td>
+                      </tr>
+                      <tr className="border-b border-slate-100 hover:bg-slate-50">
+                        <td className="py-3 px-4 font-medium text-slate-900">ROAS</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[0]?.roas.toFixed(2)}x</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[1]?.roas.toFixed(2)}x</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[2]?.roas.toFixed(2)}x</td>
+                        <td className="py-3 px-4 text-right text-green-600 font-semibold">{((productScenarios[1]?.roas || 0) - (productScenarios[0]?.roas || 0)).toFixed(2)}x</td>
+                        <td className="py-3 px-4 text-right text-green-600 font-semibold">{((productScenarios[2]?.roas || 0) - (productScenarios[1]?.roas || 0)).toFixed(2)}x</td>
+                      </tr>
+                      <tr className="border-b border-slate-100 hover:bg-slate-50">
+                        <td className="py-3 px-4 font-medium text-slate-900">الربح/الطلب</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[0]?.profitPerOrder.toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[1]?.profitPerOrder.toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[2]?.profitPerOrder.toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-green-600 font-semibold">{((productScenarios[1]?.profitPerOrder || 0) - (productScenarios[0]?.profitPerOrder || 0)).toFixed(0)} ج.م</td>
+                        <td className="py-3 px-4 text-right text-green-600 font-semibold">{((productScenarios[2]?.profitPerOrder || 0) - (productScenarios[1]?.profitPerOrder || 0)).toFixed(0)} ج.م</td>
+                      </tr>
+                      <tr className="hover:bg-slate-50">
+                        <td className="py-3 px-4 font-medium text-slate-900">الهامش</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[0]?.margin.toFixed(1)}%</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[1]?.margin.toFixed(1)}%</td>
+                        <td className="py-3 px-4 text-right text-slate-600">{productScenarios[2]?.margin.toFixed(1)}%</td>
+                        <td className="py-3 px-4 text-right text-green-600 font-semibold">{((productScenarios[1]?.margin || 0) - (productScenarios[0]?.margin || 0)).toFixed(1)}%</td>
+                        <td className="py-3 px-4 text-right text-green-600 font-semibold">{((productScenarios[2]?.margin || 0) - (productScenarios[1]?.margin || 0)).toFixed(1)}%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
