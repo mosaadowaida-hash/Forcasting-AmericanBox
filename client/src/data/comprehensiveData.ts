@@ -5,34 +5,46 @@ export interface Scenario {
   item_name: string;
   item_type: string;
   selling_price: number;
-  margin_pct: number;
-  cpm_scenario: string;
+  original_price: number;
+
+  // Scenario params
+  cpm_label: string;
   cpm: number;
-  audience_size: number;
-  ctr_scenario: string;
-  ctr_pct: number;
-  cvr_scenario: string;
-  cvr_pct: number;
-  basket_scenario: string;
-  avg_items: number;
+  ctr_label: string;
+  ctr: number;
+  cvr_label: string;
+  cvr: number;
+  basket_label: string;
+  basket_size: number;
+
+  // Ad metrics
   impressions: number;
   clicks: number;
-  conversions: number;
-  delivered_orders: number;
-  ad_spend: number;
+  cpc: number;
+
+  // Orders
+  total_orders: number;
   cpa_dashboard: number;
+  total_delivered: number;
   cpa_delivered: number;
+
+  // Revenue
   aov: number;
+  avg_items: number;
   revenue_per_order: number;
   cogs_per_order: number;
-  shipping_per_order: number;
-  profit_per_order: number;
-  profit_margin_pct: number;
+  shipping: number;
+
+  // Profitability
+  gross_profit_per_order: number;
   max_cpa_allowed: number;
+  net_profit_per_order: number;
   roas: number;
+  status: string;
+
+  // Totals
   total_revenue: number;
   total_profit: number;
-  status: 'Profit' | 'Break Even' | 'Loss';
 }
 
 export interface ProductRanking {
@@ -40,14 +52,42 @@ export interface ProductRanking {
   item_name: string;
   item_type: string;
   selling_price: number;
-  margin_pct: number;
-  median_revenue: number;
-  median_profit: number;
-  median_roas: number;
+  original_price: number;
+
+  // Revenue metrics
+  revenue_median: number;
+  revenue_min: number;
+  revenue_max: number;
+
+  // Profit metrics
+  profit_median: number;
+  profit_min: number;
+  profit_max: number;
+
+  // ROAS metrics
+  roas_median: number;
+  roas_min: number;
+  roas_max: number;
+
+  // CPA metrics
+  cpa_dashboard_median: number;
+  cpa_delivered_median: number;
+
+  // Max CPA
+  max_cpa_allowed: number;
+
+  // Profitability
+  profit_scenarios: number;
+  loss_scenarios: number;
   profitability_rate: number;
-  profit_count: number;
-  loss_count: number;
-  total_scenarios: number;
+
+  // Best/Worst
+  best_scenario: string;
+  best_profit: number;
+  best_roas: number;
+  worst_scenario: string;
+  worst_profit: number;
+  worst_roas: number;
 }
 
 export const allScenarios: Scenario[] = allScenariosData as Scenario[];
@@ -63,8 +103,10 @@ function calculateMedian(values: number[]): number {
 export const overallStats = {
   totalScenarios: allScenarios.length,
   totalProducts: new Set(allScenarios.map(s => s.item_name)).size,
-  medianProfit: calculateMedian(allScenarios.map(s => s.profit_per_order)),
+  medianProfit: calculateMedian(allScenarios.map(s => s.net_profit_per_order)),
+  medianRevenue: calculateMedian(allScenarios.map(s => s.revenue_per_order)),
   medianRoas: calculateMedian(allScenarios.map(s => s.roas)),
-  profitableScenarios: allScenarios.filter(s => s.profit_per_order > 0).length,
-  profitabilityRate: (allScenarios.filter(s => s.profit_per_order > 0).length / allScenarios.length) * 100,
+  profitableScenarios: allScenarios.filter(s => s.status === 'ربح').length,
+  lossScenarios: allScenarios.filter(s => s.status === 'خسارة').length,
+  profitabilityRate: (allScenarios.filter(s => s.status === 'ربح').length / allScenarios.length) * 100,
 };
