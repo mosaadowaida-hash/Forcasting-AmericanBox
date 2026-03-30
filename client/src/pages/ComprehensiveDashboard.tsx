@@ -256,24 +256,24 @@ export default function ComprehensiveDashboard() {
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-slate-50 border-b border-slate-200">
+                <table className="w-full text-sm border-collapse">
+                  <thead className="bg-slate-50 border-b border-slate-200 sticky top-0">
                     <tr>
-                      <th className="px-4 py-2 text-right font-medium">المنتج</th>
-                      <th className="px-4 py-2 text-right font-medium">CPA</th>
-                      <th className="px-4 py-2 text-right font-medium">ROAS</th>
-                      <th className="px-4 py-2 text-right font-medium">الربح</th>
-                      <th className="px-4 py-2 text-right font-medium">الحالة</th>
+                      <th className="px-4 py-2 text-right font-medium w-40">المنتج</th>
+                      <th className="px-4 py-2 text-right font-medium w-20">CPA</th>
+                      <th className="px-4 py-2 text-right font-medium w-16">ROAS</th>
+                      <th className="px-4 py-2 text-right font-medium w-24">الربح</th>
+                      <th className="px-4 py-2 text-right font-medium w-20">الحالة</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredScenarios.slice(0, 20).map((scenario, idx) => (
                       <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50">
-                        <td className="px-4 py-2">{scenario.item_name.substring(0, 30)}</td>
-                        <td className="px-4 py-2">{scenario.cpa_dashboard} ج.م</td>
-                        <td className="px-4 py-2 font-semibold">{scenario.roas}x</td>
-                        <td className="px-4 py-2 text-green-600 font-semibold">{scenario.profit_per_order} ج.م (ربح)</td>
-                        <td className="px-4 py-2">
+                        <td className="px-4 py-2 w-40">{scenario.item_name.substring(0, 30)}</td>
+                        <td className="px-4 py-2 w-20">{scenario.cpa_dashboard} ج.م</td>
+                        <td className="px-4 py-2 font-semibold w-16">{scenario.roas}x</td>
+                        <td className="px-4 py-2 text-green-600 font-semibold w-24">{scenario.profit_per_order} ج.م (ربح)</td>
+                        <td className="px-4 py-2 w-20">
                           <Badge variant={scenario.status === 'Profit' ? 'default' : scenario.status === 'Break Even' ? 'secondary' : 'destructive'}>
                             {scenario.status}
                           </Badge>
@@ -295,32 +295,32 @@ export default function ComprehensiveDashboard() {
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-slate-50 border-b border-slate-200">
+                <table className="w-full text-sm border-collapse">
+                  <thead className="bg-slate-50 border-b border-slate-200 sticky top-0">
                     <tr>
-                      <th className="px-4 py-2 text-right font-medium">الترتيب</th>
-                      <th className="px-4 py-2 text-right font-medium">المنتج</th>
-                      <th className="px-4 py-2 text-right font-medium">العائد الوسيط</th>
-                      <th className="px-4 py-2 text-right font-medium">الربح الوسيط</th>
-                      <th className="px-4 py-2 text-right font-medium">ROAS الوسيط</th>
-                      <th className="px-4 py-2 text-right font-medium">معدل الربحية %</th>
-                      <th className="px-4 py-2 text-right font-medium">السعر</th>
+                      <th className="px-4 py-2 text-right font-medium w-12">الترتيب</th>
+                      <th className="px-4 py-2 text-right font-medium w-40">المنتج</th>
+                      <th className="px-4 py-2 text-right font-medium w-24">العائد الوسيط</th>
+                      <th className="px-4 py-2 text-right font-medium w-24">الربح الوسيط</th>
+                      <th className="px-4 py-2 text-right font-medium w-20">ROAS الوسيط</th>
+                      <th className="px-4 py-2 text-right font-medium w-24">معدل الربحية %</th>
+                      <th className="px-4 py-2 text-right font-medium w-20">السعر</th>
                     </tr>
                   </thead>
                   <tbody>
                     {productRanking.map((product) => (
                       <tr key={product.rank} className="border-b border-slate-100 hover:bg-slate-50">
-                        <td className="px-4 py-2 font-bold text-blue-600">#{product.rank}</td>
-                        <td className="px-4 py-2">{product.product_name.substring(0, 40)}</td>
-                        <td className="px-4 py-2 text-blue-600 font-semibold">{product.median_revenue} ج.م</td>
-                        <td className="px-4 py-2 text-green-600 font-semibold">{product.median_profit} ج.م</td>
-                        <td className="px-4 py-2 font-semibold">{product.median_roas}x</td>
-                        <td className="px-4 py-2">
+                        <td className="px-4 py-2 font-bold text-blue-600 w-12">#{product.rank}</td>
+                        <td className="px-4 py-2 w-40">{product.product_name.substring(0, 40)}</td>
+                        <td className="px-4 py-2 text-blue-600 font-semibold w-24">{product.median_revenue} ج.م</td>
+                        <td className="px-4 py-2 text-green-600 font-semibold w-24">{product.median_profit} ج.م</td>
+                        <td className="px-4 py-2 font-semibold w-20">{product.median_roas}x</td>
+                        <td className="px-4 py-2 w-24">
                           <Badge variant={product.profitability_rate > 95 ? 'default' : 'secondary'}>
                             {product.profitability_rate}%
                           </Badge>
                         </td>
-                        <td className="px-4 py-2">{product.selling_price} ج.م</td>
+                        <td className="px-4 py-2 w-20">{product.selling_price} ج.م</td>
                       </tr>
                     ))}
                   </tbody>
