@@ -7,57 +7,54 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ScatterChart, Scatter, PieChart, Pie, Cell
 } from "recharts";
-import {
-  allScenarios, productRanking, getProductScenarios, getScenariosByFilters,
-  getUniqueCPMScenarios, getUniqueCTRScenarios, getUniqueCVRScenarios,
-  getUniqueBasketScenarios, getStatistics, getTopProfitableProducts
-} from "@/data/comprehensiveData";
-import { TrendingUp, DollarSign, Target, Zap, Package, TrendingDown } from "lucide-react";
+import { allScenarios, productRanking, overallStats } from "@/data/comprehensiveData";
+import { TrendingUp, DollarSign, Target, Zap } from "lucide-react";
 
 export default function ComprehensiveDashboard() {
-  const [selectedProduct, setSelectedProduct] = useState(productRanking[0]?.product_name || "");
+  const [selectedProduct, setSelectedProduct] = useState(productRanking[0]?.item_name || "");
   const [selectedCPM, setSelectedCPM] = useState("Medium CPM Cost");
   const [selectedCTR, setSelectedCTR] = useState("Good CTR");
   const [selectedCVR, setSelectedCVR] = useState("Good CVR");
   const [selectedBasket, setSelectedBasket] = useState("Fair Basket Size");
 
-  const stats = getStatistics();
-  const filteredScenarios = getScenariosByFilters({
-    cpmScenario: selectedCPM,
-    ctrScenario: selectedCTR,
-    cvrScenario: selectedCVR,
-    basketScenario: selectedBasket,
-  });
+  // Get unique filter values
+  const uniqueCPMs = Array.from(new Set(allScenarios.map(s => s.cpm_scenario)));
+  const uniqueCTRs = Array.from(new Set(allScenarios.map(s => s.ctr_scenario)));
+  const uniqueCVRs = Array.from(new Set(allScenarios.map(s => s.cvr_scenario)));
+  const uniqueBaskets = Array.from(new Set(allScenarios.map(s => s.basket_scenario)));
 
-  const productScenarios = getProductScenarios(selectedProduct);
-  const selectedScenario = productScenarios.find(
-    s => s.cpm_scenario === selectedCPM && s.ctr_scenario === selectedCTR &&
-         s.cvr_scenario === selectedCVR && s.basket_scenario === selectedBasket
+  // Filter scenarios
+  const filteredScenarios = allScenarios.filter(s =>
+    s.cpm_scenario === selectedCPM &&
+    s.ctr_scenario === selectedCTR &&
+    s.cvr_scenario === selectedCVR &&
+    s.basket_scenario === selectedBasket
   );
 
-  const selectedProductRanking = productRanking.find(p => p.product_name === selectedProduct);
+  // Product scenarios
+  const productScenarios = allScenarios.filter(s => s.item_name === selectedProduct);
+  const selectedProductRanking = productRanking.find(p => p.item_name === selectedProduct);
 
-  // Chart data for scenario comparison
-  const scenarioComparison = productScenarios
-    .filter(s => s.ctr_scenario === "Good CTR" && s.cvr_scenario === "Good CVR")
-    .map(s => ({
-      name: `${s.cpm_scenario.split(' ')[0]} CPM`,
-      profit: s.profit_per_order,
-      roas: s.roas,
-      cpa: s.cpa_dashboard,
-    }));
-
-  const profitabilityChart = [
-    { name: "Profit", value: stats.profitScenarios, fill: "#10b981" },
-    { name: "Break Even", value: stats.breakEvenScenarios, fill: "#f59e0b" },
-    { name: "Loss", value: stats.lossScenarios, fill: "#ef4444" },
-  ];
-
-  const topProducts = getTopProfitableProducts(5).map(p => ({
-    name: p.product_name.substring(0, 20),
+  // Chart data
+  const topProducts = productRanking.slice(0, 5).map(p => ({
+    name: p.item_name.substring(0, 20),
     profit: p.median_profit,
     roas: p.median_roas,
   }));
+
+  const profitabilityChart = [
+    { name: "Profit", value: allScenarios.filter(s => s.profit > 0).length, fill: "#10b981" },
+    { name: "Break Even", value: allScenarios.filter(s => s.profit === 0).length, fill: "#f59e0b" },
+    { name: "Loss", value: allScenarios.filter(s => s.profit < 0).length, fill: "#ef4444" },
+  ];
+
+  const cpmComparison = productScenarios
+    .filter(s => s.ctr_scenario === "Good CTR" && s.cvr_scenario === "Good CVR")
+    .map(s => ({
+      name: s.cpm_scenario.split(' ')[0],
+      profit: s.profit,
+      revenue: s.revenue,
+    }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
@@ -67,7 +64,7 @@ export default function ComprehensiveDashboard() {
           محاكي الحملات والإيرادات - النسخة الشاملة
         </h1>
         <p className="text-slate-600">
-          تحليل 6,048 سيناريو (144 سيناريو × 42 منتج) بدقة شديدة
+          تحليل {overallStats.totalScenarios.toLocaleString()} سيناريو ({overallStats.totalProducts} منتج × 144 سيناريو)
         </p>
       </div>
 
@@ -75,59 +72,58 @@ export default function ComprehensiveDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <Card className="border-0 shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">إجمالي السيناريوهات</CardTitle>
+            <CardTitle className="text-sm">إجمالي السيناريوهات</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">{stats.totalScenarios.toLocaleString()}</div>
-            <p className="text-xs text-slate-500 mt-1">42 منتج × 144 سيناريو</p>
+            <div className="text-3xl font-bold text-slate-900">{overallStats.totalScenarios.toLocaleString()}</div>
+            <p className="text-xs text-slate-500 mt-1">{overallStats.totalProducts} منتج × 144 سيناريو</p>
           </CardContent>
         </Card>
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">معدل الربحية</CardTitle>
+            <CardTitle className="text-sm">معدل الربحية</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">{stats.profitabilityRate.toFixed(1)}%</div>
-            <p className="text-xs text-slate-500 mt-1">{stats.profitScenarios + stats.breakEvenScenarios} سيناريو رابح</p>
+            <div className="text-3xl font-bold text-green-600">{overallStats.profitabilityRate.toFixed(1)}%</div>
+            <p className="text-xs text-slate-500 mt-1">{overallStats.profitableScenarios} سيناريو رابح</p>
           </CardContent>
         </Card>
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">متوسط الربح</CardTitle>
+            <CardTitle className="text-sm">متوسط الربح</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">{stats.avgProfit.toLocaleString()} ج.م</div>
+            <div className="text-3xl font-bold text-green-600">{overallStats.medianProfit.toFixed(0)} ج.م</div>
             <p className="text-xs text-slate-500 mt-1">لكل طلب</p>
           </CardContent>
         </Card>
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">متوسط ROAS</CardTitle>
+            <CardTitle className="text-sm">متوسط ROAS</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600">{stats.avgROAS}x</div>
+            <div className="text-3xl font-bold text-blue-600">{overallStats.medianRoas.toFixed(2)}x</div>
             <p className="text-xs text-slate-500 mt-1">العائد على الإنفاق</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Tabs */}
+      {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 bg-white border border-slate-200">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
           <TabsTrigger value="scenarios">السيناريوهات</TabsTrigger>
           <TabsTrigger value="ranking">ترتيب المنتجات</TabsTrigger>
-          <TabsTrigger value="product-analysis">تحليل المنتج</TabsTrigger>
+          <TabsTrigger value="product">تحليل المنتج</TabsTrigger>
           <TabsTrigger value="filters">تصفية متقدمة</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Profitability Distribution */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>توزيع الربحية</CardTitle>
@@ -135,7 +131,16 @@ export default function ComprehensiveDashboard() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={profitabilityChart} cx="50%" cy="50%" labelLine={false} label dataKey="value">
+                    <Pie
+                      data={profitabilityChart}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
                       {profitabilityChart.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
@@ -146,7 +151,6 @@ export default function ComprehensiveDashboard() {
               </CardContent>
             </Card>
 
-            {/* Top 5 Products */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>أفضل 5 منتجات (الربح الوسيط)</CardTitle>
@@ -158,98 +162,16 @@ export default function ComprehensiveDashboard() {
                     <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="profit" fill="#3b82f6" name="الربح (ج.م)" />
+                    <Bar dataKey="profit" fill="#10b981" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
           </div>
-
-          {/* Scenario Comparison */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>مقارنة السيناريوهات (Good CTR & CVR)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={scenarioComparison}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip />
-                  <Legend />
-                  <Bar yAxisId="left" dataKey="profit" fill="#10b981" name="الربح (ج.م)" />
-                  <Bar yAxisId="right" dataKey="roas" fill="#3b82f6" name="ROAS" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {/* Scenarios Tab */}
         <TabsContent value="scenarios" className="space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>تصفية السيناريوهات</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-sm font-medium text-slate-700">CPM</label>
-                <Select value={selectedCPM} onValueChange={setSelectedCPM}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getUniqueCPMScenarios().map(cpm => (
-                      <SelectItem key={cpm} value={cpm}>{cpm}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-700">CTR</label>
-                <Select value={selectedCTR} onValueChange={setSelectedCTR}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getUniqueCTRScenarios().map(ctr => (
-                      <SelectItem key={ctr} value={ctr}>{ctr}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-700">CVR</label>
-                <Select value={selectedCVR} onValueChange={setSelectedCVR}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getUniqueCVRScenarios().map(cvr => (
-                      <SelectItem key={cvr} value={cvr}>{cvr}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-700">Basket Size</label>
-                <Select value={selectedBasket} onValueChange={setSelectedBasket}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getUniqueBasketScenarios().map(basket => (
-                      <SelectItem key={basket} value={basket}>{basket}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Scenarios Table */}
           <Card className="border-0 shadow-lg">
             <CardHeader>
               <CardTitle>السيناريوهات المطابقة ({filteredScenarios.length})</CardTitle>
@@ -272,7 +194,7 @@ export default function ComprehensiveDashboard() {
                         <td className="px-4 py-2 w-40">{scenario.item_name.substring(0, 30)}</td>
                         <td className="px-4 py-2 w-20">{scenario.cpa_dashboard} ج.م</td>
                         <td className="px-4 py-2 font-semibold w-16">{scenario.roas}x</td>
-                        <td className="px-4 py-2 text-green-600 font-semibold w-24">{scenario.profit_per_order} ج.م (ربح)</td>
+                        <td className="px-4 py-2 text-green-600 font-semibold w-24">{scenario.profit} ج.م</td>
                         <td className="px-4 py-2 w-20">
                           <Badge variant={scenario.status === 'Profit' ? 'default' : scenario.status === 'Break Even' ? 'secondary' : 'destructive'}>
                             {scenario.status}
@@ -311,7 +233,7 @@ export default function ComprehensiveDashboard() {
                     {productRanking.map((product) => (
                       <tr key={product.rank} className="border-b border-slate-100 hover:bg-slate-50">
                         <td className="px-4 py-2 font-bold text-blue-600 w-12">#{product.rank}</td>
-                        <td className="px-4 py-2 w-40">{product.product_name.substring(0, 40)}</td>
+                        <td className="px-4 py-2 w-40">{product.item_name.substring(0, 40)}</td>
                         <td className="px-4 py-2 text-blue-600 font-semibold w-24">{product.median_revenue} ج.م</td>
                         <td className="px-4 py-2 text-green-600 font-semibold w-24">{product.median_profit} ج.م</td>
                         <td className="px-4 py-2 font-semibold w-20">{product.median_roas}x</td>
@@ -331,7 +253,7 @@ export default function ComprehensiveDashboard() {
         </TabsContent>
 
         {/* Product Analysis Tab */}
-        <TabsContent value="product-analysis" className="space-y-6">
+        <TabsContent value="product" className="space-y-6">
           <Card className="border-0 shadow-lg">
             <CardHeader>
               <CardTitle>اختر منتج للتحليل</CardTitle>
@@ -343,8 +265,8 @@ export default function ComprehensiveDashboard() {
                 </SelectTrigger>
                 <SelectContent>
                   {productRanking.map((product) => (
-                    <SelectItem key={product.product_name} value={product.product_name}>
-                      #{product.rank} - {product.product_name}
+                    <SelectItem key={product.item_name} value={product.item_name}>
+                      #{product.rank} - {product.item_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -354,7 +276,6 @@ export default function ComprehensiveDashboard() {
 
           {selectedProductRanking && (
             <>
-              {/* Product Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="border-0 shadow-lg">
                   <CardHeader className="pb-2">
@@ -382,42 +303,34 @@ export default function ComprehensiveDashboard() {
                     <div className="text-2xl font-bold text-blue-600">{selectedProductRanking.median_roas}x</div>
                   </CardContent>
                 </Card>
-
+                <Card className="border-0 shadow-lg">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">معدل الربحية</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-600">{selectedProductRanking.profitability_rate}%</div>
+                    <p className="text-xs text-slate-500 mt-1">{selectedProductRanking.profit_count} من {selectedProductRanking.total_scenarios}</p>
+                  </CardContent>
+                </Card>
               </div>
 
-              {/* Market Category */}
-              {selectedProductRanking.market_research && (
+              {cpmComparison.length > 0 && (
                 <Card className="border-0 shadow-lg">
                   <CardHeader>
-                    <CardTitle>بحث السوق - {selectedProductRanking.market_category}</CardTitle>
+                    <CardTitle>مقارنة CPM (Good CTR & CVR)</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-medium text-slate-600">الطلب</p>
-                        <p className="text-lg font-bold">{selectedProductRanking.market_research.demand}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-600">معدل النمو</p>
-                        <p className="text-lg font-bold">{selectedProductRanking.market_research.growth}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-600">مستوى المنافسة</p>
-                        <p className="text-lg font-bold">{selectedProductRanking.market_research.competition}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-600">حساسية السعر</p>
-                        <p className="text-lg font-bold">{selectedProductRanking.market_research.price_sensitivity}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-600 mb-2">الجمهور المستهدف</p>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedProductRanking.market_research.target_audience?.map((audience: string) => (
-                          <Badge key={audience} variant="secondary">{audience}</Badge>
-                        ))}
-                      </div>
-                    </div>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={cpmComparison}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="profit" fill="#10b981" name="الربح" />
+                        <Bar dataKey="revenue" fill="#3b82f6" name="العائد" />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </CardContent>
                 </Card>
               )}
@@ -425,30 +338,81 @@ export default function ComprehensiveDashboard() {
           )}
         </TabsContent>
 
-        {/* Advanced Filters Tab */}
+        {/* Filters Tab */}
         <TabsContent value="filters" className="space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>تصفية متقدمة</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-slate-600">يمكنك تحديد السيناريوهات المخصصة أعلاه وسيتم عرض النتائج في تبويب السيناريوهات</p>
-              <div className="bg-slate-50 p-4 rounded-lg space-y-2">
-                <p className="font-medium">السيناريو المختار حالياً:</p>
-                <ul className="text-sm space-y-1">
-                  <li>CPM: {selectedCPM}</li>
-                  <li>CTR: {selectedCTR}</li>
-                  <li>CVR: {selectedCVR}</li>
-                  <li>Basket Size: {selectedBasket}</li>
-                </ul>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <p className="text-sm text-blue-900">
-                  عدد السيناريوهات المطابقة: <span className="font-bold">{filteredScenarios.length}</span> من أصل {stats.totalScenarios}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-sm">CPM</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Select value={selectedCPM} onValueChange={setSelectedCPM}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {uniqueCPMs.map((cpm) => (
+                      <SelectItem key={cpm} value={cpm}>{cpm}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-sm">CTR</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Select value={selectedCTR} onValueChange={setSelectedCTR}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {uniqueCTRs.map((ctr) => (
+                      <SelectItem key={ctr} value={ctr}>{ctr}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-sm">CVR</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Select value={selectedCVR} onValueChange={setSelectedCVR}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {uniqueCVRs.map((cvr) => (
+                      <SelectItem key={cvr} value={cvr}>{cvr}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-sm">Basket Size</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Select value={selectedBasket} onValueChange={setSelectedBasket}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {uniqueBaskets.map((basket) => (
+                      <SelectItem key={basket} value={basket}>{basket}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
