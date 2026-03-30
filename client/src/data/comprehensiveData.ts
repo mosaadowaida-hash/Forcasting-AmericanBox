@@ -1,5 +1,5 @@
-import allScenariosData from './all_scenarios_fixed.json';
-import productRankingData from './product_ranking_fixed.json';
+import allScenariosData from './all_scenarios_final.json';
+import productRankingData from './product_ranking_final.json';
 
 export interface Scenario {
   item_name: string;
