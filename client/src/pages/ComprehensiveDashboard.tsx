@@ -375,7 +375,7 @@ export default function ComprehensiveDashboard() {
 
               {/* All 144 Scenarios Table */}
               <Card className="border-0 shadow-lg">
-                <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">جميع 144 سيناريو لهذا المنتج (لكل طلب مُسلَّم واحد)</CardTitle></CardHeader>
+                <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">جميع 144 سيناريو لهذا المنتج (لكل طلب مُسلَّم واحد) - {filteredScenarios.length} سيناريو مطابق</CardTitle></CardHeader>
                 <CardContent className="px-0 sm:px-3 md:px-6">
                   <div className="overflow-x-auto max-h-[500px]">
                     <table className="w-full text-[9px] sm:text-[10px] md:text-xs border-collapse min-w-[700px]">
@@ -396,7 +396,7 @@ export default function ComprehensiveDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {productScenarios
+                        {filteredScenarios
                           .sort((a, b) => b.net_profit_per_order - a.net_profit_per_order)
                           .map((s, idx) => (
                           <tr key={idx} className={`border-b border-slate-50 ${s.status === 'خسارة' ? 'bg-red-50' : ''}`}>
