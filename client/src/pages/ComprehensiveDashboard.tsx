@@ -14,24 +14,29 @@ const marketResearchMap = marketResearchMapData as Record<string, any>;
 export default function ComprehensiveDashboard() {
   const [selectedProduct, setSelectedProduct] = useState(productRanking[0]?.item_name || "");
 
-  const uniqueCPMs = useMemo(() => Array.from(new Set(allScenarios.map(s => s.cpm_label))), []);
-  const uniqueCTRs = useMemo(() => Array.from(new Set(allScenarios.map(s => s.ctr_label))), []);
-  const uniqueCVRs = useMemo(() => Array.from(new Set(allScenarios.map(s => s.cvr_label))), []);
-  const uniqueBaskets = useMemo(() => Array.from(new Set(allScenarios.map(s => s.basket_label))), []);
+  // First get all scenarios for the selected product
+  const productScenarios = useMemo(() => allScenarios.filter(s => s.item_name === selectedProduct), [selectedProduct]);
 
-  const [selectedCPM, setSelectedCPM] = useState(uniqueCPMs[1] || uniqueCPMs[0] || "");
-  const [selectedCTR, setSelectedCTR] = useState(uniqueCTRs[1] || uniqueCTRs[0] || "");
-  const [selectedCVR, setSelectedCVR] = useState(uniqueCVRs[1] || uniqueCVRs[0] || "");
+  // Then get unique values from ONLY the selected product's scenarios
+  const uniqueCPMs = useMemo(() => Array.from(new Set(productScenarios.map(s => s.cpm_label))), [productScenarios]);
+  const uniqueCTRs = useMemo(() => Array.from(new Set(productScenarios.map(s => s.ctr_label))), [productScenarios]);
+  const uniqueCVRs = useMemo(() => Array.from(new Set(productScenarios.map(s => s.cvr_label))), [productScenarios]);
+  const uniqueBaskets = useMemo(() => Array.from(new Set(productScenarios.map(s => s.basket_label))), [productScenarios]);
+
+  // Initialize with first values
+  const [selectedCPM, setSelectedCPM] = useState(uniqueCPMs[0] || "");
+  const [selectedCTR, setSelectedCTR] = useState(uniqueCTRs[0] || "");
+  const [selectedCVR, setSelectedCVR] = useState(uniqueCVRs[0] || "");
   const [selectedBasket, setSelectedBasket] = useState(uniqueBaskets[0] || "");
 
-  const filteredScenarios = useMemo(() => allScenarios.filter(s =>
+  // Filter to get exactly ONE scenario that matches all criteria
+  const filteredScenarios = useMemo(() => productScenarios.filter(s =>
     s.cpm_label === selectedCPM &&
     s.ctr_label === selectedCTR &&
     s.cvr_label === selectedCVR &&
     s.basket_label === selectedBasket
-  ), [selectedCPM, selectedCTR, selectedCVR, selectedBasket]);
+  ), [selectedCPM, selectedCTR, selectedCVR, selectedBasket, productScenarios]);
 
-  const productScenarios = useMemo(() => allScenarios.filter(s => s.item_name === selectedProduct), [selectedProduct]);
   const selectedProductRanking = productRanking.find(p => p.item_name === selectedProduct);
 
   const topProducts = useMemo(() => productRanking.slice(0, 5).map(p => ({
@@ -47,7 +52,7 @@ export default function ComprehensiveDashboard() {
 
   const cpmComparison = useMemo(() => {
     return productScenarios
-      .filter(s => s.ctr_label === (uniqueCTRs[1] || "") && s.cvr_label === (uniqueCVRs[1] || "") && s.basket_label === (uniqueBaskets[0] || ""))
+      .filter(s => s.ctr_label === (uniqueCTRs[0] || "") && s.cvr_label === (uniqueCVRs[0] || "") && s.basket_label === (uniqueBaskets[0] || ""))
       .map(s => ({
         name: s.cpm_label,
         "الربح/أوردر": s.net_profit_per_order,
@@ -61,70 +66,52 @@ export default function ComprehensiveDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-3 sm:p-4 md:p-6" dir="rtl">
       {/* Header */}
-      <div className="mb-4 sm:mb-6 md:mb-8">
-        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">
-          محاكي الحملات والإيرادات - النسخة الشاملة
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-600">
-          تحليل {overallStats.totalScenarios.toLocaleString()} سيناريو ({overallStats.totalProducts} منتج/باندل &times; 144 سيناريو) - جميع الأرقام <strong>لكل طلب واحد مُسلَّم</strong>
-        </p>
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">محاكي الحملات والإيرادات - النسخة الشاملة</h1>
+        <p className="text-sm text-slate-600 mt-1">تحليل 6,048 سيناريو (42 منتج/باندل × 144 سيناريو) - جميع الأرقام لكل طلب واحد مُسلَّم</p>
       </div>
 
-      {/* Global KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-8">
+      {/* Overall Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <Card className="border-0 shadow-lg">
-          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6"><CardTitle className="text-[10px] sm:text-xs md:text-sm">إجمالي السيناريوهات</CardTitle></CardHeader>
-          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-slate-900">{overallStats.totalScenarios.toLocaleString()}</div>
-            <p className="text-[9px] sm:text-xs text-slate-500 mt-1">{overallStats.totalProducts} منتج &times; 144 سيناريو</p>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-xs sm:text-sm">إجمالي السيناريوهات</CardTitle></CardHeader>
+          <CardContent><div className="text-lg md:text-2xl font-bold text-slate-900">6,048</div></CardContent>
         </Card>
         <Card className="border-0 shadow-lg">
-          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6"><CardTitle className="text-[10px] sm:text-xs md:text-sm">معدل الربحية</CardTitle></CardHeader>
-          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-green-600">{overallStats.profitabilityRate.toFixed(1)}%</div>
-            <p className="text-[9px] sm:text-xs text-slate-500 mt-1">{overallStats.profitableScenarios.toLocaleString()} سيناريو رابح</p>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-xs sm:text-sm">معدل الربحية</CardTitle></CardHeader>
+          <CardContent><div className="text-lg md:text-2xl font-bold text-green-600">{((overallStats.profitableScenarios / 6048) * 100).toFixed(1)}%</div></CardContent>
         </Card>
         <Card className="border-0 shadow-lg">
-          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6"><CardTitle className="text-[10px] sm:text-xs md:text-sm">الربح الوسيط / أوردر</CardTitle></CardHeader>
-          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-green-600">{fmt(overallStats.medianProfit)} ج.م</div>
-            <p className="text-[9px] sm:text-xs text-slate-500 mt-1">لكل طلب مُسلَّم</p>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-xs sm:text-sm">الربح الوسيط / أوردر</CardTitle></CardHeader>
+          <CardContent><div className="text-lg md:text-2xl font-bold text-slate-900">{fmt(selectedProductRanking?.profit_median)}</div></CardContent>
         </Card>
         <Card className="border-0 shadow-lg">
-          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6"><CardTitle className="text-[10px] sm:text-xs md:text-sm">ROAS الوسيط</CardTitle></CardHeader>
-          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-blue-600">{overallStats.medianRoas.toFixed(2)}x</div>
-            <p className="text-[9px] sm:text-xs text-slate-500 mt-1">العائد على الإنفاق</p>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-xs sm:text-sm">الوسيط ROAS</CardTitle></CardHeader>
+          <CardContent><div className="text-lg md:text-2xl font-bold text-blue-600">{selectedProductRanking?.roas_median.toFixed(2)}x</div></CardContent>
         </Card>
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
-        <TabsList className="grid w-full grid-cols-5 h-auto">
-          <TabsTrigger value="overview" className="text-[9px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-1 sm:px-3">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="scenarios" className="text-[9px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-1 sm:px-3">السيناريوهات</TabsTrigger>
-          <TabsTrigger value="ranking" className="text-[9px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-1 sm:px-3">ترتيب المنتجات</TabsTrigger>
-          <TabsTrigger value="product" className="text-[9px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-1 sm:px-3">تحليل المنتج</TabsTrigger>
-          <TabsTrigger value="filters" className="text-[9px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-1 sm:px-3">تصفية متقدمة</TabsTrigger>
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-5 mb-4 text-[10px] sm:text-xs md:text-sm">
+          <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
+          <TabsTrigger value="scenarios">السيناريوهات</TabsTrigger>
+          <TabsTrigger value="ranking">ترتيب المنتجات</TabsTrigger>
+          <TabsTrigger value="analysis">تحليل المنتج</TabsTrigger>
+          <TabsTrigger value="advanced">تصفية متقدمة</TabsTrigger>
         </TabsList>
 
-        {/* ========== Overview Tab ========== */}
-        <TabsContent value="overview" className="space-y-4 sm:space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Overview Tab */}
+        <TabsContent value="overview">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <Card className="border-0 shadow-lg">
-              <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">توزيع الربحية (جميع السيناريوهات)</CardTitle></CardHeader>
-              <CardContent className="px-3 sm:px-6">
-                <ResponsiveContainer width="100%" height={250}>
+              <CardHeader><CardTitle className="text-sm sm:text-base">توزيع الربحية (جميع السيناريوهات)</CardTitle></CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={profitabilityChart} cx="50%" cy="50%" labelLine={false}
-                      label={({ name, value }) => `${name}: ${value.toLocaleString()}`}
-                      outerRadius={70} dataKey="value">
-                      {profitabilityChart.map((entry, i) => (
-                        <Cell key={`cell-${i}`} fill={entry.fill} />
+                    <Pie data={profitabilityChart} cx="50%" cy="50%" labelLine={false} label outerRadius={80} fill="#8884d8" dataKey="value">
+                      {profitabilityChart.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -134,15 +121,17 @@ export default function ComprehensiveDashboard() {
             </Card>
 
             <Card className="border-0 shadow-lg">
-              <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">أفضل 5 منتجات (الربح الوسيط / أوردر)</CardTitle></CardHeader>
-              <CardContent className="px-3 sm:px-6">
-                <ResponsiveContainer width="100%" height={250}>
+              <CardHeader><CardTitle className="text-sm sm:text-base">أفضل 5 منتجات</CardTitle></CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={topProducts}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-20} textAnchor="end" height={80} fontSize={10} />
-                    <YAxis fontSize={10} />
-                    <Tooltip formatter={(v: number) => `${v.toLocaleString()} ج.م`} />
-                    <Bar dataKey="profit" fill="#10b981" name="الربح/أوردر" />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="profit" fill="#10b981" name="الربح الوسيط" />
+                    <Bar dataKey="roas" fill="#3b82f6" name="ROAS الوسيط" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -150,232 +139,119 @@ export default function ComprehensiveDashboard() {
           </div>
         </TabsContent>
 
-        {/* ========== Scenarios Tab ========== */}
-        <TabsContent value="scenarios" className="space-y-4 sm:space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mb-4">
-            <Select value={selectedCPM} onValueChange={setSelectedCPM}>
-              <SelectTrigger className="text-xs sm:text-sm"><SelectValue placeholder="CPM" /></SelectTrigger>
-              <SelectContent>{uniqueCPMs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select value={selectedCTR} onValueChange={setSelectedCTR}>
-              <SelectTrigger className="text-xs sm:text-sm"><SelectValue placeholder="CTR" /></SelectTrigger>
-              <SelectContent>{uniqueCTRs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select value={selectedCVR} onValueChange={setSelectedCVR}>
-              <SelectTrigger className="text-xs sm:text-sm"><SelectValue placeholder="CVR" /></SelectTrigger>
-              <SelectContent>{uniqueCVRs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select value={selectedBasket} onValueChange={setSelectedBasket}>
-              <SelectTrigger className="text-xs sm:text-sm"><SelectValue placeholder="Basket" /></SelectTrigger>
-              <SelectContent>{uniqueBaskets.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-
+        {/* Scenarios Tab */}
+        <TabsContent value="scenarios">
           <Card className="border-0 shadow-lg">
-            <CardHeader className="px-3 sm:px-6">
-              <CardTitle className="text-sm sm:text-base">السيناريوهات المطابقة ({filteredScenarios.length} منتج) - لكل طلب مُسلَّم واحد</CardTitle>
-            </CardHeader>
-            <CardContent className="px-0 sm:px-3 md:px-6">
-              <div className="overflow-x-auto">
-                <table className="w-full text-[10px] sm:text-xs md:text-sm border-collapse min-w-[700px]">
-                  <thead className="bg-slate-100 border-b-2 border-slate-300 sticky top-0">
-                    <tr>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">المنتج</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">السعر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">AOV</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">CPA Dashboard</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">CPA Delivered</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">العائد/أوردر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">COGS/أوردر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">الربح/أوردر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">ROAS</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">الحالة</th>
+            <CardHeader><CardTitle className="text-sm sm:text-base">جميع السيناريوهات (6,048)</CardTitle></CardHeader>
+            <CardContent className="overflow-x-auto max-h-[600px]">
+              <table className="w-full text-[9px] sm:text-[10px] md:text-xs border-collapse min-w-[800px]">
+                <thead className="bg-slate-100 border-b-2 border-slate-300 sticky top-0 z-10">
+                  <tr>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">المنتج</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">CPM</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">CTR</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">CVR</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">Basket</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">العائد</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">الربح</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">ROAS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allScenarios.slice(0, 100).map((s, idx) => (
+                    <tr key={idx} className={`border-b border-slate-50 ${s.status === 'خسارة' ? 'bg-red-50' : ''}`}>
+                      <td className="px-1.5 sm:px-2 py-1 text-[8px] sm:text-[9px]">{s.item_name.substring(0, 10)}</td>
+                      <td className="px-1.5 sm:px-2 py-1">{s.cpm_label}</td>
+                      <td className="px-1.5 sm:px-2 py-1">{s.ctr_label}</td>
+                      <td className="px-1.5 sm:px-2 py-1">{s.cvr_label}</td>
+                      <td className="px-1.5 sm:px-2 py-1">{s.basket_label}</td>
+                      <td className="px-1.5 sm:px-2 py-1">{fmt(s.revenue_per_order)}</td>
+                      <td className={`px-1.5 sm:px-2 py-1 font-bold ${s.net_profit_per_order >= 0 ? 'text-green-600' : 'text-red-600'}`}>{fmt(s.net_profit_per_order)}</td>
+                      <td className="px-1.5 sm:px-2 py-1">{s.roas.toFixed(1)}x</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filteredScenarios
-                      .sort((a, b) => b.net_profit_per_order - a.net_profit_per_order)
-                      .map((s, idx) => (
-                      <tr key={idx} className={`border-b border-slate-100 ${s.status === 'خسارة' ? 'bg-red-50' : s.status === 'ربح' ? 'hover:bg-green-50' : 'hover:bg-yellow-50'}`}>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 truncate max-w-[120px] sm:max-w-[200px]" title={s.item_name}>{s.item_name}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-slate-600 whitespace-nowrap">{fmt(s.selling_price)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 font-medium whitespace-nowrap">{fmt(s.aov)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 whitespace-nowrap">{fmt(s.cpa_dashboard)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 font-medium text-orange-600 whitespace-nowrap">{fmt(s.cpa_delivered)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-blue-700 font-medium whitespace-nowrap">{fmt(s.revenue_per_order)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-slate-500 whitespace-nowrap">{fmt(s.cogs_per_order)}</td>
-                        <td className={`px-2 sm:px-3 py-1.5 sm:py-2 font-bold whitespace-nowrap ${s.net_profit_per_order >= 0 ? 'text-green-600' : 'text-red-600'}`}>{fmt(s.net_profit_per_order)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 font-semibold whitespace-nowrap">{s.roas.toFixed(1)}x</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2">
-                          <Badge className="text-[8px] sm:text-[10px] px-1 sm:px-2" variant={s.status === 'ربح' ? 'default' : s.status === 'نقطة التعادل' ? 'secondary' : 'destructive'}>
-                            {s.status}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* ========== Ranking Tab ========== */}
-        <TabsContent value="ranking" className="space-y-4 sm:space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="px-3 sm:px-6">
-              <CardTitle className="text-sm sm:text-base">ترتيب المنتجات حسب الربحية (لكل طلب مُسلَّم واحد)</CardTitle>
-            </CardHeader>
-            <CardContent className="px-0 sm:px-3 md:px-6">
-              <div className="overflow-x-auto">
-                <table className="w-full text-[10px] sm:text-xs md:text-sm border-collapse min-w-[650px]">
-                  <thead className="bg-slate-100 border-b-2 border-slate-300 sticky top-0">
-                    <tr>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">#</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">المنتج</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">النوع</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">السعر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">العائد الوسيط</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">الربح الوسيط</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">ROAS الوسيط</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">معدل الربحية</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">رابح/خاسر</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {productRanking.map((p) => (
-                      <tr key={p.rank} className={`border-b border-slate-100 ${p.profit_median < 0 ? 'bg-red-50' : 'hover:bg-slate-50'}`}>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 font-bold text-blue-600">#{p.rank}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 truncate max-w-[120px] sm:max-w-[200px]" title={p.item_name}>{p.item_name}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2">
-                          <Badge className="text-[8px] sm:text-[10px]" variant={p.item_type === 'bundle' ? 'default' : 'secondary'}>
-                            {p.item_type === 'bundle' ? 'باندل' : 'منتج'}
-                          </Badge>
-                        </td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 whitespace-nowrap">{fmt(p.selling_price)} ج.م</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-blue-600 font-medium whitespace-nowrap">{fmt(p.revenue_median)} ج.م</td>
-                        <td className={`px-2 sm:px-3 py-1.5 sm:py-2 font-bold whitespace-nowrap ${p.profit_median >= 0 ? 'text-green-600' : 'text-red-600'}`}>{fmt(p.profit_median)} ج.م</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 font-semibold whitespace-nowrap">{p.roas_median.toFixed(1)}x</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2">
-                          <Badge className="text-[8px] sm:text-[10px]" variant={p.profitability_rate > 80 ? 'default' : p.profitability_rate > 50 ? 'secondary' : 'destructive'}>
-                            {p.profitability_rate.toFixed(0)}%
-                          </Badge>
-                        </td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-[9px] sm:text-xs whitespace-nowrap">{p.profit_scenarios}/{p.loss_scenarios}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* ========== Product Analysis Tab ========== */}
-        <TabsContent value="product" className="space-y-4 sm:space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">اختر منتج للتحليل التفصيلي</CardTitle></CardHeader>
-            <CardContent className="px-3 sm:px-6">
-              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {productRanking.map((p) => (
-                    <SelectItem key={p.item_name} value={p.item_name}>
-                      #{p.rank} - {p.item_name} ({fmt(p.selling_price)} ج.م)
-                    </SelectItem>
                   ))}
-                </SelectContent>
-              </Select>
+                </tbody>
+              </table>
             </CardContent>
           </Card>
+        </TabsContent>
 
+        {/* Ranking Tab */}
+        <TabsContent value="ranking">
+          <Card className="border-0 shadow-lg">
+            <CardHeader><CardTitle className="text-sm sm:text-base">ترتيب المنتجات (42)</CardTitle></CardHeader>
+            <CardContent className="overflow-x-auto max-h-[600px]">
+              <table className="w-full text-[9px] sm:text-[10px] md:text-xs border-collapse min-w-[700px]">
+                <thead className="bg-slate-100 border-b-2 border-slate-300 sticky top-0 z-10">
+                  <tr>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">#</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">المنتج</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">الربح الوسيط</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">ROAS الوسيط</th>
+                    <th className="px-1.5 sm:px-2 py-2 text-right">% ربح</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productRanking.map((p, idx) => (
+                    <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50">
+                      <td className="px-1.5 sm:px-2 py-1 font-bold">{idx + 1}</td>
+                      <td className="px-1.5 sm:px-2 py-1">{p.item_name}</td>
+                      <td className="px-1.5 sm:px-2 py-1 text-green-600 font-bold">{fmt(p.profit_median)}</td>
+                      <td className="px-1.5 sm:px-2 py-1 text-blue-600 font-bold">{p.roas_median.toFixed(2)}x</td>
+                      <td className="px-1.5 sm:px-2 py-1">{((p.profit_scenarios / 144) * 100).toFixed(0)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Analysis Tab */}
+        <TabsContent value="analysis">
           {selectedProductRanking && (
             <>
-              {/* Product KPIs */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+              <Card className="border-0 shadow-lg mb-4">
+                <CardHeader><CardTitle className="text-sm sm:text-base">اختر منتج للتحليل</CardTitle></CardHeader>
+                <CardContent>
+                  <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {productRanking.map((p) => (
+                        <SelectItem key={p.item_name} value={p.item_name}>
+                          {p.item_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
+
+              {/* Product Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 <Card className="border-0 shadow-lg">
-                  <CardHeader className="pb-1 px-3 sm:px-4 pt-3 sm:pt-4"><CardTitle className="text-[10px] sm:text-xs">سعر البيع</CardTitle></CardHeader>
-                  <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-slate-900">{fmt(selectedProductRanking.selling_price)} ج.م</div>
-                  </CardContent>
+                  <CardHeader className="pb-2"><CardTitle className="text-xs">عدد السيناريوهات</CardTitle></CardHeader>
+                  <CardContent><div className="text-lg font-bold text-blue-600">{productScenarios.length}</div></CardContent>
                 </Card>
                 <Card className="border-0 shadow-lg">
-                  <CardHeader className="pb-1 px-3 sm:px-4 pt-3 sm:pt-4"><CardTitle className="text-[10px] sm:text-xs">العائد الوسيط / أوردر</CardTitle></CardHeader>
-                  <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-blue-600">{fmt(selectedProductRanking.revenue_median)} ج.م</div>
-                  </CardContent>
+                  <CardHeader className="pb-2"><CardTitle className="text-xs">% ربح</CardTitle></CardHeader>
+                  <CardContent><div className="text-lg font-bold text-green-600">{((selectedProductRanking.profit_scenarios / 144) * 100).toFixed(0)}%</div></CardContent>
                 </Card>
                 <Card className="border-0 shadow-lg">
-                  <CardHeader className="pb-1 px-3 sm:px-4 pt-3 sm:pt-4"><CardTitle className="text-[10px] sm:text-xs">الربح الوسيط / أوردر</CardTitle></CardHeader>
-                  <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
-                    <div className={`text-base sm:text-lg md:text-xl font-bold ${selectedProductRanking.profit_median >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {fmt(selectedProductRanking.profit_median)} ج.م
-                    </div>
-                  </CardContent>
+                  <CardHeader className="pb-2"><CardTitle className="text-xs">الربح الوسيط</CardTitle></CardHeader>
+                  <CardContent><div className="text-lg font-bold">{fmt(selectedProductRanking.profit_median)}</div></CardContent>
                 </Card>
                 <Card className="border-0 shadow-lg">
-                  <CardHeader className="pb-1 px-3 sm:px-4 pt-3 sm:pt-4"><CardTitle className="text-[10px] sm:text-xs">ROAS الوسيط</CardTitle></CardHeader>
-                  <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-blue-600">{selectedProductRanking.roas_median.toFixed(2)}x</div>
-                  </CardContent>
-                </Card>
-                <Card className="border-0 shadow-lg">
-                  <CardHeader className="pb-1 px-3 sm:px-4 pt-3 sm:pt-4"><CardTitle className="text-[10px] sm:text-xs">معدل الربحية</CardTitle></CardHeader>
-                  <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-green-600">{selectedProductRanking.profitability_rate.toFixed(0)}%</div>
-                    <p className="text-[9px] sm:text-xs text-slate-500">{selectedProductRanking.profit_scenarios} رابح / {selectedProductRanking.loss_scenarios} خاسر</p>
-                  </CardContent>
+                  <CardHeader className="pb-2"><CardTitle className="text-xs">ROAS الوسيط</CardTitle></CardHeader>
+                  <CardContent><div className="text-lg font-bold text-blue-600">{selectedProductRanking.roas_median.toFixed(2)}x</div></CardContent>
                 </Card>
               </div>
-
-              {/* Best/Worst Scenarios */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                <Card className="border-0 shadow-lg border-r-4 border-r-green-500">
-                  <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm text-green-700">أفضل سيناريو</CardTitle></CardHeader>
-                  <CardContent className="px-3 sm:px-6">
-                    <p className="text-[10px] sm:text-xs text-slate-600 mb-2">{selectedProductRanking.best_scenario}</p>
-                    <div className="flex gap-3 sm:gap-4 flex-wrap">
-                      <div><span className="text-[10px] sm:text-xs text-slate-500">الربح:</span> <span className="font-bold text-green-600 text-xs sm:text-sm">{fmt(selectedProductRanking.best_profit)} ج.م</span></div>
-                      <div><span className="text-[10px] sm:text-xs text-slate-500">ROAS:</span> <span className="font-bold text-green-600 text-xs sm:text-sm">{selectedProductRanking.best_roas.toFixed(1)}x</span></div>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="border-0 shadow-lg border-r-4 border-r-red-500">
-                  <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm text-red-700">أسوأ سيناريو</CardTitle></CardHeader>
-                  <CardContent className="px-3 sm:px-6">
-                    <p className="text-[10px] sm:text-xs text-slate-600 mb-2">{selectedProductRanking.worst_scenario}</p>
-                    <div className="flex gap-3 sm:gap-4 flex-wrap">
-                      <div><span className="text-[10px] sm:text-xs text-slate-500">الربح:</span> <span className="font-bold text-red-600 text-xs sm:text-sm">{fmt(selectedProductRanking.worst_profit)} ج.م</span></div>
-                      <div><span className="text-[10px] sm:text-xs text-slate-500">ROAS:</span> <span className="font-bold text-red-600 text-xs sm:text-sm">{selectedProductRanking.worst_roas.toFixed(1)}x</span></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* CPM Comparison Chart */}
-              {cpmComparison.length > 0 && (
-                <Card className="border-0 shadow-lg">
-                  <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">مقارنة تكلفة CPM (Good CTR + Good CVR + Single Item)</CardTitle></CardHeader>
-                  <CardContent className="px-1 sm:px-3 md:px-6">
-                    <ResponsiveContainer width="100%" height={250}>
-                      <BarChart data={cpmComparison}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" fontSize={10} />
-                        <YAxis fontSize={10} />
-                        <Tooltip formatter={(v: number) => `${v.toLocaleString()} ج.م`} />
-                        <Legend wrapperStyle={{ fontSize: '11px' }} />
-                        <Bar dataKey="الربح/أوردر" fill="#10b981" />
-                        <Bar dataKey="العائد/أوردر" fill="#3b82f6" />
-                        <Bar dataKey="CPA Delivered" fill="#ef4444" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              )}
 
               {/* All 144 Scenarios Table */}
               <Card className="border-0 shadow-lg">
-                <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">جميع 144 سيناريو لهذا المنتج (لكل طلب مُسلَّم واحد) - {filteredScenarios.length} سيناريو مطابق</CardTitle></CardHeader>
+                <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">جميع 144 سيناريو لهذا المنتج (لكل طلب مُسلَّم واحد)</CardTitle></CardHeader>
                 <CardContent className="px-0 sm:px-3 md:px-6">
                   <div className="overflow-x-auto max-h-[500px]">
                     <table className="w-full text-[9px] sm:text-[10px] md:text-xs border-collapse min-w-[700px]">
@@ -396,7 +272,7 @@ export default function ComprehensiveDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredScenarios
+                        {productScenarios
                           .sort((a, b) => b.net_profit_per_order - a.net_profit_per_order)
                           .map((s, idx) => (
                           <tr key={idx} className={`border-b border-slate-50 ${s.status === 'خسارة' ? 'bg-red-50' : ''}`}>
@@ -426,9 +302,9 @@ export default function ComprehensiveDashboard() {
 
               {/* Filter Section */}
               <Card className="border-0 shadow-lg mt-4 sm:mt-6">
-                <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">تصفية السيناريوهات</CardTitle></CardHeader>
+                <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">تصفية السيناريوهات - {filteredScenarios.length} سيناريو مطابق</CardTitle></CardHeader>
                 <CardContent className="px-3 sm:px-6">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-4">
                     <div>
                       <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">CPM</label>
                       <Select value={selectedCPM} onValueChange={setSelectedCPM}>
@@ -495,92 +371,61 @@ export default function ComprehensiveDashboard() {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Filtered Scenario Display */}
+              {filteredScenarios.length > 0 && (
+                <Card className="border-0 shadow-lg mt-4 sm:mt-6 border-l-4 border-l-green-500">
+                  <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">السيناريو المختار</CardTitle></CardHeader>
+                  <CardContent className="px-3 sm:px-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {filteredScenarios.map((s, idx) => (
+                        <div key={idx} className="p-3 bg-slate-50 rounded-lg">
+                          <p className="text-xs text-slate-600 mb-1">CPM: {s.cpm_label}</p>
+                          <p className="text-xs text-slate-600 mb-1">CTR: {s.ctr_label}</p>
+                          <p className="text-xs text-slate-600 mb-1">CVR: {s.cvr_label}</p>
+                          <p className="text-xs text-slate-600 mb-2">Basket: {s.basket_label}</p>
+                          <div className="border-t pt-2">
+                            <p className="text-xs font-bold text-slate-700 mb-1">العائد: {fmt(s.revenue_per_order)}</p>
+                            <p className={`text-xs font-bold ${s.net_profit_per_order >= 0 ? 'text-green-600' : 'text-red-600'}`}>الربح: {fmt(s.net_profit_per_order)}</p>
+                            <p className="text-xs font-bold text-blue-600">ROAS: {s.roas.toFixed(2)}x</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </>
           )}
         </TabsContent>
 
-        {/* ========== Filters Tab ========== */}
-        <TabsContent value="filters" className="space-y-4 sm:space-y-6">
+        {/* Advanced Tab */}
+        <TabsContent value="advanced">
           <Card className="border-0 shadow-lg">
-            <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">تصفية متقدمة - اختر السيناريو</CardTitle></CardHeader>
-            <CardContent className="px-3 sm:px-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+            <CardHeader><CardTitle className="text-sm sm:text-base">معلومات متقدمة</CardTitle></CardHeader>
+            <CardContent>
+              <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">تكلفة CPM</label>
-                  <Select value={selectedCPM} onValueChange={setSelectedCPM}>
-                    <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>{uniqueCPMs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-                  </Select>
+                  <h3 className="font-bold text-slate-900 mb-2">معادلات الحساب:</h3>
+                  <ul className="text-sm text-slate-700 space-y-1 list-disc list-inside">
+                    <li>معدل التأكيد: 76.90%</li>
+                    <li>معدل التسليم: 68.83%</li>
+                    <li>COGS: 65% من السعر الأصلي</li>
+                    <li>تكلفة الشحن: 30 ج.م لكل طلب</li>
+                    <li>Upsell Mix: 70% single, 20% double (-10%), 10% triple (-15%)</li>
+                  </ul>
                 </div>
                 <div>
-                  <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">معدل النقر CTR</label>
-                  <Select value={selectedCTR} onValueChange={setSelectedCTR}>
-                    <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>{uniqueCTRs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-                  </Select>
+                  <h3 className="font-bold text-slate-900 mb-2">الحقول:</h3>
+                  <ul className="text-sm text-slate-700 space-y-1 list-disc list-inside">
+                    <li>CPM: تكلفة الألف انطباع (3 مستويات)</li>
+                    <li>CTR: نسبة النقر (4 مستويات)</li>
+                    <li>CVR: نسبة التحويل (3 مستويات)</li>
+                    <li>Basket Size: حجم السلة (4 مستويات)</li>
+                    <li>AOV: متوسط قيمة الطلب</li>
+                    <li>ROAS: العائد على الإنفاق الإعلاني</li>
+                  </ul>
                 </div>
-                <div>
-                  <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">معدل التحويل CVR</label>
-                  <Select value={selectedCVR} onValueChange={setSelectedCVR}>
-                    <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>{uniqueCVRs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">حجم السلة</label>
-                  <Select value={selectedBasket} onValueChange={setSelectedBasket}>
-                    <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>{uniqueBaskets.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="px-3 sm:px-6">
-              <CardTitle className="text-xs sm:text-sm md:text-base">النتائج ({filteredScenarios.length} منتج) - {selectedCPM} + {selectedCTR} + {selectedCVR} + {selectedBasket}</CardTitle>
-            </CardHeader>
-            <CardContent className="px-0 sm:px-3 md:px-6">
-              <div className="overflow-x-auto">
-                <table className="w-full text-[10px] sm:text-xs md:text-sm border-collapse min-w-[650px]">
-                  <thead className="bg-slate-100 border-b-2 border-slate-300 sticky top-0">
-                    <tr>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">المنتج</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">السعر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">AOV</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">CPA Dash.</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">CPA Del.</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">العائد/أوردر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">COGS/أوردر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">الربح/أوردر</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">ROAS</th>
-                      <th className="px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold whitespace-nowrap">الحالة</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredScenarios
-                      .sort((a, b) => b.net_profit_per_order - a.net_profit_per_order)
-                      .map((s, idx) => (
-                      <tr key={idx} className={`border-b border-slate-100 ${s.status === 'خسارة' ? 'bg-red-50' : 'hover:bg-slate-50'}`}>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 truncate max-w-[120px] sm:max-w-[200px]" title={s.item_name}>{s.item_name}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 whitespace-nowrap">{fmt(s.selling_price)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 whitespace-nowrap">{fmt(s.aov)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 whitespace-nowrap">{fmt(s.cpa_dashboard)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-orange-600 font-medium whitespace-nowrap">{fmt(s.cpa_delivered)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-blue-700 font-medium whitespace-nowrap">{fmt(s.revenue_per_order)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-slate-500 whitespace-nowrap">{fmt(s.cogs_per_order)}</td>
-                        <td className={`px-2 sm:px-3 py-1.5 sm:py-2 font-bold whitespace-nowrap ${s.net_profit_per_order >= 0 ? 'text-green-600' : 'text-red-600'}`}>{fmt(s.net_profit_per_order)}</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2 font-semibold whitespace-nowrap">{s.roas.toFixed(1)}x</td>
-                        <td className="px-2 sm:px-3 py-1.5 sm:py-2">
-                          <Badge className="text-[8px] sm:text-[10px] px-1 sm:px-2" variant={s.status === 'ربح' ? 'default' : s.status === 'نقطة التعادل' ? 'secondary' : 'destructive'}>
-                            {s.status}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
             </CardContent>
           </Card>
