@@ -470,26 +470,7 @@ export default function ComprehensiveDashboard() {
         </TabsContent>
       </Tabs>
 
-      {/* Add Product Dialog */}
-      <AddProductDialog 
-        open={addProductDialogOpen} 
-        onOpenChange={setAddProductDialogOpen}
-        onProductAdded={() => {
-          setRefreshKey(prev => prev + 1);
-        }}
-      />
 
-      {/* Product Management Dialog */}
-      {customProducts.find(p => p.id === selectedProduct) && (
-        <ProductManagementDialog
-          product={customProducts.find(p => p.id === selectedProduct) || null}
-          open={managementDialogOpen}
-          onOpenChange={setManagementDialogOpen}
-          onProductUpdated={() => {
-            setRefreshKey(prev => prev + 1);
-          }}
-        />
-      )}
     </div>
   );
 }

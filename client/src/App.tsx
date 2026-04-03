@@ -6,7 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ComprehensiveDashboard from "./pages/ComprehensiveDashboard";
-import DynamicDashboard from "./pages/DynamicDashboard";
+import DynamicProductsDashboard from "./pages/DynamicProductsDashboard";
 
 
 function Router() {
@@ -14,7 +14,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/dashboard"} component={ComprehensiveDashboard} />
-      <Route path={"/dynamic-dashboard"} component={DynamicDashboard} />
+      <Route path={"/dynamic-dashboard"} component={DynamicProductsDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
