@@ -1,20 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
-const CONFIRMATION_RATE = 0.769; // 76.90%
-const DELIVERY_RATE = 0.6883; // 68.83%
-const COGS_PERCENTAGE = 0.65; // 65%
-const SHIPPING_COST = 30; // 30 ج.م
-
-const UPSELL_MIX = {
-  single: { percentage: 0.70, discount: 0 },
-  double: { percentage: 0.20, discount: 0.10 },
-  triple: { percentage: 0.10, discount: 0.15 },
-};
+const CONFIRMATION_RATE = 0.7690;
+const DELIVERY_RATE = 0.6883;
+const COGS_PERCENTAGE = 0.65;
+const SHIPPING_COST = 30;
 
 const CPM_LEVELS = [
-  { value: 32.5, label: 'Low (32.5)' },
-  { value: 47.5, label: 'Medium (47.5)' },
-  { value: 70, label: 'High (70)' },
+  { value: 5, label: 'منخفض (5)' },
+  { value: 10, label: 'متوسط (10)' },
+  { value: 15, label: 'مرتفع (15)' },
 ];
 
 const CTR_LEVELS = [
@@ -81,16 +75,7 @@ function calculateAOV(
     basePrice = originalPrice * (1 - bundleDiscount / 100);
   }
 
-  const singlePrice = basePrice;
-  const doublePrice = basePrice * 2 * (1 - (discountTwoItems || 0) / 100);
-  const triplePrice = basePrice * 3 * (1 - (discountThreeItems || 0) / 100);
-
-  const aov =
-    singlePrice * UPSELL_MIX.single.percentage +
-    doublePrice * UPSELL_MIX.double.percentage +
-    triplePrice * UPSELL_MIX.triple.percentage;
-
-  return aov;
+  return basePrice;
 }
 
 function generateScenarios(
@@ -158,13 +143,30 @@ function generateScenarios(
 export function useLocalProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem('custom_products');
     const storedScenarios = localStorage.getItem('custom_scenarios');
-    if (stored) setProducts(JSON.parse(stored));
-    if (storedScenarios) setScenarios(JSON.parse(storedScenarios));
+    
+    if (stored) {
+      try {
+        setProducts(JSON.parse(stored));
+      } catch (e) {
+        console.error('Failed to parse products:', e);
+      }
+    }
+    
+    if (storedScenarios) {
+      try {
+        setScenarios(JSON.parse(storedScenarios));
+      } catch (e) {
+        console.error('Failed to parse scenarios:', e);
+      }
+    }
+    
+    setIsLoaded(true);
   }, []);
 
   const addProduct = useCallback((product: Omit<Product, 'id' | 'created_at'>) => {
@@ -184,54 +186,70 @@ export function useLocalProducts() {
       product.bundle_discount
     );
 
-    const updatedProducts = [...products, newProduct];
-    const updatedScenarios = [...scenarios, ...newScenarios];
+    setProducts(prev => {
+      const updated = [...prev, newProduct];
+      localStorage.setItem('custom_products', JSON.stringify(updated));
+      return updated;
+    });
 
-    setProducts(updatedProducts);
-    setScenarios(updatedScenarios);
-
-    localStorage.setItem('custom_products', JSON.stringify(updatedProducts));
-    localStorage.setItem('custom_scenarios', JSON.stringify(updatedScenarios));
+    setScenarios(prev => {
+      const updated = [...prev, ...newScenarios];
+      localStorage.setItem('custom_scenarios', JSON.stringify(updated));
+      return updated;
+    });
 
     return newProduct;
-  }, [products, scenarios]);
+  }, []);
 
   const updateProduct = useCallback((id: string, updates: Partial<Product>) => {
-    const product = products.find(p => p.id === id);
-    if (!product) return;
+    setProducts(prev => {
+      const product = prev.find(p => p.id === id);
+      if (!product) return prev;
 
-    const updated: Product = { ...product, ...updates };
-    const updatedProducts = products.map(p => (p.id === id ? updated : p));
+      const updated: Product = { ...product, ...updates };
+      const newPrev = prev.map(p => (p.id === id ? updated : p));
+      
+      localStorage.setItem('custom_products', JSON.stringify(newPrev));
+      return newPrev;
+    });
 
     // Regenerate scenarios
-    const newScenarios = generateScenarios(
-      id,
-      updated.original_price,
-      updated.type,
-      updated.discount_two_items,
-      updated.discount_three_items,
-      updated.bundle_discount
-    );
+    setScenarios(prev => {
+      const product = products.find(p => p.id === id);
+      if (!product) return prev;
 
-    const updatedScenarios = scenarios.filter(s => s.product_id !== id).concat(newScenarios);
+      const updated = { ...product, ...updates };
+      
+      const newScenarios = generateScenarios(
+        id,
+        updated.original_price,
+        updated.type,
+        updated.discount_two_items,
+        updated.discount_three_items,
+        updated.bundle_discount
+      );
 
-    setProducts(updatedProducts);
-    setScenarios(updatedScenarios);
-
-    localStorage.setItem('custom_products', JSON.stringify(updatedProducts));
-    localStorage.setItem('custom_scenarios', JSON.stringify(updatedScenarios));
-  }, [products, scenarios]);
+      const filtered = prev.filter(s => s.product_id !== id);
+      const newPrev = [...filtered, ...newScenarios];
+      
+      localStorage.setItem('custom_scenarios', JSON.stringify(newPrev));
+      return newPrev;
+    });
+  }, [products]);
 
   const deleteProduct = useCallback((id: string) => {
-    const updatedProducts = products.filter(p => p.id !== id);
-    const updatedScenarios = scenarios.filter(s => s.product_id !== id);
+    setProducts(prev => {
+      const newPrev = prev.filter(p => p.id !== id);
+      localStorage.setItem('custom_products', JSON.stringify(newPrev));
+      return newPrev;
+    });
 
-    setProducts(updatedProducts);
-    setScenarios(updatedScenarios);
-
-    localStorage.setItem('custom_products', JSON.stringify(updatedProducts));
-    localStorage.setItem('custom_scenarios', JSON.stringify(updatedScenarios));
-  }, [products, scenarios]);
+    setScenarios(prev => {
+      const newPrev = prev.filter(s => s.product_id !== id);
+      localStorage.setItem('custom_scenarios', JSON.stringify(newPrev));
+      return newPrev;
+    });
+  }, []);
 
   const getProductScenarios = useCallback((productId: string) => {
     return scenarios.filter(s => s.product_id === productId);
@@ -240,6 +258,7 @@ export function useLocalProducts() {
   return {
     products,
     scenarios,
+    isLoaded,
     addProduct,
     updateProduct,
     deleteProduct,
