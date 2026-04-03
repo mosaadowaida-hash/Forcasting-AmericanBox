@@ -107,14 +107,26 @@ function generateScenarios(
     for (const ctrLevel of CTR_LEVELS) {
       for (const cvrLevel of CVR_LEVELS) {
         for (const basketSize of BASKET_LEVELS) {
-          const aov = calculateAOV(originalPrice, type, discountTwoItems, discountThreeItems, bundleDiscount);
-          const revenue_per_order = aov * DELIVERY_RATE;
-          const ad_cost_per_order = (cpmLevel.value * ctrLevel.value * cvrLevel.value) / 10000;
-          const cpa_dashboard = cpmLevel.value / (ctrLevel.value * cvrLevel.value * 1000);
-          const cpa_delivered = ad_cost_per_order / (ctrLevel.value * cvrLevel.value * DELIVERY_RATE);
+          const baseAOV = calculateAOV(originalPrice, type, discountTwoItems, discountThreeItems, bundleDiscount);
+          const aov = baseAOV * basketSize.value;
+          
+          const impressions = 1000000 / cpmLevel.value;
+          const clicks = impressions * ctrLevel.value;
+          const conversions = clicks * cvrLevel.value;
+          const orders = conversions * CONFIRMATION_RATE;
+          const delivered_orders = orders * DELIVERY_RATE;
+          
+          const ad_cost = (cpmLevel.value / 1000) * impressions;
+          const cpa_dashboard = orders > 0 ? ad_cost / orders : 0;
+          const cpa_delivered = delivered_orders > 0 ? ad_cost / delivered_orders : 0;
+          
+          const revenue_per_order = aov;
+          const revenue_per_delivered = revenue_per_order * DELIVERY_RATE;
+          
           const cogs_per_order = originalPrice * COGS_PERCENTAGE;
-          const net_profit_per_order = revenue_per_order - cogs_per_order - SHIPPING_COST - ad_cost_per_order;
-          const roas = ad_cost_per_order > 0 ? revenue_per_order / ad_cost_per_order : 0;
+          const ad_cost_per_delivered = delivered_orders > 0 ? ad_cost / delivered_orders : 0;
+          const net_profit_per_order = revenue_per_delivered - cogs_per_order - SHIPPING_COST - ad_cost_per_delivered;
+          const roas = ad_cost_per_delivered > 0 ? revenue_per_delivered / ad_cost_per_delivered : 0;
 
           scenarios.push({
             id: `${productId}-${cpmLevel.value}-${ctrLevel.value}-${cvrLevel.value}-${basketSize.value}`,
