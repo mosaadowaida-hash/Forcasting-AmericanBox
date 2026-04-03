@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { AddProductDialog } from "@/components/AddProductDialog";
 import { ProductManagementDialog } from "@/components/ProductManagementDialog";
+import { useLocalProducts } from "@/hooks/useLocalProducts";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,12 +17,20 @@ import marketResearchMapData from "@/data/market_research_map.json";
 const marketResearchMap = marketResearchMapData as Record<string, any>;
 
 export default function ComprehensiveDashboard() {
+  const { products: customProducts, scenarios: customScenarios, getProductScenarios } = useLocalProducts();
   const [selectedProduct, setSelectedProduct] = useState(productRanking[0]?.item_name || "");
   const [addProductDialogOpen, setAddProductDialogOpen] = useState(false);
   const [managementDialogOpen, setManagementDialogOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Combine original and custom scenarios
+  const allScenariosWithCustom = useMemo(() => [
+    ...allScenarios,
+    ...customScenarios
+  ], [customScenarios]);
 
   // First get all scenarios for the selected product
-  const productScenarios = useMemo(() => allScenarios.filter(s => s.item_name === selectedProduct), [selectedProduct]);
+  const productScenarios = useMemo(() => allScenariosWithCustom.filter(s => (s as any).item_name === selectedProduct || (s as any).product_id === selectedProduct), [selectedProduct, allScenariosWithCustom]);
 
   // Then get unique values from ONLY the selected product's scenarios
   const uniqueCPMs = useMemo(() => Array.from(new Set(productScenarios.map(s => s.cpm_label))), [productScenarios]);
@@ -69,13 +78,20 @@ export default function ComprehensiveDashboard() {
 
   const fmt = (n: number | undefined) => (n ?? 0).toLocaleString("ar-EG", { maximumFractionDigits: 0 });
 
+  // Get all available products (original + custom)
+  const allAvailableProducts = useMemo(() => {
+    const originalProducts = productRanking.map(p => p.item_name);
+    const customProductNames = customProducts.map(p => p.id);
+    return [...originalProducts, ...customProductNames];
+  }, [customProducts]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-3 sm:p-4 md:p-6" dir="rtl">
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-slate-900">محاكي الحملات والإيرادات - النسخة الشاملة</h1>
-          <p className="text-sm text-slate-600 mt-1">تحليل 6,048 سيناريو (42 منتج/باندل × 144 سيناريو) - جميع الأرقام لكل طلب واحد مُسلَّم</p>
+          <p className="text-sm text-slate-600 mt-1">تحليل {allScenariosWithCustom.length} سيناريو ({allAvailableProducts.length} منتج/باندل × 144 سيناريو) - جميع الأرقام لكل طلب واحد مُسلَّم</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => setManagementDialogOpen(true)} className="bg-slate-600 hover:bg-slate-700 text-white whitespace-nowrap"><Settings className="w-4 h-4 ml-2" />إدارة المنتج</Button>
@@ -226,18 +242,28 @@ export default function ComprehensiveDashboard() {
               <Card className="border-0 shadow-lg mb-4">
                 <CardHeader><CardTitle className="text-sm sm:text-base">اختر منتج للتحليل</CardTitle></CardHeader>
                 <CardContent>
-                  <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {productRanking.map((p) => (
-                        <SelectItem key={p.item_name} value={p.item_name}>
-                          {p.item_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+        <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {productRanking.map(product => (
+              <SelectItem key={product.item_name} value={product.item_name}>
+                {product.item_name}
+              </SelectItem>
+            ))}
+            {customProducts.length > 0 && (
+              <>
+                <div className="border-t my-2"></div>
+                {customProducts.map(product => (
+                  <SelectItem key={product.id} value={product.id}>
+                    {product.name} (مخصص)
+                  </SelectItem>
+                ))}
+              </>
+            )}
+          </SelectContent>
+        </Select>
                 </CardContent>
               </Card>
 
@@ -287,7 +313,7 @@ export default function ComprehensiveDashboard() {
                         {productScenarios
                           .sort((a, b) => b.net_profit_per_order - a.net_profit_per_order)
                           .map((s, idx) => (
-                          <tr key={idx} className={`border-b border-slate-50 ${s.status === 'خسارة' ? 'bg-red-50' : ''}`}>
+                          <tr key={idx} className={`border-b border-slate-50 ${s.net_profit_per_order < 0 ? 'bg-red-50' : ''}`}>
                             <td className="px-1.5 sm:px-2 py-1">{s.cpm_label}</td>
                             <td className="px-1.5 sm:px-2 py-1">{s.ctr_label}</td>
                             <td className="px-1.5 sm:px-2 py-1">{s.cvr_label}</td>
@@ -296,12 +322,12 @@ export default function ComprehensiveDashboard() {
                             <td className="px-1.5 sm:px-2 py-1 whitespace-nowrap">{fmt(s.cpa_dashboard)}</td>
                             <td className="px-1.5 sm:px-2 py-1 text-orange-600 whitespace-nowrap">{fmt(s.cpa_delivered)}</td>
                             <td className="px-1.5 sm:px-2 py-1 whitespace-nowrap">{fmt(s.revenue_per_order)}</td>
-                            <td className="px-1.5 sm:px-2 py-1 text-slate-500 whitespace-nowrap">{fmt(s.cogs_per_order)}</td>
+                            <td className="px-1.5 sm:px-2 py-1 text-slate-500 whitespace-nowrap">{fmt((s as any).cogs || (s as any).cogs_per_order)}</td>
                             <td className={`px-1.5 sm:px-2 py-1 font-bold whitespace-nowrap ${s.net_profit_per_order >= 0 ? 'text-green-600' : 'text-red-600'}`}>{fmt(s.net_profit_per_order)}</td>
                             <td className="px-1.5 sm:px-2 py-1 whitespace-nowrap">{s.roas.toFixed(1)}x</td>
                             <td className="px-1.5 sm:px-2 py-1">
-                              <Badge className="text-[7px] sm:text-[9px] px-0.5 sm:px-1" variant={s.status === 'ربح' ? 'default' : s.status === 'نقطة التعادل' ? 'secondary' : 'destructive'}>
-                                {s.status}
+                              <Badge className="text-[7px] sm:text-[9px] px-0.5 sm:px-1" variant={s.net_profit_per_order > 0 ? 'default' : s.net_profit_per_order === 0 ? 'secondary' : 'destructive'}>
+                                {s.net_profit_per_order > 0 ? 'ربح' : s.net_profit_per_order === 0 ? 'نقطة التعادل' : 'خسارة'}
                               </Badge>
                             </td>
                           </tr>
@@ -449,20 +475,21 @@ export default function ComprehensiveDashboard() {
         open={addProductDialogOpen} 
         onOpenChange={setAddProductDialogOpen}
         onProductAdded={() => {
-          // Refresh the page or reload data
-          window.location.reload();
+          setRefreshKey(prev => prev + 1);
         }}
       />
 
       {/* Product Management Dialog */}
-      <ProductManagementDialog
-        product={selectedProduct ? { id: selectedProduct, name: selectedProduct, type: 'product', original_price: 0 } : null}
-        open={managementDialogOpen}
-        onOpenChange={setManagementDialogOpen}
-        onProductUpdated={() => {
-          window.location.reload();
-        }}
-      />
+      {customProducts.find(p => p.id === selectedProduct) && (
+        <ProductManagementDialog
+          product={customProducts.find(p => p.id === selectedProduct) || null}
+          open={managementDialogOpen}
+          onOpenChange={setManagementDialogOpen}
+          onProductUpdated={() => {
+            setRefreshKey(prev => prev + 1);
+          }}
+        />
+      )}
     </div>
   );
 }
