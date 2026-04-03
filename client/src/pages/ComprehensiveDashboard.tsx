@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import { AddProductDialog } from "@/components/AddProductDialog";
+import { ProductManagementDialog } from "@/components/ProductManagementDialog";
 import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,6 +18,7 @@ const marketResearchMap = marketResearchMapData as Record<string, any>;
 export default function ComprehensiveDashboard() {
   const [selectedProduct, setSelectedProduct] = useState(productRanking[0]?.item_name || "");
   const [addProductDialogOpen, setAddProductDialogOpen] = useState(false);
+  const [managementDialogOpen, setManagementDialogOpen] = useState(false);
 
   // First get all scenarios for the selected product
   const productScenarios = useMemo(() => allScenarios.filter(s => s.item_name === selectedProduct), [selectedProduct]);
@@ -74,7 +77,10 @@ export default function ComprehensiveDashboard() {
           <h1 className="text-2xl md:text-3xl font-bold text-slate-900">محاكي الحملات والإيرادات - النسخة الشاملة</h1>
           <p className="text-sm text-slate-600 mt-1">تحليل 6,048 سيناريو (42 منتج/باندل × 144 سيناريو) - جميع الأرقام لكل طلب واحد مُسلَّم</p>
         </div>
-        <Button onClick={() => setAddProductDialogOpen(true)} className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap">+ إضافة منتج جديد</Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setManagementDialogOpen(true)} className="bg-slate-600 hover:bg-slate-700 text-white whitespace-nowrap"><Settings className="w-4 h-4 ml-2" />إدارة المنتج</Button>
+          <Button onClick={() => setAddProductDialogOpen(true)} className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap">+ إضافة منتج جديد</Button>
+        </div>
       </div>
 
       {/* Overall Stats */}
@@ -444,6 +450,16 @@ export default function ComprehensiveDashboard() {
         onOpenChange={setAddProductDialogOpen}
         onProductAdded={() => {
           // Refresh the page or reload data
+          window.location.reload();
+        }}
+      />
+
+      {/* Product Management Dialog */}
+      <ProductManagementDialog
+        product={selectedProduct ? { id: selectedProduct, name: selectedProduct, type: 'product', original_price: 0 } : null}
+        open={managementDialogOpen}
+        onOpenChange={setManagementDialogOpen}
+        onProductUpdated={() => {
           window.location.reload();
         }}
       />

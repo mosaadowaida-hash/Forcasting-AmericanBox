@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocalProducts } from '@/hooks/useLocalProducts';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ interface AddProductDialogProps {
 }
 
 export function AddProductDialog({ open, onOpenChange, onProductAdded }: AddProductDialogProps) {
+  const { addProduct } = useLocalProducts();
   const [productType, setProductType] = useState<'product' | 'bundle'>('product');
   const [productName, setProductName] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
@@ -54,24 +56,14 @@ export function AddProductDialog({ open, onOpenChange, onProductAdded }: AddProd
     try {
       setLoading(true);
 
-      const payload = {
+      addProduct({
         name: productName.trim(),
         type: productType,
         original_price: parseFloat(originalPrice),
-        discount_two_items: productType === 'product' ? parseFloat(discountTwoItems) : null,
-        discount_three_items: productType === 'product' ? parseFloat(discountThreeItems) : null,
-        bundle_discount: productType === 'bundle' ? parseFloat(bundleDiscount) : null,
-      };
-
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        discount_two_items: productType === 'product' ? parseFloat(discountTwoItems) : undefined,
+        discount_three_items: productType === 'product' ? parseFloat(discountThreeItems) : undefined,
+        bundle_discount: productType === 'bundle' ? parseFloat(bundleDiscount) : undefined,
       });
-
-      if (!response.ok) {
-        throw new Error('فشل في إضافة المنتج');
-      }
 
       toast.success('تم إضافة المنتج بنجاح!');
       
