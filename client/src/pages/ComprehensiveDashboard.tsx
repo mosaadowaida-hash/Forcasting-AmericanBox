@@ -8,6 +8,8 @@ import {
   ResponsiveContainer, PieChart, Pie, Cell
 } from "recharts";
 import { allScenarios, productRanking, overallStats } from "@/data/comprehensiveData";
+import marketResearchMapData from "@/data/market_research_map.json";
+const marketResearchMap = marketResearchMapData as Record<string, any>;
 
 export default function ComprehensiveDashboard() {
   const [selectedProduct, setSelectedProduct] = useState(productRanking[0]?.item_name || "");
@@ -421,6 +423,78 @@ export default function ComprehensiveDashboard() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Filter Section */}
+              <Card className="border-0 shadow-lg mt-4 sm:mt-6">
+                <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">تصفية السيناريوهات</CardTitle></CardHeader>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                    <div>
+                      <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">CPM</label>
+                      <Select value={selectedCPM} onValueChange={setSelectedCPM}>
+                        <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
+                        <SelectContent>{uniqueCPMs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">CTR</label>
+                      <Select value={selectedCTR} onValueChange={setSelectedCTR}>
+                        <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
+                        <SelectContent>{uniqueCTRs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">CVR</label>
+                      <Select value={selectedCVR} onValueChange={setSelectedCVR}>
+                        <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
+                        <SelectContent>{uniqueCVRs.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-700 mb-1 block">Basket Size</label>
+                      <Select value={selectedBasket} onValueChange={setSelectedBasket}>
+                        <SelectTrigger className="text-xs sm:text-sm"><SelectValue /></SelectTrigger>
+                        <SelectContent>{uniqueBaskets.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Market Research Section */}
+              {marketResearchMap[selectedProduct] && (
+                <Card className="border-0 shadow-lg mt-4 sm:mt-6 border-l-4 border-l-blue-500">
+                  <CardHeader className="px-3 sm:px-6"><CardTitle className="text-sm sm:text-base">بيانات السوق والأبحاث</CardTitle></CardHeader>
+                  <CardContent className="px-3 sm:px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs font-semibold text-slate-600 mb-1">معدل الطلب</p>
+                        <p className="text-sm font-bold text-slate-900">{marketResearchMap[selectedProduct].demand}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-600 mb-1">مستوى المنافسة</p>
+                        <p className="text-sm font-bold text-slate-900">{marketResearchMap[selectedProduct].competition}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-600 mb-1">حساسية السعر</p>
+                        <p className="text-sm font-bold text-slate-900">{marketResearchMap[selectedProduct].price_sensitivity}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-600 mb-1">حجم السوق</p>
+                        <p className="text-sm font-bold text-slate-900">{marketResearchMap[selectedProduct].market_size}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-600 mb-1">معدل النمو</p>
+                        <p className="text-sm font-bold text-slate-900">{marketResearchMap[selectedProduct].growth}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-600 mb-1">الجمهور المستهدف</p>
+                        <p className="text-sm font-bold text-slate-900">{marketResearchMap[selectedProduct].target_audience?.join(', ') || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </>
           )}
         </TabsContent>

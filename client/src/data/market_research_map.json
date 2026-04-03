@@ -1,0 +1,506 @@
+{
+  "Sports Research MCT Oil 946ml": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل مكافحة الشيخوخة": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Master Bundle": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل صحة العظام": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Carlson Chelated Zinc": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل العناية بالبشرة": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Mary Ruth's Liquid Morning": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Way Organic MCT Oil": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Bounty Advanced Hair, Skin & Nails": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Champix 1mg": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nordic naturals Children’s DHA 473ml": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل صحة القلب": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Viviscal Hair Growth Supplement": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Now Mct oil": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Vitamin D3 + K2": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Solgar Coq-10 200 Mg": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل فقدان الوزن": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل المكملات الرياضية": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "EVL Evlution nutrition LeanMode": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل الصحة النفسية": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل صحة المرأة": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Way Liquid Chlorofresh": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Way D3 1000 120": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Way Chlorofresh 60 caps": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Bounty Ginkgo Biloba": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل صحة الطفل": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "NOW Foods Liquid Chlorophyll 473 ml": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Double Wood Magnesium Glycinate": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل العناية بالشعر": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل دعم المناعة": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "باندل صحة الرجل": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s way whole thallus KELP 180 capsule": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "NaturesPlus Hema-Plex": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Bounty Ginseng Complex": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Solgar Chelated Copper 100 cap": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nutricost Lithium Orotate": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s way whole thallus KELP 100 capsules": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Vitamatic Berberine 500MG 60 capsules": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Solgar chelated zinc": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Nature’s Way Vitex Fruit": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Solgar Zinc Picolinate": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  },
+  "Kids Smart Vita Gummies Brain Booster": {
+    "demand": "متوسط",
+    "competition": "متوسطة",
+    "price_sensitivity": "متوسطة",
+    "target_audience": [
+      "النساء",
+      "الرجال",
+      "25-45 سنة"
+    ],
+    "market_size": "كبير",
+    "growth": "متوسط"
+  }
+}
