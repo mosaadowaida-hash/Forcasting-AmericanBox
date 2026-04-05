@@ -101,7 +101,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <BarChart3 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-lg text-white">CampaignSim</span>
+            <span className="font-bold text-lg text-white">Ads Forecasting Pro</span>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login">
@@ -144,7 +144,7 @@ export default function LandingPage() {
 
           {/* Sub-headline */}
           <p className="text-slate-300 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto mb-10">
-            محاكي الحملات يحسب لك <strong className="text-white">144 سيناريو</strong> لكل منتج —
+            <strong className="text-white">Ads Forecasting Pro</strong> يحسب لك <strong className="text-white">144 سيناريو</strong> لكل منتج —
             بناءً على CPM وCTR وCVR وحجم السلة —
             فتعرف بالضبط متى تكون في <span className="text-green-400 font-semibold">ربح</span> ومتى في <span className="text-red-400 font-semibold">خسارة</span>، قبل ما تصرف جنيه واحد.
           </p>
@@ -437,10 +437,10 @@ export default function LandingPage() {
             <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
               <BarChart3 className="w-4 h-4 text-white" />
             </div>
-            <span className="text-slate-400 font-semibold text-sm">CampaignSim</span>
+            <span className="text-slate-400 font-semibold text-sm">Ads Forecasting Pro</span>
           </div>
           <p className="text-slate-600 text-xs">
-            محاكي الحملات والإيرادات — كل الحقوق محفوظة {new Date().getFullYear()}
+            Ads Forecasting Pro — كل الحقوق محفوظة {new Date().getFullYear()}
           </p>
           <div className="flex items-center gap-4 text-slate-500 text-xs">
             <Link href="/login" className="hover:text-slate-300 transition-colors">تسجيل الدخول</Link>

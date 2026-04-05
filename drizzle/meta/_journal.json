@@ -15,6 +15,13 @@
       "when": 1775373694742,
       "tag": "0001_illegal_titanium_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1775385991094,
+      "tag": "0002_thankful_supreme_intelligence",
+      "breakpoints": true
     }
   ]
 }

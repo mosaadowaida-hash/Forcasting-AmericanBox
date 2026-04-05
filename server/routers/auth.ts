@@ -9,6 +9,7 @@ import { getSessionCookieOptions } from "../_core/cookies";
 import { COOKIE_NAME } from "@shared/const";
 import { eq } from "drizzle-orm";
 import { ENV } from "../_core/env";
+import { storagePut } from "../storage";
 
 // Generate a unique openId for local (email/password) users
 function generateLocalOpenId(email: string): string {
@@ -21,7 +22,7 @@ export const authRouter = router({
     return opts.ctx.user ?? null;
   }),
 
-  // Sign up with email and password
+  // Sign up with email and password (no payment yet - payment submitted separately)
   signup: publicProcedure
     .input(
       z.object({
@@ -48,7 +49,7 @@ export const authRouter = router({
 
       // Create user with pending status
       const openId = generateLocalOpenId(input.email);
-      await db.insert(users).values({
+      const result = await db.insert(users).values({
         openId,
         name: input.name,
         email: input.email,
@@ -59,9 +60,55 @@ export const authRouter = router({
         lastSignedIn: new Date(),
       });
 
+      const userId = (result as any).insertId ?? (result as any)[0]?.insertId;
+
       return {
         success: true,
-        message: "Account created successfully. Please wait for admin approval.",
+        userId: Number(userId),
+        message: "Account created. Please complete payment to activate your account.",
+      };
+    }),
+
+  // Submit payment info after signup
+  submitPayment: publicProcedure
+    .input(
+      z.object({
+        userId: z.number(),
+        paymentMethod: z.enum(["instapay", "paypal"]),
+        // For instapay: base64 image data
+        proofImageBase64: z.string().optional(),
+        proofImageMimeType: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [user] = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
+      if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+
+      let proofImageUrl: string | undefined;
+
+      // Upload proof image to S3 for instapay
+      if (input.paymentMethod === "instapay" && input.proofImageBase64) {
+        const mimeType = input.proofImageMimeType || "image/jpeg";
+        const ext = mimeType.split("/")[1] || "jpg";
+        const buffer = Buffer.from(input.proofImageBase64, "base64");
+        const key = `payment-proofs/${user.id}-${Date.now()}.${ext}`;
+        const { url } = await storagePut(key, buffer, mimeType);
+        proofImageUrl = url;
+      }
+
+      await db.update(users).set({
+        paymentMethod: input.paymentMethod,
+        paymentProofImage: proofImageUrl ?? null,
+        paymentStatus: "pending",
+        paymentSubmittedAt: new Date(),
+      }).where(eq(users.id, input.userId));
+
+      return {
+        success: true,
+        message: "Payment submitted. Your account is under review and will be activated soon.",
       };
     }),
 
@@ -102,14 +149,7 @@ export const authRouter = router({
         });
       }
 
-      // Check account status
-      if (user.status === "pending") {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Your account is pending admin approval. Please wait.",
-        });
-      }
-
+      // Check account status - pending users CAN login but see pending screen
       if (user.status === "suspended") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -137,6 +177,7 @@ export const authRouter = router({
           email: user.email,
           role: user.role,
           status: user.status,
+          paymentStatus: user.paymentStatus,
         },
       };
     }),

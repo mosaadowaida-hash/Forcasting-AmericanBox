@@ -42,8 +42,8 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
             <BarChart3 className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Campaign Simulator</h1>
-          <p className="text-slate-400 text-sm mt-1">محاكي الحملات والإيرادات</p>
+          <h1 className="text-2xl font-bold text-white">Ads Forecasting Pro</h1>
+          <p className="text-slate-400 text-sm mt-1">توقع إيراداتك قبل إطلاق حملتك</p>
         </div>
 
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm shadow-2xl">

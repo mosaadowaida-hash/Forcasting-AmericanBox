@@ -143,7 +143,7 @@ export default function Dashboard() {
     <div className="space-y-6 p-6" dir="rtl">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">محاكي الحملات والإيرادات</h1>
+          <h1 className="text-3xl font-bold">Ads Forecasting Pro</h1>
           <p className="text-gray-600 mt-1">{products.length} منتج | {products.length * 144} سيناريو</p>
         </div>
         <Button onClick={() => { resetForm(); setShowAddDialog(true); }} className="gap-2">

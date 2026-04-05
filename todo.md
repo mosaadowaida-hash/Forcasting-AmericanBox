@@ -136,3 +136,23 @@
 - [x] Landing Page: CTA buttons (Login + Sign Up)
 - [x] Landing Page: Professional design with dark/gradient theme
 - [x] Update routing so / shows Landing Page, /dashboard redirects to login if unauthenticated
+
+## Phase 10: Payment System + AOV Fix + Landing Page Updates
+- [ ] DB: Add payment_method, payment_proof_image, payment_status columns to users table
+- [ ] Backend: Add file upload endpoint for payment proof images (S3)
+- [ ] Backend: Add payment submission procedure (instapay/paypal)
+- [ ] Backend: Add admin procedures: verifyPayment, rejectPayment
+- [ ] Backend: Add admin impersonation procedure (get user session token)
+- [ ] Frontend: Update Signup to multi-step flow with payment step (InstaPay + PayPal)
+- [ ] Frontend: InstaPay step - show phone number + image upload for proof
+- [ ] Frontend: PayPal step - embed PayPal hosted button
+- [ ] Frontend: Pending page - show "قيد المراجعة" badge with payment status
+- [ ] Frontend: Admin Panel - show payment proof image, payment method, payment status per user
+- [ ] Frontend: Admin Panel - add Verify Payment / Reject Payment buttons
+- [ ] Frontend: Admin Panel - add Impersonation button (view as user)
+- [ ] Fix AOV formula: AOV = price × basket_size (no inflation)
+- [ ] Landing Page: Update all copy texts as specified
+- [ ] Landing Page: Replace static testimonial with animated slider
+- [ ] Landing Page: Add pricing section ($34/month)
+- [ ] Landing Page: Update domain URL to adsforcasting.pro/dashboard
+- [ ] Rename brand from CampaignSim to Ads Forecasting Pro everywhere

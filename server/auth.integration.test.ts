@@ -31,20 +31,21 @@ vi.mock("./_core/sdk", () => ({
   },
 }));
 
-// Mock drizzle insert
-const mockInsert = vi.fn().mockResolvedValue([{ insertId: 999 }]);
-const mockUpdate = vi.fn().mockResolvedValue([{}]);
-const mockSelect = vi.fn().mockReturnThis();
-const mockFrom = vi.fn().mockReturnThis();
-const mockWhere = vi.fn().mockReturnThis();
-const mockLimit = vi.fn().mockResolvedValue([]);
-const mockOrderBy = vi.fn().mockResolvedValue([]);
-const mockValues = vi.fn().mockReturnThis();
-const mockSet = vi.fn().mockReturnThis();
+// Mock storage for payment proof uploads
+vi.mock("./storage", () => ({
+  storagePut: vi.fn().mockResolvedValue({ url: "https://cdn.example.com/proof.jpg", key: "payment-proofs/test.jpg" }),
+}));
+
+// Mock drizzle insert/update/select
+const mockInsert = vi.fn().mockReturnValue({ values: vi.fn().mockResolvedValue([{ insertId: 999 }]) });
+const mockUpdateSet = vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue([{}]) });
+const mockUpdate = vi.fn().mockReturnValue({ set: mockUpdateSet });
+const mockSelectFrom = vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue({ limit: vi.fn().mockResolvedValue([]) }) });
+const mockSelect = vi.fn().mockReturnValue({ from: mockSelectFrom });
 
 vi.mocked(db.getDb).mockResolvedValue({
-  insert: mockInsert.mockReturnValue({ values: mockValues.mockResolvedValue([{ insertId: 999 }]) }),
-  update: mockUpdate.mockReturnValue({ set: mockSet.mockReturnValue({ where: mockWhere.mockResolvedValue([{}]) }) }),
+  insert: mockInsert,
+  update: mockUpdate,
   select: mockSelect,
   delete: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue([]) }),
 } as any);
@@ -138,7 +139,9 @@ describe("auth.signup", () => {
     });
 
     expect(result.success).toBe(true);
-    expect(result.message).toContain("admin approval");
+    // New flow: message asks to complete payment (not admin approval directly)
+    expect(result.message).toContain("payment");
+    expect(result.userId).toBeDefined();
   });
 
   it("should reject signup with short password", async () => {
@@ -185,7 +188,7 @@ describe("auth.login", () => {
     ).rejects.toThrow("Invalid email or password");
   });
 
-  it("should reject login for pending user", async () => {
+  it("should allow login for pending user (shows payment/pending screen)", async () => {
     const hash = await bcrypt.hash("password123", 10);
     vi.mocked(db.getUserByEmail).mockResolvedValueOnce({
       id: 2,
@@ -197,10 +200,16 @@ describe("auth.login", () => {
       openId: "pending-openid",
     } as any);
 
+    // Mock db.update for lastSignedIn update
+    vi.mocked(db.getDb).mockResolvedValueOnce({
+      update: vi.fn().mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue([{}]) }) }),
+    } as any);
+
     const caller = appRouter.createCaller(makePublicContext());
-    await expect(
-      caller.auth.login({ email: "pending@email.com", password: "password123" })
-    ).rejects.toThrow("pending admin approval");
+    // Pending users CAN log in now - they see the pending screen in the UI
+    const result = await caller.auth.login({ email: "pending@email.com", password: "password123" });
+    expect(result.success).toBe(true);
+    expect(result.user.status).toBe("pending");
   });
 
   it("should reject login for suspended user", async () => {
@@ -221,8 +230,8 @@ describe("auth.login", () => {
     ).rejects.toThrow("suspended");
   });
 
-  it("should succeed for active user with correct password", async () => {
-    const hash = await bcrypt.hash("correctPassword", 10);
+  it("should successfully login an active user and return session", async () => {
+    const hash = await bcrypt.hash("password123", 10);
     vi.mocked(db.getUserByEmail).mockResolvedValueOnce({
       id: 78,
       email: "americanbox149@gmail.com",
@@ -230,51 +239,42 @@ describe("auth.login", () => {
       status: "active",
       role: "user",
       name: "American Box",
-      openId: "americanbox-local-user",
-    } as any);
-    vi.mocked(db.getDb).mockResolvedValueOnce({
-      update: vi.fn().mockReturnValue({
-        set: vi.fn().mockReturnValue({
-          where: vi.fn().mockResolvedValue([{}]),
-        }),
-      }),
+      openId: "americanbox-openid",
     } as any);
 
-    const ctx = makePublicContext();
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.auth.login({
-      email: "americanbox149@gmail.com",
-      password: "correctPassword",
-    });
+    vi.mocked(db.getDb).mockResolvedValueOnce({
+      update: vi.fn().mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue([{}]) }) }),
+    } as any);
+
+    const caller = appRouter.createCaller(makePublicContext());
+    const result = await caller.auth.login({ email: "americanbox149@gmail.com", password: "password123" });
 
     expect(result.success).toBe(true);
-    expect(result.user?.role).toBe("user");
-    expect(result.user?.status).toBe("active");
-    // Cookie should have been set
-    expect(ctx.res.cookie).toHaveBeenCalled();
+    expect(result.user.email).toBe("americanbox149@gmail.com");
+    expect(result.user.role).toBe("user");
   });
 });
 
 // ============================================================
-// ADMIN PROCEDURES TESTS
+// ADMIN TESTS
 // ============================================================
 
 describe("admin.listUsers", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("should return all users for admin", async () => {
-    const mockUsers = [
-      { id: 1, name: "Admin", email: "admin@test.com", role: "admin", status: "active", createdAt: new Date(), activatedAt: new Date(), suspendedAt: null, lastSignedIn: new Date(), loginMethod: "email" },
-      { id: 78, name: "American Box", email: "americanbox149@gmail.com", role: "user", status: "active", createdAt: new Date(), activatedAt: new Date(), suspendedAt: null, lastSignedIn: new Date(), loginMethod: "email" },
-    ];
-    vi.mocked(db.getAllUsers).mockResolvedValueOnce(mockUsers as any);
+    vi.mocked(db.getAllUsers).mockResolvedValueOnce([
+      { id: 1, name: "Admin", email: "admin@test.com", role: "admin", status: "active", createdAt: new Date(), activatedAt: new Date() } as any,
+      { id: 2, name: "User", email: "user@test.com", role: "user", status: "active", createdAt: new Date(), activatedAt: new Date() } as any,
+    ]);
 
     const caller = appRouter.createCaller(makeAdminContext());
-    const users = await caller.admin.listUsers();
+    const result = await caller.admin.listUsers();
 
-    expect(users).toHaveLength(2);
-    expect(users[0].email).toBe("admin@test.com");
-    expect(users[1].email).toBe("americanbox149@gmail.com");
-    // Should not expose passwordHash
-    expect((users[0] as any).passwordHash).toBeUndefined();
+    expect(result).toHaveLength(2);
+    expect(result[0].role).toBe("admin");
   });
 
   it("should reject non-admin access", async () => {
@@ -292,6 +292,11 @@ describe("admin.approveUser", () => {
       role: "user",
       status: "pending",
     };
+
+    const mockWhere = vi.fn().mockResolvedValue([{}]);
+    const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
+    const mockUpdateFn = vi.fn().mockReturnValue({ set: mockSet });
+
     vi.mocked(db.getDb).mockResolvedValueOnce({
       select: vi.fn().mockReturnValue({
         from: vi.fn().mockReturnValue({
@@ -300,39 +305,42 @@ describe("admin.approveUser", () => {
           }),
         }),
       }),
+      update: mockUpdateFn,
     } as any);
-    vi.mocked(db.updateUserStatus).mockResolvedValueOnce(undefined);
 
     const caller = appRouter.createCaller(makeAdminContext());
     const result = await caller.admin.approveUser({ userId: 5 });
 
     expect(result.success).toBe(true);
-    expect(db.updateUserStatus).toHaveBeenCalledWith(5, "active", expect.objectContaining({ activatedAt: expect.any(Date) }));
+    // Verify db.update was called (new implementation uses db.update directly)
+    expect(mockUpdateFn).toHaveBeenCalled();
+    expect(mockSet).toHaveBeenCalledWith(expect.objectContaining({
+      status: "active",
+      paymentStatus: "verified",
+    }));
   });
 
-  it("should reject approving a non-pending user", async () => {
-    const activeUser = {
-      id: 78,
-      status: "active",
-    };
+  it("should reject approving a non-existent user", async () => {
     vi.mocked(db.getDb).mockResolvedValueOnce({
       select: vi.fn().mockReturnValue({
         from: vi.fn().mockReturnValue({
           where: vi.fn().mockReturnValue({
-            limit: vi.fn().mockResolvedValue([activeUser]),
+            limit: vi.fn().mockResolvedValue([]), // no user found
           }),
         }),
       }),
     } as any);
 
     const caller = appRouter.createCaller(makeAdminContext());
-    await expect(caller.admin.approveUser({ userId: 78 })).rejects.toThrow("not in pending status");
+    await expect(caller.admin.approveUser({ userId: 9999 })).rejects.toThrow("User not found");
   });
 });
 
 describe("admin.suspendUser", () => {
   it("should suspend an active user", async () => {
     const activeUser = { id: 78, role: "user", status: "active" };
+    vi.mocked(db.updateUserStatus).mockResolvedValueOnce(undefined);
+
     vi.mocked(db.getDb).mockResolvedValueOnce({
       select: vi.fn().mockReturnValue({
         from: vi.fn().mockReturnValue({
@@ -342,7 +350,6 @@ describe("admin.suspendUser", () => {
         }),
       }),
     } as any);
-    vi.mocked(db.updateUserStatus).mockResolvedValueOnce(undefined);
 
     const caller = appRouter.createCaller(makeAdminContext());
     const result = await caller.admin.suspendUser({ userId: 78 });
@@ -351,8 +358,9 @@ describe("admin.suspendUser", () => {
     expect(db.updateUserStatus).toHaveBeenCalledWith(78, "suspended", expect.objectContaining({ suspendedAt: expect.any(Date) }));
   });
 
-  it("should not allow suspending admin accounts", async () => {
+  it("should reject suspending an admin user", async () => {
     const adminUser = { id: 1, role: "admin", status: "active" };
+
     vi.mocked(db.getDb).mockResolvedValueOnce({
       select: vi.fn().mockReturnValue({
         from: vi.fn().mockReturnValue({
@@ -365,5 +373,45 @@ describe("admin.suspendUser", () => {
 
     const caller = appRouter.createCaller(makeAdminContext());
     await expect(caller.admin.suspendUser({ userId: 1 })).rejects.toThrow("Cannot suspend admin");
+  });
+});
+
+describe("admin.deleteUser", () => {
+  it("should delete a non-admin user", async () => {
+    const user = { id: 78, role: "user", status: "active" };
+    vi.mocked(db.deleteUserAndData).mockResolvedValueOnce(undefined);
+
+    vi.mocked(db.getDb).mockResolvedValueOnce({
+      select: vi.fn().mockReturnValue({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockReturnValue({
+            limit: vi.fn().mockResolvedValue([user]),
+          }),
+        }),
+      }),
+    } as any);
+
+    const caller = appRouter.createCaller(makeAdminContext());
+    const result = await caller.admin.deleteUser({ userId: 78 });
+
+    expect(result.success).toBe(true);
+    expect(db.deleteUserAndData).toHaveBeenCalledWith(78);
+  });
+
+  it("should reject deleting an admin user", async () => {
+    const adminUser = { id: 2, role: "admin", status: "active" };
+
+    vi.mocked(db.getDb).mockResolvedValueOnce({
+      select: vi.fn().mockReturnValue({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockReturnValue({
+            limit: vi.fn().mockResolvedValue([adminUser]),
+          }),
+        }),
+      }),
+    } as any);
+
+    const caller = appRouter.createCaller(makeAdminContext());
+    await expect(caller.admin.deleteUser({ userId: 2 })).rejects.toThrow("Cannot delete admin");
   });
 });

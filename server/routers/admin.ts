@@ -5,6 +5,9 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { getDb, getAllUsers, updateUserStatus, updateUserProfile, deleteUserAndData } from "../db";
 import { users, products, scenarios } from "../../drizzle/schema";
 import { eq, asc } from "drizzle-orm";
+import { sdk } from "../_core/sdk";
+import { getSessionCookieOptions } from "../_core/cookies";
+import { COOKIE_NAME } from "@shared/const";
 
 // Admin-only middleware
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -19,10 +22,9 @@ export const adminRouter = router({
   // USER MANAGEMENT
   // ============================================================
 
-  // List all users
+  // List all users (including payment info)
   listUsers: adminProcedure.query(async () => {
     const allUsers = await getAllUsers();
-    // Don't expose password hashes
     return allUsers.map(u => ({
       id: u.id,
       name: u.name,
@@ -34,10 +36,15 @@ export const adminRouter = router({
       activatedAt: u.activatedAt,
       suspendedAt: u.suspendedAt,
       lastSignedIn: u.lastSignedIn,
+      // Payment info
+      paymentMethod: u.paymentMethod,
+      paymentProofImage: u.paymentProofImage,
+      paymentStatus: u.paymentStatus,
+      paymentSubmittedAt: u.paymentSubmittedAt,
     }));
   }),
 
-  // Approve a pending user
+  // Approve a pending user (also marks payment as verified)
   approveUser: adminProcedure
     .input(z.object({ userId: z.number() }))
     .mutation(async ({ input }) => {
@@ -46,11 +53,30 @@ export const adminRouter = router({
 
       const [user] = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
       if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-      if (user.status !== "pending") {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "User is not in pending status" });
-      }
 
-      await updateUserStatus(input.userId, "active", { activatedAt: new Date() });
+      await db.update(users).set({
+        status: "active",
+        activatedAt: new Date(),
+        paymentStatus: "verified",
+      }).where(eq(users.id, input.userId));
+
+      return { success: true };
+    }),
+
+  // Reject a pending user's payment (keeps account but marks payment rejected)
+  rejectPayment: adminProcedure
+    .input(z.object({ userId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [user] = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
+      if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+
+      await db.update(users).set({
+        paymentStatus: "rejected",
+      }).where(eq(users.id, input.userId));
+
       return { success: true };
     }),
 
@@ -154,6 +180,38 @@ export const adminRouter = router({
     }),
 
   // ============================================================
+  // IMPERSONATION - Admin views dashboard as a specific user
+  // ============================================================
+
+  // Get a session token for a specific user (impersonation)
+  impersonateUser: adminProcedure
+    .input(z.object({ userId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [user] = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
+      if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      if (user.role === "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot impersonate admin accounts" });
+      }
+      if (user.status !== "active") {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Can only impersonate active users" });
+      }
+
+      // Create a session token for the target user
+      const sessionToken = await sdk.createSessionToken(user.openId, {
+        name: user.name || user.email || "",
+      });
+
+      // Set session cookie to impersonate the user
+      const cookieOptions = getSessionCookieOptions(ctx.req);
+      ctx.res.cookie(COOKIE_NAME, sessionToken, cookieOptions);
+
+      return { success: true, userName: user.name, userEmail: user.email };
+    }),
+
+  // ============================================================
   // PRODUCT MANAGEMENT (Admin can see/manage all products)
   // ============================================================
 
@@ -219,12 +277,14 @@ export const adminRouter = router({
     const pendingUsers = allUsers.filter(u => u.status === "pending").length;
     const activeUsers = allUsers.filter(u => u.status === "active").length;
     const suspendedUsers = allUsers.filter(u => u.status === "suspended").length;
+    const pendingPayments = allUsers.filter(u => u.paymentStatus === "pending" && u.paymentMethod != null).length;
 
     return {
       totalUsers: allUsers.length,
       pendingUsers,
       activeUsers,
       suspendedUsers,
+      pendingPayments,
       totalProducts: allProducts.length,
       totalScenarios: allScenarios.length,
     };

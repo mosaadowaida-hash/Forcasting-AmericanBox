@@ -36,11 +36,17 @@ import {
   AlertCircle,
   BarChart3,
   LogOut,
+  Eye,
+  CreditCard,
+  Smartphone,
+  UserCheck,
+  DollarSign,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 
 type UserStatus = "pending" | "active" | "suspended";
+type PaymentStatus = "pending" | "verified" | "rejected";
 
 function StatusBadge({ status }: { status: UserStatus }) {
   const config = {
@@ -49,10 +55,23 @@ function StatusBadge({ status }: { status: UserStatus }) {
     suspended: { label: "موقوف", className: "bg-red-900/30 text-red-300 border-red-700" },
   };
   const { label, className } = config[status] || config.pending;
+  return <Badge variant="outline" className={className}>{label}</Badge>;
+}
+
+function PaymentBadge({ status, method }: { status: PaymentStatus | null | undefined; method: string | null | undefined }) {
+  if (!method) return <span className="text-slate-600 text-xs">—</span>;
+  const methodLabel = method === "instapay" ? "InstaPay" : "PayPal";
+  const statusConfig = {
+    pending: { label: "بانتظار التحقق", className: "bg-amber-900/30 text-amber-300 border-amber-700" },
+    verified: { label: "تم التحقق", className: "bg-green-900/30 text-green-300 border-green-700" },
+    rejected: { label: "مرفوض", className: "bg-red-900/30 text-red-300 border-red-700" },
+  };
+  const cfg = statusConfig[status as PaymentStatus] || statusConfig.pending;
   return (
-    <Badge variant="outline" className={className}>
-      {label}
-    </Badge>
+    <div className="flex flex-col gap-1">
+      <Badge variant="outline" className={cfg.className}>{cfg.label}</Badge>
+      <span className="text-slate-500 text-xs">{methodLabel}</span>
+    </div>
   );
 }
 
@@ -81,6 +100,12 @@ export default function AdminPanel() {
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
 
+  // Payment proof viewer
+  const [proofImageUrl, setProofImageUrl] = useState<string | null>(null);
+
+  // Impersonation confirmation
+  const [impersonateUser, setImpersonateUser] = useState<{ id: number; name: string | null; email: string | null } | null>(null);
+
   // Queries
   const { data: stats } = trpc.admin.getStats.useQuery();
   const { data: users = [], refetch: refetchUsers } = trpc.admin.listUsers.useQuery();
@@ -88,7 +113,11 @@ export default function AdminPanel() {
 
   // Mutations
   const approveMutation = trpc.admin.approveUser.useMutation({
-    onSuccess: () => { toast.success("تم تفعيل الحساب بنجاح"); refetchUsers(); },
+    onSuccess: () => { toast.success("تم تفعيل الحساب وتأكيد الدفع"); refetchUsers(); },
+    onError: (e) => toast.error(e.message),
+  });
+  const rejectPaymentMutation = trpc.admin.rejectPayment.useMutation({
+    onSuccess: () => { toast.success("تم رفض الدفع"); refetchUsers(); },
     onError: (e) => toast.error(e.message),
   });
   const rejectMutation = trpc.admin.rejectUser.useMutation({
@@ -128,6 +157,17 @@ export default function AdminPanel() {
     },
     onError: (e) => toast.error(e.message),
   });
+  const impersonateMutation = trpc.admin.impersonateUser.useMutation({
+    onSuccess: (data) => {
+      toast.success(`جاري الدخول كـ ${data.userName || data.userEmail}...`);
+      setImpersonateUser(null);
+      // Reload the page to apply the new session cookie
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 800);
+    },
+    onError: (e) => toast.error(e.message),
+  });
 
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => setLocation("/login"),
@@ -151,6 +191,7 @@ export default function AdminPanel() {
   };
 
   const pendingUsers = users.filter(u => u.status === "pending");
+  const pendingPayments = users.filter(u => u.paymentStatus === "pending" && u.paymentMethod != null);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white" dir="rtl">
@@ -163,7 +204,7 @@ export default function AdminPanel() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-white">لوحة تحكم المسؤول</h1>
-              <p className="text-xs text-slate-400">Campaign Simulator - Admin Panel</p>
+              <p className="text-xs text-slate-400">Ads Forecasting Pro — Admin Panel</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -192,7 +233,7 @@ export default function AdminPanel() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
             <Card className="bg-slate-900 border-slate-800">
               <CardContent className="pt-4 pb-4">
                 <div className="flex items-center gap-3">
@@ -235,6 +276,19 @@ export default function AdminPanel() {
             <Card className="bg-slate-900 border-slate-800">
               <CardContent className="pt-4 pb-4">
                 <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-yellow-600/20 rounded-lg flex items-center justify-center">
+                    <DollarSign className="w-5 h-5 text-yellow-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">{stats.pendingPayments ?? 0}</p>
+                    <p className="text-xs text-slate-400">دفعات بانتظار التحقق</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-slate-900 border-slate-800">
+              <CardContent className="pt-4 pb-4">
+                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center">
                     <Package className="w-5 h-5 text-purple-400" />
                   </div>
@@ -248,7 +302,19 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* Pending Users Alert */}
+        {/* Alerts */}
+        {pendingPayments.length > 0 && (
+          <Card className="bg-yellow-900/10 border-yellow-700/50 mb-4">
+            <CardContent className="pt-4 pb-4">
+              <div className="flex items-center gap-3">
+                <DollarSign className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                <p className="text-yellow-300 text-sm">
+                  يوجد <span className="font-bold">{pendingPayments.length}</span> دفعة جديدة في انتظار التحقق
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         {pendingUsers.length > 0 && (
           <Card className="bg-amber-900/10 border-amber-700/50 mb-6">
             <CardContent className="pt-4 pb-4">
@@ -289,9 +355,10 @@ export default function AdminPanel() {
                         <TableHead className="text-slate-400 text-right">الاسم</TableHead>
                         <TableHead className="text-slate-400 text-right">البريد الإلكتروني</TableHead>
                         <TableHead className="text-slate-400 text-right">الدور</TableHead>
-                        <TableHead className="text-slate-400 text-right">الحالة</TableHead>
+                        <TableHead className="text-slate-400 text-right">حالة الحساب</TableHead>
+                        <TableHead className="text-slate-400 text-right">حالة الدفع</TableHead>
+                        <TableHead className="text-slate-400 text-right">إثبات الدفع</TableHead>
                         <TableHead className="text-slate-400 text-right">تاريخ التسجيل</TableHead>
-                        <TableHead className="text-slate-400 text-right">تاريخ التفعيل</TableHead>
                         <TableHead className="text-slate-400 text-right">الإجراءات</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -313,32 +380,72 @@ export default function AdminPanel() {
                             </Badge>
                           </TableCell>
                           <TableCell><StatusBadge status={user.status as UserStatus} /></TableCell>
-                          <TableCell className="text-slate-400 text-xs">{formatDate(user.createdAt)}</TableCell>
-                          <TableCell className="text-slate-400 text-xs">{formatDate(user.activatedAt)}</TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-1">
-                              {user.status === "pending" && (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    className="h-7 w-7 p-0 text-green-400 hover:text-green-300 hover:bg-green-900/20"
-                                    onClick={() => approveMutation.mutate({ userId: user.id })}
-                                    title="قبول"
-                                  >
-                                    <CheckCircle className="w-4 h-4" />
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                                    onClick={() => rejectMutation.mutate({ userId: user.id })}
-                                    title="رفض"
-                                  >
-                                    <XCircle className="w-4 h-4" />
-                                  </Button>
-                                </>
+                            <PaymentBadge
+                              status={user.paymentStatus as PaymentStatus | null}
+                              method={user.paymentMethod}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {user.paymentProofImage ? (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 px-2 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 text-xs gap-1"
+                                onClick={() => setProofImageUrl(user.paymentProofImage!)}
+                              >
+                                <Eye className="w-3 h-3" />
+                                عرض
+                              </Button>
+                            ) : user.paymentMethod === "paypal" ? (
+                              <span className="text-slate-500 text-xs flex items-center gap-1">
+                                <CreditCard className="w-3 h-3" />
+                                PayPal
+                              </span>
+                            ) : (
+                              <span className="text-slate-600 text-xs">—</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-slate-400 text-xs">{formatDate(user.createdAt)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1 flex-wrap">
+                              {/* Approve: for pending users with payment submitted */}
+                              {user.status === "pending" && user.paymentMethod && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 w-7 p-0 text-green-400 hover:text-green-300 hover:bg-green-900/20"
+                                  onClick={() => approveMutation.mutate({ userId: user.id })}
+                                  title="تفعيل الحساب وتأكيد الدفع"
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                </Button>
                               )}
+                              {/* Reject payment */}
+                              {user.status === "pending" && user.paymentStatus === "pending" && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 w-7 p-0 text-orange-400 hover:text-orange-300 hover:bg-orange-900/20"
+                                  onClick={() => rejectPaymentMutation.mutate({ userId: user.id })}
+                                  title="رفض الدفع"
+                                >
+                                  <DollarSign className="w-4 h-4" />
+                                </Button>
+                              )}
+                              {/* Reject user (delete) */}
+                              {user.status === "pending" && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                  onClick={() => rejectMutation.mutate({ userId: user.id })}
+                                  title="رفض وحذف الحساب"
+                                >
+                                  <XCircle className="w-4 h-4" />
+                                </Button>
+                              )}
+                              {/* Suspend */}
                               {user.status === "active" && user.role !== "admin" && (
                                 <Button
                                   size="sm"
@@ -350,6 +457,7 @@ export default function AdminPanel() {
                                   <Pause className="w-4 h-4" />
                                 </Button>
                               )}
+                              {/* Reactivate */}
                               {user.status === "suspended" && (
                                 <Button
                                   size="sm"
@@ -361,6 +469,19 @@ export default function AdminPanel() {
                                   <Play className="w-4 h-4" />
                                 </Button>
                               )}
+                              {/* Impersonate (active non-admin users only) */}
+                              {user.status === "active" && user.role !== "admin" && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 w-7 p-0 text-purple-400 hover:text-purple-300 hover:bg-purple-900/20"
+                                  onClick={() => setImpersonateUser(user)}
+                                  title="الدخول كهذا المستخدم"
+                                >
+                                  <UserCheck className="w-4 h-4" />
+                                </Button>
+                              )}
+                              {/* Edit */}
                               <Button
                                 size="sm"
                                 variant="ghost"
@@ -370,6 +491,7 @@ export default function AdminPanel() {
                               >
                                 <Edit className="w-4 h-4" />
                               </Button>
+                              {/* Delete */}
                               {user.role !== "admin" && (
                                 <Button
                                   size="sm"
@@ -448,6 +570,67 @@ export default function AdminPanel() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Payment Proof Image Viewer */}
+      <Dialog open={!!proofImageUrl} onOpenChange={() => setProofImageUrl(null)}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-2xl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle>صورة إثبات الدفع</DialogTitle>
+          </DialogHeader>
+          {proofImageUrl && (
+            <div className="mt-2">
+              <img
+                src={proofImageUrl}
+                alt="Payment Proof"
+                className="w-full rounded-xl border border-slate-700 max-h-[60vh] object-contain"
+              />
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProofImageUrl(null)} className="border-slate-700 text-slate-300">
+              إغلاق
+            </Button>
+            {proofImageUrl && (
+              <a href={proofImageUrl} target="_blank" rel="noopener noreferrer">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  فتح في نافذة جديدة
+                </Button>
+              </a>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Impersonation Confirmation */}
+      <Dialog open={!!impersonateUser} onOpenChange={() => setImpersonateUser(null)}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-purple-400 flex items-center gap-2">
+              <UserCheck className="w-5 h-5" />
+              الدخول كمستخدم
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              ستدخل إلى لوحة التحكم كـ <span className="text-white font-semibold">{impersonateUser?.name || impersonateUser?.email}</span>.
+              سيتم تسجيل خروجك من حساب الأدمن مؤقتاً.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-purple-900/20 border border-purple-800/50 rounded-xl p-3 text-sm text-purple-300">
+            ⚠️ لإعادة الدخول كأدمن، سجّل الخروج ثم سجّل الدخول بحساب الأدمن مجدداً.
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setImpersonateUser(null)} className="border-slate-700 text-slate-300">
+              إلغاء
+            </Button>
+            <Button
+              className="bg-purple-600 hover:bg-purple-700"
+              onClick={() => impersonateUser && impersonateMutation.mutate({ userId: impersonateUser.id })}
+              disabled={impersonateMutation.isPending}
+            >
+              {impersonateMutation.isPending ? "جاري الدخول..." : "تأكيد الدخول"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit User Dialog */}
       <Dialog open={!!editUser} onOpenChange={() => setEditUser(null)}>

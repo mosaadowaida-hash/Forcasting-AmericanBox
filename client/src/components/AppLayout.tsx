@@ -35,7 +35,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Left: Logo + Nav Links */}
             <div className="flex items-center gap-1" dir="rtl">
               <Link href="/dashboard" className="font-bold text-lg text-blue-600 ml-6 whitespace-nowrap">
-                محاكي الحملات
+                Ads Forecasting Pro
               </Link>
               {navItems.map(item => {
                 const isActive = location === item.href;

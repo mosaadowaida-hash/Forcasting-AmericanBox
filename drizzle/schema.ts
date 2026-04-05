@@ -18,6 +18,11 @@ export const users = mysqlTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
   activatedAt: timestamp("activatedAt"),
   suspendedAt: timestamp("suspendedAt"),
+  // Payment fields
+  paymentMethod: mysqlEnum("paymentMethod", ["instapay", "paypal"]),
+  paymentProofImage: text("paymentProofImage"), // S3 URL for InstaPay proof
+  paymentStatus: mysqlEnum("paymentStatus", ["pending", "verified", "rejected"]),
+  paymentSubmittedAt: timestamp("paymentSubmittedAt"),
 });
 
 export type User = typeof users.$inferSelect;
