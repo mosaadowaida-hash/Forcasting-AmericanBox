@@ -198,3 +198,42 @@
 - [x] Change "ابدأ مجاناً" button to "ابدأ الآن باشتراك 29$"
 - [x] Update stats section text as requested
 - [x] Fix Login page brand name to "Ads Forecasting Pro"
+
+## Phase 12: Excel Export + Payment Mix + Core Engine
+
+### DB: Payment Mix
+- [x] Add paymentMix field to products table (JSON array: cod/instapay/card)
+- [x] Run migration SQL
+- [x] Migrate existing products to default paymentMix (cod only)
+
+### Core Engine: Payment Mix → Delivery Rate
+- [x] Define delivery success rates: COD=0.65, InstaPay=0.90, Card=0.92
+- [x] Calculate weighted average delivery rate from selected payment methods
+- [x] Update scenario calculation: deliveryRate = weighted avg of selected methods
+- [x] deliveredOrders = clicks × CVR × deliveryRate
+- [x] cpaCostDelivered = adSpend / deliveredOrders (CPA Delivered)
+- [x] cpaDashboard unchanged (based on CPM/CTR/CVR only)
+- [x] Recalculate all existing scenarios with new engine
+
+### Backend: Export Procedures
+- [x] products.exportScenarios: return all scenarios for user (all products)
+- [x] products.exportFilteredScenarios: accept filters (productId, cpmMin/Max, ctrMin/Max, cvrMin/Max, aovMin/Max)
+- [x] Return fields: productName, CPM, CTR, CVR, AOV, CPA, Revenue, Profit, Status
+
+### Backend: Update Product CRUD
+- [x] products.create: accept paymentMix array
+- [x] products.update: accept paymentMix array
+- [x] products.getById: return paymentMix
+
+### Frontend: Export Excel Button
+- [x] Install xlsx (SheetJS) package for client-side Excel generation
+- [x] Add "تحميل السيناريوهات" button in Dashboard page
+- [x] Modal with two options: Download All / Download Filtered
+- [x] Filtered export: show filter inputs (product, CPM range, CTR range, CVR range, AOV range)
+- [x] Generate .xlsx file client-side from tRPC data
+
+### Frontend: Payment Mix in Add/Edit Product
+- [x] Add Payment Mix selector in Add Product form (checkboxes: COD, InstaPay, Card)
+- [x] Add Payment Mix selector in Edit Product form
+- [x] Show current paymentMix in product details
+- [x] Validate: at least one payment method must be selected

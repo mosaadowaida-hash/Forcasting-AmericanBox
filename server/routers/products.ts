@@ -9,22 +9,54 @@ import { eq, asc, and } from "drizzle-orm";
 // CONSTANTS - Verified against original 6,048 scenarios
 // ============================================================
 
-// AOV = price × basket_size (no inflation factor)
-// Fixed: AOV should never exceed price × basket_size
-
-// Revenue delivery rate = ~0.885 (verified: range 0.8846-0.8853)
-const DELIVERY_RATE = 0.885;
-
-// CPA delivery factor = ~1.13 (verified: range 1.127-1.133)
-const CPA_DELIVERY_FACTOR = 1.13;
-
 // Actual margin = 31.5% (verified: all products)
 const ACTUAL_MARGIN = 31.5;
 
 // Shipping cost = 100 EGP for individual products with price ≤ 2600
-// Bundles and products > 2600 have no shipping cost
 const SHIPPING_THRESHOLD = 2600;
 const SHIPPING_COST = 100;
+
+// ============================================================
+// PAYMENT MIX - Delivery Success Rates per method
+// ============================================================
+
+// Delivery success rate per payment method
+// COD has the lowest rate (returns/cancellations), Card the highest
+const PAYMENT_DELIVERY_RATES: Record<string, number> = {
+  cod: 0.65,       // Cash on Delivery: 65% success
+  instapay: 0.90,  // InstaPay / Wallet: 90% success
+  card: 0.92,      // Card Payments: 92% success
+};
+
+const DEFAULT_DELIVERY_RATE = 0.65; // fallback = COD only
+
+type PaymentMethod = "cod" | "instapay" | "card";
+
+/**
+ * Calculate weighted average delivery rate from a list of payment methods.
+ * Equal weight per method (simple average).
+ */
+function calcDeliveryRate(paymentMix: PaymentMethod[]): number {
+  if (!paymentMix || paymentMix.length === 0) return DEFAULT_DELIVERY_RATE;
+  const total = paymentMix.reduce((sum, m) => sum + (PAYMENT_DELIVERY_RATES[m] ?? DEFAULT_DELIVERY_RATE), 0);
+  return total / paymentMix.length;
+}
+
+/**
+ * Parse paymentMix JSON string from DB into array.
+ */
+function parsePaymentMix(raw: string | null | undefined): PaymentMethod[] {
+  if (!raw) return ["cod"];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed as PaymentMethod[];
+  } catch {}
+  return ["cod"];
+}
+
+// ============================================================
+// SCENARIO GRID
+// ============================================================
 
 // 3 CPM × 4 CTR × 3 CVR × 4 Basket = 144 scenarios
 const CPM_LEVELS = [
@@ -54,7 +86,7 @@ const BASKET_SIZES = [
 ];
 
 // ============================================================
-// CALCULATION ENGINE - Matching original data exactly
+// CALCULATION ENGINE
 // ============================================================
 
 function round2(n: number): number {
@@ -63,11 +95,20 @@ function round2(n: number): number {
 
 /**
  * Generate all 144 scenarios for a product.
+ *
+ * Key formulas:
+ * - cpaDashboard = CPC / CVR  (based on ad spend, NOT delivery)
+ * - deliveryRate = weighted avg of payment methods
+ * - deliveredOrders = clicks × CVR × deliveryRate
+ * - cpaDelivered = adSpend / deliveredOrders = cpaDashboard / deliveryRate
+ * - AOV = price × basket_size
+ * - profit = price × margin% - cpaDashboard - shipping
  */
 function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
   const results: Omit<InsertScenario, "id">[] = [];
   const price = product.originalPrice;
-  // AOV base = price (basket multiplier applied per scenario below)
+  const paymentMix = parsePaymentMix((product as any).paymentMix);
+  const deliveryRate = calcDeliveryRate(paymentMix);
 
   // Shipping: 100 EGP for individual products with price ≤ 2600
   const shippingCost = (product.type === "product" && price <= SHIPPING_THRESHOLD) ? SHIPPING_COST : 0;
@@ -81,18 +122,39 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
           const cvr = cvrLevel.value;
           const basket = basketLevel.value;
 
+          // CPC = CPM / (CTR × 1000)
           const cpc = round2(cpm / (ctr * 1000));
+
+          // CPA Dashboard = CPC / CVR  (ad-platform metric, NOT delivery-adjusted)
           const cpaDashboard = Math.round(cpc / cvr);
-          const cpaDelivered = Math.round(cpaDashboard * CPA_DELIVERY_FACTOR);
+
+          // CPA Delivered = cpaDashboard / deliveryRate  (actual cost per delivered order)
+          const cpaDelivered = Math.round(cpaDashboard / deliveryRate);
+
           // AOV = price × basket_size (no inflation)
           const aov = Math.round(price * basket);
-          const revenuePerOrder = Math.round(aov * DELIVERY_RATE);
+
+          // Revenue per delivered order = AOV (full price, delivery already in cpaDelivered)
+          const revenuePerOrder = aov;
+
+          // Profit = margin - cpaDashboard - shipping (based on dashboard CPA as in original)
           const profit = Math.round(price * ACTUAL_MARGIN / 100 - cpaDashboard - shippingCost);
+
+          // COGS = revenue - cpaDelivered - profit
           const cogs = revenuePerOrder - cpaDelivered - profit;
+
+          // Break-even CPA = price × margin%
           const breakEvenCpa = Math.round(price * ACTUAL_MARGIN / 100);
+
+          // ROAS = AOV / cpaDashboard
           const roas = round2(aov / cpaDashboard);
+
+          // Delivered ROAS = AOV / cpaDelivered
           const deliveredRoas = round2(aov / cpaDelivered);
+
+          // Profit margin = profit / AOV × 100
           const profitMargin = round2(aov > 0 ? (profit / aov) * 100 : 0);
+
           const status = profit > 0 ? "ربح" : "خسارة";
 
           results.push({
@@ -126,6 +188,9 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
 
   return results; // Exactly 144
 }
+
+// Zod schema for payment mix
+const paymentMixSchema = z.array(z.enum(["cod", "instapay", "card"])).min(1).default(["cod"]);
 
 // ============================================================
 // tRPC ROUTER - Multi-tenant: each user sees only their data
@@ -173,7 +238,6 @@ export const productsRouter = router({
       .where(eq(products.userId, ctx.user.id));
     if (userProducts.length === 0) return [];
     const productIds = userProducts.map(p => p.id);
-    // Fetch scenarios for all user's products
     const allScenarios = await db.select().from(scenarios).orderBy(asc(scenarios.id));
     return allScenarios.filter(s => productIds.includes(s.productId));
   }),
@@ -235,7 +299,6 @@ export const productsRouter = router({
     const allScenarios = await db.select().from(scenarios).orderBy(asc(scenarios.id));
     const userScenarios = allScenarios.filter(s => productIds.includes(s.productId));
 
-    // Group scenarios by product
     const scenariosByProduct = new Map<number, typeof userScenarios>();
     for (const s of userScenarios) {
       if (!scenariosByProduct.has(s.productId)) {
@@ -267,6 +330,101 @@ export const productsRouter = router({
     }).sort((a, b) => b.profitabilityRate - a.profitabilityRate);
   }),
 
+  // ============================================================
+  // EXPORT PROCEDURES
+  // ============================================================
+
+  // Export all scenarios for the current user (all products)
+  exportScenarios: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) return [];
+
+    const userProducts = await db.select().from(products)
+      .where(eq(products.userId, ctx.user.id))
+      .orderBy(asc(products.id));
+    if (userProducts.length === 0) return [];
+
+    const productIds = userProducts.map(p => p.id);
+    const productMap = new Map(userProducts.map(p => [p.id, p.name]));
+
+    const allScenarios = await db.select().from(scenarios).orderBy(asc(scenarios.id));
+    const userScenarios = allScenarios.filter(s => productIds.includes(s.productId));
+
+    return userScenarios.map(s => ({
+      productName: productMap.get(s.productId) ?? "Unknown",
+      cpm: s.cpm,
+      ctr: s.ctr,
+      cvr: s.cvr,
+      basketSize: s.basketSize,
+      aov: s.aov,
+      cpaDashboard: s.cpaDashboard,
+      cpaDelivered: s.cpaDelivered,
+      revenue: s.revenuePerOrder,
+      profit: s.netProfitPerOrder,
+      status: s.status,
+      roas: s.roas,
+    }));
+  }),
+
+  // Export filtered scenarios
+  exportFilteredScenarios: protectedProcedure
+    .input(z.object({
+      productId: z.number().optional(),
+      cpmMin: z.number().optional(),
+      cpmMax: z.number().optional(),
+      ctrMin: z.number().optional(),
+      ctrMax: z.number().optional(),
+      cvrMin: z.number().optional(),
+      cvrMax: z.number().optional(),
+      aovMin: z.number().optional(),
+      aovMax: z.number().optional(),
+    }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const userProducts = await db.select().from(products)
+        .where(eq(products.userId, ctx.user.id))
+        .orderBy(asc(products.id));
+      if (userProducts.length === 0) return [];
+
+      const productIds = userProducts.map(p => p.id);
+      const productMap = new Map(userProducts.map(p => [p.id, p.name]));
+
+      const allScenarios = await db.select().from(scenarios).orderBy(asc(scenarios.id));
+      let filtered = allScenarios.filter(s => productIds.includes(s.productId));
+
+      // Apply filters
+      if (input.productId) filtered = filtered.filter(s => s.productId === input.productId);
+      if (input.cpmMin !== undefined) filtered = filtered.filter(s => s.cpm >= input.cpmMin!);
+      if (input.cpmMax !== undefined) filtered = filtered.filter(s => s.cpm <= input.cpmMax!);
+      if (input.ctrMin !== undefined) filtered = filtered.filter(s => s.ctr >= input.ctrMin!);
+      if (input.ctrMax !== undefined) filtered = filtered.filter(s => s.ctr <= input.ctrMax!);
+      if (input.cvrMin !== undefined) filtered = filtered.filter(s => s.cvr >= input.cvrMin!);
+      if (input.cvrMax !== undefined) filtered = filtered.filter(s => s.cvr <= input.cvrMax!);
+      if (input.aovMin !== undefined) filtered = filtered.filter(s => s.aov >= input.aovMin!);
+      if (input.aovMax !== undefined) filtered = filtered.filter(s => s.aov <= input.aovMax!);
+
+      return filtered.map(s => ({
+        productName: productMap.get(s.productId) ?? "Unknown",
+        cpm: s.cpm,
+        ctr: s.ctr,
+        cvr: s.cvr,
+        basketSize: s.basketSize,
+        aov: s.aov,
+        cpaDashboard: s.cpaDashboard,
+        cpaDelivered: s.cpaDelivered,
+        revenue: s.revenuePerOrder,
+        profit: s.netProfitPerOrder,
+        status: s.status,
+        roas: s.roas,
+      }));
+    }),
+
+  // ============================================================
+  // CRUD OPERATIONS
+  // ============================================================
+
   // Create a new product for current user and calculate 144 scenarios
   create: protectedProcedure
     .input(
@@ -277,13 +435,13 @@ export const productsRouter = router({
         discountTwoItems: z.number().min(0).max(100).optional().default(10),
         discountThreeItems: z.number().min(0).max(100).optional().default(15),
         bundleDiscount: z.number().min(0).max(100).optional().default(0),
+        paymentMix: paymentMixSchema,
       })
     )
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      // Insert product with userId
       const result = await db.insert(products).values({
         userId: ctx.user.id,
         name: input.name,
@@ -292,12 +450,13 @@ export const productsRouter = router({
         discountTwoItems: input.discountTwoItems,
         discountThreeItems: input.discountThreeItems,
         bundleDiscount: input.bundleDiscount,
+        paymentMix: JSON.stringify(input.paymentMix),
       });
 
       const productId = Number(result[0].insertId);
       const [createdProduct] = await db.select().from(products).where(eq(products.id, productId));
 
-      // Generate 144 scenarios
+      // Generate 144 scenarios using payment mix
       const scenarioData = generateScenarios(createdProduct);
       for (let i = 0; i < scenarioData.length; i += 50) {
         const batch = scenarioData.slice(i, i + 50);
@@ -318,6 +477,7 @@ export const productsRouter = router({
         discountTwoItems: z.number().min(0).max(100).optional(),
         discountThreeItems: z.number().min(0).max(100).optional(),
         bundleDiscount: z.number().min(0).max(100).optional(),
+        paymentMix: paymentMixSchema.optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -340,6 +500,7 @@ export const productsRouter = router({
       if (updates.discountTwoItems !== undefined) updateObj.discountTwoItems = updates.discountTwoItems;
       if (updates.discountThreeItems !== undefined) updateObj.discountThreeItems = updates.discountThreeItems;
       if (updates.bundleDiscount !== undefined) updateObj.bundleDiscount = updates.bundleDiscount;
+      if (updates.paymentMix !== undefined) updateObj.paymentMix = JSON.stringify(updates.paymentMix);
 
       if (Object.keys(updateObj).length > 0) {
         await db.update(products).set(updateObj).where(eq(products.id, id));
@@ -347,7 +508,7 @@ export const productsRouter = router({
 
       const [updatedProduct] = await db.select().from(products).where(eq(products.id, id));
 
-      // Delete old scenarios and regenerate
+      // Delete old scenarios and regenerate with new payment mix
       await db.delete(scenarios).where(eq(scenarios.productId, id));
       const scenarioData = generateScenarios(updatedProduct);
       for (let i = 0; i < scenarioData.length; i += 50) {

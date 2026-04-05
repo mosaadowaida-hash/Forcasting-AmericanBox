@@ -219,6 +219,115 @@ describe("Products Router", () => {
     await caller.products.delete(product.id);
   });
 
+  it("should create product with paymentMix and verify CPA Delivered changes", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+
+    // Create product with COD only (65% delivery rate)
+    const codProduct = await caller.products.create({
+      name: "Test COD Product",
+      type: "product",
+      originalPrice: 3000,
+      paymentMix: ["cod"],
+    });
+    const codScenarios = await caller.products.getScenarios(codProduct.id);
+    const codCpaDelivered = codScenarios[0].cpaDelivered;
+
+    // Create product with Card only (92% delivery rate)
+    const cardProduct = await caller.products.create({
+      name: "Test Card Product",
+      type: "product",
+      originalPrice: 3000,
+      paymentMix: ["card"],
+    });
+    const cardScenarios = await caller.products.getScenarios(cardProduct.id);
+    const cardCpaDelivered = cardScenarios[0].cpaDelivered;
+
+    // COD has lower delivery rate → higher CPA Delivered (same CPA Dashboard)
+    expect(codCpaDelivered).toBeGreaterThan(cardCpaDelivered);
+    // CPA Dashboard should be the same (not affected by payment mix)
+    expect(codScenarios[0].cpaDashboard).toBeCloseTo(cardScenarios[0].cpaDashboard, 2);
+
+    // Clean up
+    await caller.products.delete(codProduct.id);
+    await caller.products.delete(cardProduct.id);
+  });
+
+  it("should export all scenarios for user", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+    const exported = await caller.products.exportScenarios();
+    expect(Array.isArray(exported)).toBe(true);
+    expect(exported.length).toBe(6048); // 42 products * 144 scenarios
+    // Verify export fields
+    const row = exported[0];
+    expect(row).toHaveProperty("productName");
+    expect(row).toHaveProperty("cpm");
+    expect(row).toHaveProperty("ctr");
+    expect(row).toHaveProperty("cvr");
+    expect(row).toHaveProperty("aov");
+    expect(row).toHaveProperty("cpaDashboard");
+    expect(row).toHaveProperty("cpaDelivered");
+    expect(row).toHaveProperty("revenue");
+    expect(row).toHaveProperty("profit");
+    expect(row).toHaveProperty("roas");
+    expect(row).toHaveProperty("status");
+  });
+
+  it("should export filtered scenarios", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+    const products = await caller.products.list();
+    const firstProductId = products[0].id;
+
+    // Filter by product ID
+    const filtered = await caller.products.exportFilteredScenarios({ productId: firstProductId });
+    expect(Array.isArray(filtered)).toBe(true);
+    expect(filtered.length).toBe(144); // Only 1 product's scenarios
+    expect(filtered.every(s => s.productName === products[0].name)).toBe(true);
+
+    // Filter by CPM range
+    const cpmFiltered = await caller.products.exportFilteredScenarios({ cpmMin: 40, cpmMax: 60 });
+    expect(cpmFiltered.every(s => s.cpm >= 40 && s.cpm <= 60)).toBe(true);
+  });
+
+  it("should return paymentMix in getById", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+    const products = await caller.products.list();
+    const productId = products[0].id;
+    const product = await caller.products.getById(productId);
+    expect(product).not.toBeNull();
+    expect(product).toHaveProperty("paymentMix");
+    // paymentMix should be a JSON string containing an array
+    const mix = JSON.parse(product!.paymentMix ?? '["cod"]');
+    expect(Array.isArray(mix)).toBe(true);
+    expect(mix.length).toBeGreaterThan(0);
+    expect(["cod", "instapay", "card"]).toEqual(expect.arrayContaining(mix));
+  });
+
+  it("should reject empty paymentMix array on create", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+    // Empty array should fail Zod validation (min(1))
+    await expect(
+      caller.products.create({
+        name: "Test Empty PaymentMix",
+        type: "product",
+        originalPrice: 1000,
+        paymentMix: [] as any,
+      })
+    ).rejects.toThrow();
+  });
+
+  it("should reject invalid paymentMix method on create", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+    // Invalid method should fail Zod enum validation
+    await expect(
+      caller.products.create({
+        name: "Test Invalid PaymentMix",
+        type: "product",
+        originalPrice: 1000,
+        paymentMix: ["cash"] as any,
+      })
+    ).rejects.toThrow();
+  });
+
   it("should reject unauthenticated access to protected routes", async () => {
     const publicCaller = appRouter.createCaller(mockPublicContext);
     await expect(publicCaller.products.list()).rejects.toThrow();

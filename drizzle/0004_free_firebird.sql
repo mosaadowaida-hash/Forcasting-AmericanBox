@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `paymentMix` text DEFAULT ('["cod"]') NOT NULL;

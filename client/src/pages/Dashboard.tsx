@@ -13,9 +13,91 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
-import { Plus, Edit2, Trash2, TrendingUp, TrendingDown, DollarSign, BarChart3 } from 'lucide-react';
+import { Plus, Edit2, Trash2, TrendingUp, TrendingDown, DollarSign, BarChart3, Download, Filter } from 'lucide-react';
 import { toast } from 'sonner';
+import * as XLSX from 'xlsx';
 
+// ─── Payment Mix Types ──────────────────────────────────────────────────────
+type PaymentMethod = 'cod' | 'instapay' | 'card';
+const PAYMENT_OPTIONS: { value: PaymentMethod; label: string; rate: number }[] = [
+  { value: 'cod',      label: 'Cash on Delivery (COD)',        rate: 65 },
+  { value: 'instapay', label: 'InstaPay / Wallet',             rate: 90 },
+  { value: 'card',     label: 'Card Payments (Visa/Mastercard)', rate: 92 },
+];
+
+function parsePaymentMix(raw: string | null | undefined): PaymentMethod[] {
+  if (!raw) return ['cod'];
+  try {
+    const p = JSON.parse(raw);
+    if (Array.isArray(p) && p.length > 0) return p as PaymentMethod[];
+  } catch {}
+  return ['cod'];
+}
+
+// ─── Payment Mix Selector Component ─────────────────────────────────────────
+function PaymentMixSelector({ value, onChange }: { value: PaymentMethod[]; onChange: (v: PaymentMethod[]) => void }) {
+  const toggle = (method: PaymentMethod) => {
+    if (value.includes(method)) {
+      if (value.length === 1) return; // must keep at least one
+      onChange(value.filter(m => m !== method));
+    } else {
+      onChange([...value, method]);
+    }
+  };
+
+  const avgRate = value.length > 0
+    ? Math.round(value.reduce((s, m) => s + (PAYMENT_OPTIONS.find(o => o.value === m)?.rate ?? 65), 0) / value.length)
+    : 65;
+
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium">طرق الدفع المتاحة (Payment Mix)</label>
+      <div className="space-y-2">
+        {PAYMENT_OPTIONS.map(opt => (
+          <label key={opt.value} className="flex items-center gap-3 p-2 rounded border cursor-pointer hover:bg-gray-50">
+            <input
+              type="checkbox"
+              checked={value.includes(opt.value)}
+              onChange={() => toggle(opt.value)}
+              className="w-4 h-4"
+            />
+            <div className="flex-1">
+              <span className="text-sm font-medium">{opt.label}</span>
+            </div>
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">نجاح {opt.rate}%</span>
+          </label>
+        ))}
+      </div>
+      <p className="text-xs text-blue-600 bg-blue-50 px-3 py-1.5 rounded">
+        متوسط نسبة التسليم المتوقعة: <strong>{avgRate}%</strong> — يؤثر على CPA Delivered فقط
+      </p>
+    </div>
+  );
+}
+
+// ─── Export to Excel ─────────────────────────────────────────────────────────
+function exportToExcel(data: any[], filename: string) {
+  const rows = data.map(s => ({
+    'المنتج': s.productName,
+    'CPM': s.cpm,
+    'CTR': s.ctr,
+    'CVR': s.cvr,
+    'Basket Size': s.basketSize,
+    'AOV (ج.م)': s.aov,
+    'CPA Dashboard (ج.م)': s.cpaDashboard,
+    'CPA Delivered (ج.م)': s.cpaDelivered,
+    'العائد (ج.م)': s.revenue,
+    'الربح (ج.م)': s.profit,
+    'ROAS': s.roas,
+    'الحالة': s.status,
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Scenarios');
+  XLSX.writeFile(wb, filename);
+}
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 export default function Dashboard() {
   const utils = trpc.useUtils();
   const { data: products = [], isLoading } = trpc.products.list.useQuery();
@@ -23,14 +105,43 @@ export default function Dashboard() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+
+  // Export filter state
+  const [exportFilters, setExportFilters] = useState({
+    productId: '' as string,
+    cpmMin: '', cpmMax: '',
+    ctrMin: '', ctrMax: '',
+    cvrMin: '', cvrMax: '',
+    aovMin: '', aovMax: '',
+  });
+  const [exportMode, setExportMode] = useState<'all' | 'filtered'>('all');
 
   const [formData, setFormData] = useState({
     name: '', type: 'product' as 'product' | 'bundle',
     originalPrice: 0, discountTwoItems: 10, discountThreeItems: 15, bundleDiscount: 0,
+    paymentMix: ['cod'] as PaymentMethod[],
   });
 
   const { data: productScenarios = [] } = trpc.products.getScenarios.useQuery(
     selectedProductId!, { enabled: selectedProductId !== null }
+  );
+
+  // Export queries (lazy - only runs when triggered)
+  const exportAllQuery = trpc.products.exportScenarios.useQuery(undefined, { enabled: false });
+  const exportFilteredQuery = trpc.products.exportFilteredScenarios.useQuery(
+    {
+      productId: exportFilters.productId ? Number(exportFilters.productId) : undefined,
+      cpmMin: exportFilters.cpmMin ? Number(exportFilters.cpmMin) : undefined,
+      cpmMax: exportFilters.cpmMax ? Number(exportFilters.cpmMax) : undefined,
+      ctrMin: exportFilters.ctrMin ? Number(exportFilters.ctrMin) / 100 : undefined,
+      ctrMax: exportFilters.ctrMax ? Number(exportFilters.ctrMax) / 100 : undefined,
+      cvrMin: exportFilters.cvrMin ? Number(exportFilters.cvrMin) / 100 : undefined,
+      cvrMax: exportFilters.cvrMax ? Number(exportFilters.cvrMax) / 100 : undefined,
+      aovMin: exportFilters.aovMin ? Number(exportFilters.aovMin) : undefined,
+      aovMax: exportFilters.aovMax ? Number(exportFilters.aovMax) : undefined,
+    },
+    { enabled: false }
   );
 
   const selectedProduct = useMemo(
@@ -112,7 +223,7 @@ export default function Dashboard() {
   });
 
   function resetForm() {
-    setFormData({ name: '', type: 'product', originalPrice: 0, discountTwoItems: 10, discountThreeItems: 15, bundleDiscount: 0 });
+    setFormData({ name: '', type: 'product', originalPrice: 0, discountTwoItems: 10, discountThreeItems: 15, bundleDiscount: 0, paymentMix: ['cod'] });
   }
 
   function openEditDialog() {
@@ -124,8 +235,43 @@ export default function Dashboard() {
       discountTwoItems: selectedProduct.discountTwoItems ?? 10,
       discountThreeItems: selectedProduct.discountThreeItems ?? 15,
       bundleDiscount: selectedProduct.bundleDiscount ?? 0,
+      paymentMix: parsePaymentMix((selectedProduct as any).paymentMix),
     });
     setShowEditDialog(true);
+  }
+
+  async function handleExportAll() {
+    try {
+      const result = await utils.products.exportScenarios.fetch();
+      if (!result || result.length === 0) { toast.error('لا توجد سيناريوهات للتصدير'); return; }
+      exportToExcel(result, `ads-forecasting-all-${Date.now()}.xlsx`);
+      toast.success(`تم تحميل ${result.length} سيناريو بنجاح`);
+      setShowExportDialog(false);
+    } catch (e: any) {
+      toast.error('خطأ في التصدير: ' + e.message);
+    }
+  }
+
+  async function handleExportFiltered() {
+    try {
+      const result = await utils.products.exportFilteredScenarios.fetch({
+        productId: exportFilters.productId ? Number(exportFilters.productId) : undefined,
+        cpmMin: exportFilters.cpmMin ? Number(exportFilters.cpmMin) : undefined,
+        cpmMax: exportFilters.cpmMax ? Number(exportFilters.cpmMax) : undefined,
+        ctrMin: exportFilters.ctrMin ? Number(exportFilters.ctrMin) / 100 : undefined,
+        ctrMax: exportFilters.ctrMax ? Number(exportFilters.ctrMax) / 100 : undefined,
+        cvrMin: exportFilters.cvrMin ? Number(exportFilters.cvrMin) / 100 : undefined,
+        cvrMax: exportFilters.cvrMax ? Number(exportFilters.cvrMax) / 100 : undefined,
+        aovMin: exportFilters.aovMin ? Number(exportFilters.aovMin) : undefined,
+        aovMax: exportFilters.aovMax ? Number(exportFilters.aovMax) : undefined,
+      });
+      if (!result || result.length === 0) { toast.error('لا توجد سيناريوهات تطابق الفلاتر المحددة'); return; }
+      exportToExcel(result, `ads-forecasting-filtered-${Date.now()}.xlsx`);
+      toast.success(`تم تحميل ${result.length} سيناريو بنجاح`);
+      setShowExportDialog(false);
+    } catch (e: any) {
+      toast.error('خطأ في التصدير: ' + e.message);
+    }
   }
 
   if (isLoading) {
@@ -141,14 +287,19 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 p-6" dir="rtl">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-bold">Ads Forecasting Pro</h1>
           <p className="text-gray-600 mt-1">{products.length} منتج | {products.length * 144} سيناريو</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowAddDialog(true); }} className="gap-2">
-          <Plus className="w-4 h-4" /> إضافة منتج جديد
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowExportDialog(true)} className="gap-2">
+            <Download className="w-4 h-4" /> تحميل السيناريوهات
+          </Button>
+          <Button onClick={() => { resetForm(); setShowAddDialog(true); }} className="gap-2">
+            <Plus className="w-4 h-4" /> إضافة منتج جديد
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -233,6 +384,20 @@ export default function Dashboard() {
                   <div><p className="text-sm text-gray-600">خصم الباندل</p><p className="font-semibold">{selectedProduct.bundleDiscount ?? 0}%</p></div>
                 )}
               </div>
+              {/* Payment Mix display */}
+              <div className="mt-3 pt-3 border-t">
+                <p className="text-sm text-gray-600 mb-1">طرق الدفع المفعّلة</p>
+                <div className="flex gap-2 flex-wrap">
+                  {parsePaymentMix((selectedProduct as any).paymentMix).map(m => {
+                    const opt = PAYMENT_OPTIONS.find(o => o.value === m);
+                    return (
+                      <span key={m} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                        {opt?.label} ({opt?.rate}%)
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -267,7 +432,25 @@ export default function Dashboard() {
           </div>
 
           <Card>
-            <CardHeader><CardTitle>جميع {productScenarios.length} سيناريو</CardTitle></CardHeader>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>جميع {productScenarios.length} سيناريو</CardTitle>
+                <Button size="sm" variant="outline" onClick={() => {
+                  exportToExcel(
+                    productScenarios.map(s => ({
+                      productName: selectedProduct.name,
+                      cpm: s.cpm, ctr: s.ctr, cvr: s.cvr, basketSize: s.basketSize,
+                      aov: s.aov, cpaDashboard: s.cpaDashboard, cpaDelivered: s.cpaDelivered,
+                      revenue: s.revenuePerOrder, profit: s.netProfitPerOrder, status: s.status, roas: s.roas,
+                    })),
+                    `${selectedProduct.name}-scenarios.xlsx`
+                  );
+                  toast.success('تم تحميل السيناريوهات');
+                }} className="gap-1">
+                  <Download className="w-3 h-3" /> تحميل Excel
+                </Button>
+              </div>
+            </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -312,9 +495,9 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* Add Dialog */}
+      {/* ── Add Dialog ─────────────────────────────────────────────────────── */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent dir="rtl">
+        <DialogContent dir="rtl" className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>إضافة منتج جديد</DialogTitle>
             <DialogDescription>أدخل بيانات المنتج وسيتم حساب 144 سيناريو تلقائياً</DialogDescription>
@@ -337,6 +520,7 @@ export default function Dashboard() {
             ) : (
               <div><label className="text-sm font-medium">خصم الباندل (%)</label><Input type="number" value={formData.bundleDiscount} onChange={(e) => setFormData({ ...formData, bundleDiscount: parseFloat(e.target.value) || 0 })} /></div>
             )}
+            <PaymentMixSelector value={formData.paymentMix} onChange={(v) => setFormData({ ...formData, paymentMix: v })} />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>إلغاء</Button>
@@ -347,9 +531,9 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Dialog */}
+      {/* ── Edit Dialog ─────────────────────────────────────────────────────── */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent dir="rtl">
+        <DialogContent dir="rtl" className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>تعديل المنتج</DialogTitle>
             <DialogDescription>عدّل بيانات المنتج وسيتم إعادة حساب 144 سيناريو تلقائياً</DialogDescription>
@@ -372,6 +556,7 @@ export default function Dashboard() {
             ) : (
               <div><label className="text-sm font-medium">خصم الباندل (%)</label><Input type="number" value={formData.bundleDiscount} onChange={(e) => setFormData({ ...formData, bundleDiscount: parseFloat(e.target.value) || 0 })} /></div>
             )}
+            <PaymentMixSelector value={formData.paymentMix} onChange={(v) => setFormData({ ...formData, paymentMix: v })} />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)}>إلغاء</Button>
@@ -382,7 +567,7 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
+      {/* ── Delete Dialog ────────────────────────────────────────────────────── */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent dir="rtl">
           <DialogHeader>
@@ -393,6 +578,96 @@ export default function Dashboard() {
             <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>إلغاء</Button>
             <Button variant="destructive" onClick={() => deleteMutation.mutate(selectedProductId!)} disabled={deleteMutation.isPending}>
               {deleteMutation.isPending ? 'جاري الحذف...' : 'حذف المنتج'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Export Dialog ────────────────────────────────────────────────────── */}
+      <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+        <DialogContent dir="rtl" className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Download className="w-5 h-5" /> تحميل السيناريوهات (Excel)</DialogTitle>
+            <DialogDescription>اختر نوع التحميل: كل السيناريوهات أو مفلترة حسب معايير محددة</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Mode selector */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setExportMode('all')}
+                className={`p-3 rounded border text-sm font-medium transition-colors ${exportMode === 'all' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300'}`}
+              >
+                تحميل الكل
+              </button>
+              <button
+                onClick={() => setExportMode('filtered')}
+                className={`p-3 rounded border text-sm font-medium transition-colors flex items-center justify-center gap-1 ${exportMode === 'filtered' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300'}`}
+              >
+                <Filter className="w-3 h-3" /> تحميل مفلتر
+              </button>
+            </div>
+
+            {exportMode === 'filtered' && (
+              <div className="space-y-3 p-3 bg-gray-50 rounded border">
+                <p className="text-xs font-medium text-gray-600">الفلاتر (اتركها فارغة لعدم التطبيق)</p>
+
+                {/* Product filter */}
+                <div>
+                  <label className="text-xs text-gray-600">المنتج</label>
+                  <Select value={exportFilters.productId || 'all'} onValueChange={(v) => setExportFilters({ ...exportFilters, productId: v === 'all' ? '' : v })}>
+                    <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="كل المنتجات" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">كل المنتجات</SelectItem>
+                      {products.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* CPM range */}
+                <div>
+                  <label className="text-xs text-gray-600">CPM (ج.م)</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input className="h-8 text-xs" placeholder="من" value={exportFilters.cpmMin} onChange={e => setExportFilters({ ...exportFilters, cpmMin: e.target.value })} />
+                    <Input className="h-8 text-xs" placeholder="إلى" value={exportFilters.cpmMax} onChange={e => setExportFilters({ ...exportFilters, cpmMax: e.target.value })} />
+                  </div>
+                </div>
+
+                {/* CTR range */}
+                <div>
+                  <label className="text-xs text-gray-600">CTR (%)</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input className="h-8 text-xs" placeholder="من (مثال: 1)" value={exportFilters.ctrMin} onChange={e => setExportFilters({ ...exportFilters, ctrMin: e.target.value })} />
+                    <Input className="h-8 text-xs" placeholder="إلى (مثال: 1.5)" value={exportFilters.ctrMax} onChange={e => setExportFilters({ ...exportFilters, ctrMax: e.target.value })} />
+                  </div>
+                </div>
+
+                {/* CVR range */}
+                <div>
+                  <label className="text-xs text-gray-600">CVR (%)</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input className="h-8 text-xs" placeholder="من (مثال: 0.5)" value={exportFilters.cvrMin} onChange={e => setExportFilters({ ...exportFilters, cvrMin: e.target.value })} />
+                    <Input className="h-8 text-xs" placeholder="إلى (مثال: 1.5)" value={exportFilters.cvrMax} onChange={e => setExportFilters({ ...exportFilters, cvrMax: e.target.value })} />
+                  </div>
+                </div>
+
+                {/* AOV range */}
+                <div>
+                  <label className="text-xs text-gray-600">AOV (ج.م)</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input className="h-8 text-xs" placeholder="من" value={exportFilters.aovMin} onChange={e => setExportFilters({ ...exportFilters, aovMin: e.target.value })} />
+                    <Input className="h-8 text-xs" placeholder="إلى" value={exportFilters.aovMax} onChange={e => setExportFilters({ ...exportFilters, aovMax: e.target.value })} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowExportDialog(false)}>إلغاء</Button>
+            <Button onClick={exportMode === 'all' ? handleExportAll : handleExportFiltered} className="gap-2">
+              <Download className="w-4 h-4" />
+              {exportMode === 'all' ? 'تحميل كل السيناريوهات' : 'تحميل المفلتر'}
             </Button>
           </DialogFooter>
         </DialogContent>
