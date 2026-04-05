@@ -1,7 +1,5 @@
-'use client';
-
 import { useState, useMemo } from 'react';
-import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
+import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
@@ -19,8 +17,9 @@ import {
 } from 'recharts';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
-export function SupabaseDashboard() {
-  const { products, scenarios, loading, error, addProduct, updateProduct, deleteProduct, getProductScenarios } = useSupabaseProducts();
+export default function SupabaseDashboard() {
+  const { data: products = [], isLoading: loading } = trpc.products.list.useQuery();
+  const { data: allScenarios = [] } = trpc.products.getAllScenarios.useQuery();
   const [selectedProductId, setSelectedProductId] = useState<string>('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -35,14 +34,13 @@ export function SupabaseDashboard() {
     bundleDiscount: 0,
   });
 
+  const { data: productScenarios = [] } = trpc.products.getScenarios.useQuery(selectedProductId, {
+    enabled: !!selectedProductId,
+  });
+
   const selectedProduct = useMemo(
     () => products.find(p => p.id === selectedProductId),
     [products, selectedProductId]
-  );
-
-  const productScenarios = useMemo(
-    () => (selectedProductId ? getProductScenarios(selectedProductId) : []),
-    [selectedProductId, getProductScenarios]
   );
 
   const stats = useMemo(() => {
@@ -61,22 +59,24 @@ export function SupabaseDashboard() {
     };
   }, [productScenarios]);
 
+  const createMutation = trpc.products.create.useMutation();
+  const deleteMutation = trpc.products.delete.useMutation();
+
   const handleAddProduct = async () => {
     if (!formData.name || formData.originalPrice <= 0) {
       alert('الرجاء ملء جميع الحقول');
       return;
     }
 
-    const success = await addProduct(
-      formData.name,
-      formData.type,
-      formData.originalPrice,
-      formData.type === 'product' ? formData.discountTwoItems : undefined,
-      formData.type === 'product' ? formData.discountThreeItems : undefined,
-      formData.type === 'bundle' ? formData.bundleDiscount : undefined
-    );
-
-    if (success) {
+    try {
+      await createMutation.mutateAsync({
+        name: formData.name,
+        type: formData.type,
+        original_price: formData.originalPrice,
+        discount_two_items: formData.type === 'product' ? formData.discountTwoItems : undefined,
+        discount_three_items: formData.type === 'product' ? formData.discountThreeItems : undefined,
+        bundle_discount: formData.type === 'bundle' ? formData.bundleDiscount : undefined,
+      });
       setFormData({
         name: '',
         type: 'product',
@@ -87,17 +87,21 @@ export function SupabaseDashboard() {
       });
       setShowAddForm(false);
       alert('تم إضافة المنتج بنجاح!');
+    } catch (error) {
+      alert('خطأ في إضافة المنتج');
     }
   };
 
   const handleDeleteProduct = async (productId: string) => {
     if (confirm('هل تريد حذف هذا المنتج؟')) {
-      const success = await deleteProduct(productId);
-      if (success) {
+      try {
+        await deleteMutation.mutateAsync(productId);
         if (selectedProductId === productId) {
           setSelectedProductId('');
         }
         alert('تم حذف المنتج بنجاح!');
+      } catch (error) {
+        alert('خطأ في حذف المنتج');
       }
     }
   };
@@ -113,17 +117,7 @@ export function SupabaseDashboard() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="p-6">
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="pt-6">
-            <p className="text-red-600">خطأ: {error}</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-6 p-6" dir="rtl">

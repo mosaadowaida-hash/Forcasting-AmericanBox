@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,21 +11,16 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('❌ Supabase credentials not found in environment variables');
+  console.error('❌ Supabase credentials not found');
   process.exit(1);
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 async function loadData() {
-  try {
-    const productsPath = path.join(__dirname, '../client/src/data/allItemsSimulation.json');
-    const productsData = JSON.parse(fs.readFileSync(productsPath, 'utf-8'));
-    return productsData;
-  } catch (error) {
-    console.error('Error loading data:', error);
-    process.exit(1);
-  }
+  const productsPath = path.join(__dirname, '../client/src/data/allItemsSimulation.json');
+  const productsData = JSON.parse(fs.readFileSync(productsPath, 'utf-8'));
+  return productsData;
 }
 
 function generateScenarios(product) {
@@ -58,7 +53,7 @@ function generateScenarios(product) {
           const roas = revenuePerOrder / cpaDashboard;
 
           scenarios.push({
-            id: nanoid(),
+            id: uuidv4(),
             product_id: product.id,
             cpm,
             cpm_label: cpmLabels[i],
@@ -87,13 +82,12 @@ function generateScenarios(product) {
 async function migrateProducts(allData) {
   console.log('Starting migration...\n');
   
-  // Get unique products
   const uniqueProducts = {};
   
   allData.forEach(item => {
     if (!uniqueProducts[item.item_name]) {
       uniqueProducts[item.item_name] = {
-        id: nanoid(),
+        id: uuidv4(),
         name: item.item_name,
         type: item.item_type || 'product',
         original_price: item.original_price || item.selling_price,
@@ -106,7 +100,6 @@ async function migrateProducts(allData) {
   const productsToInsert = Object.values(uniqueProducts);
   console.log(`📊 Found ${productsToInsert.length} unique products\n`);
   
-  // Insert products
   console.log('📝 Inserting products...');
   const { data: insertedProducts, error: productsError } = await supabase
     .from('products')
@@ -120,7 +113,6 @@ async function migrateProducts(allData) {
   
   console.log(`✅ Inserted ${insertedProducts.length} products\n`);
   
-  // Generate and insert scenarios
   console.log('🔄 Generating scenarios for each product...');
   let totalScenarios = 0;
   
@@ -128,7 +120,6 @@ async function migrateProducts(allData) {
     const scenarios = generateScenarios(product);
     totalScenarios += scenarios.length;
     
-    // Insert scenarios in batches
     const batchSize = 1000;
     for (let i = 0; i < scenarios.length; i += batchSize) {
       const batch = scenarios.slice(i, i + batchSize);

@@ -12,11 +12,11 @@ import { Overview } from "./pages/Overview";
 import { Ranking } from "./pages/Ranking";
 import { Analysis } from "./pages/Analysis";
 import { AdvancedFilter } from "./pages/AdvancedFilter";
-import { SupabaseDashboard } from "./pages/SupabaseDashboard";
+import SupabaseDashboard from "./pages/SupabaseDashboard";
 import { WorkingDashboard } from "./pages/WorkingDashboard";
 
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path="/" component={Home} />

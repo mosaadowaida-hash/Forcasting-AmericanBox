@@ -5,8 +5,8 @@ export default function Home() {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // Redirect to working dashboard
-    setLocation("/working-dashboard");
+    // Redirect to supabase dashboard
+    setLocation("/supabase-dashboard");
   }, [setLocation]);
 
   return null;
