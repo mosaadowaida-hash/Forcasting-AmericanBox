@@ -58,21 +58,21 @@ export function Overview() {
   }
 
   return (
-    <div className="space-y-6 p-6" dir="rtl">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-6" dir="rtl">
       <div>
-        <h1 className="text-3xl font-bold">نظرة عامة على المحاكي</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">نظرة عامة على المحاكي</h1>
         <p className="text-gray-600 mt-2">إحصائيات شاملة لجميع المنتجات والسيناريوهات</p>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-gray-600">إجمالي المنتجات</CardTitle>
             <Package className="w-4 h-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{overviewStats?.totalProducts ?? 0}</div>
+            <div className="text-xl sm:text-2xl font-bold">{overviewStats?.totalProducts ?? 0}</div>
             <p className="text-xs text-gray-500">
               {products.filter(p => p.type === 'product').length} منتج + {products.filter(p => p.type === 'bundle').length} باندل
             </p>
@@ -84,7 +84,7 @@ export function Overview() {
             <BarChart3 className="w-4 h-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{overviewStats?.totalScenarios?.toLocaleString('ar-EG') ?? 0}</div>
+            <div className="text-xl sm:text-2xl font-bold">{overviewStats?.totalScenarios?.toLocaleString('ar-EG') ?? 0}</div>
             <p className="text-xs text-gray-500">144 سيناريو لكل منتج</p>
           </CardContent>
         </Card>
@@ -94,7 +94,7 @@ export function Overview() {
             <TrendingUp className="w-4 h-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{overviewStats?.profitabilityRate?.toFixed(1) ?? 0}%</div>
+            <div className="text-xl sm:text-2xl font-bold text-green-600">{overviewStats?.profitabilityRate?.toFixed(1) ?? 0}%</div>
             <p className="text-xs text-gray-500">{overviewStats?.profitableScenarios?.toLocaleString('ar-EG') ?? 0} سيناريو رابح</p>
           </CardContent>
         </Card>
@@ -104,14 +104,14 @@ export function Overview() {
             <DollarSign className="w-4 h-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{overviewStats?.avgRoas?.toFixed(2) ?? 0}x</div>
+            <div className="text-xl sm:text-2xl font-bold">{overviewStats?.avgRoas?.toFixed(2) ?? 0}x</div>
             <p className="text-xs text-gray-500">الربح الوسيط: {overviewStats?.medianProfit ?? 0} ج.م</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <Card>
           <CardHeader><CardTitle className="text-sm">توزيع الربح والخسارة (جميع السيناريوهات)</CardTitle></CardHeader>
           <CardContent>

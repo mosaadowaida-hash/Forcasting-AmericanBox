@@ -103,9 +103,9 @@ export function Analysis() {
   }
 
   return (
-    <div className="space-y-6 p-6" dir="rtl">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-6" dir="rtl">
       <div>
-        <h1 className="text-3xl font-bold">تحليل المنتج</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">تحليل المنتج</h1>
         <p className="text-gray-600 mt-2">تحليل تفصيلي لسيناريوهات كل منتج</p>
       </div>
 
@@ -128,14 +128,14 @@ export function Analysis() {
       {selectedProduct && stats && (
         <>
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Card>
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
                 <CardTitle className="text-sm text-gray-600">معدل الربحية</CardTitle>
                 <TrendingUp className="w-4 h-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${stats.profitabilityRate > 50 ? 'text-green-600' : 'text-red-600'}`}>
+                <div className={`text-xl sm:text-2xl font-bold ${stats.profitabilityRate > 50 ? 'text-green-600' : 'text-red-600'}`}>
                   {stats.profitabilityRate.toFixed(1)}%
                 </div>
                 <p className="text-xs text-gray-500">{stats.profitableScenarios} رابح من {stats.totalScenarios}</p>
@@ -147,7 +147,7 @@ export function Analysis() {
                 <DollarSign className="w-4 h-4 text-yellow-600" />
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${stats.medianProfit > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <div className={`text-xl sm:text-2xl font-bold ${stats.medianProfit > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {stats.medianProfit.toFixed(0)} ج.م
                 </div>
                 <p className="text-xs text-gray-500">الأقصى: {stats.maxProfit.toFixed(0)} | الأدنى: {stats.minProfit.toFixed(0)}</p>
@@ -159,7 +159,7 @@ export function Analysis() {
                 <Target className="w-4 h-4 text-purple-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.medianRoas.toFixed(2)}x</div>
+                <div className="text-xl sm:text-2xl font-bold">{stats.medianRoas.toFixed(2)}x</div>
                 <p className="text-xs text-gray-500">متوسط AOV: {stats.avgAov.toFixed(0)} ج.م</p>
               </CardContent>
             </Card>
@@ -169,14 +169,14 @@ export function Analysis() {
                 <BarChart3 className="w-4 h-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.avgCpaDelivered.toFixed(0)} ج.م</div>
+                <div className="text-xl sm:text-2xl font-bold">{stats.avgCpaDelivered.toFixed(0)} ج.م</div>
                 <p className="text-xs text-gray-500">بعد نسبة التسليم 68.83%</p>
               </CardContent>
             </Card>
           </div>
 
           {/* Charts */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <Card>
               <CardHeader><CardTitle className="text-sm">متوسط الربح حسب CPM</CardTitle></CardHeader>
               <CardContent>

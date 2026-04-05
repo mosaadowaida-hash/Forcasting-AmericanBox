@@ -5,7 +5,6 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Filter, RotateCcw, Search } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -14,8 +13,7 @@ interface ActiveFilters {
   cpm: string;
   ctr: string;
   cvr: string;
-  aovMin: string;
-  aovMax: string;
+  basket: string;
 }
 
 const EMPTY_FILTERS: ActiveFilters = {
@@ -23,8 +21,7 @@ const EMPTY_FILTERS: ActiveFilters = {
   cpm: 'all',
   ctr: 'all',
   cvr: 'all',
-  aovMin: '',
-  aovMax: '',
+  basket: 'all',
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -45,6 +42,7 @@ export function AdvancedFilter() {
   const uniqueCPMs = Array.from(new Set(allScenarios.map(s => s.cpmLabel))).sort();
   const uniqueCTRs = Array.from(new Set(allScenarios.map(s => s.ctrLabel))).sort();
   const uniqueCVRs = Array.from(new Set(allScenarios.map(s => s.cvrLabel))).sort();
+  const uniqueBaskets = Array.from(new Set(allScenarios.map(s => s.basketLabel))).sort();
 
   // Apply filters only when button is clicked
   const handleShowScenarios = () => {
@@ -67,8 +65,7 @@ export function AdvancedFilter() {
         if (applied.cpm !== 'all' && s.cpmLabel !== applied.cpm) return false;
         if (applied.ctr !== 'all' && s.ctrLabel !== applied.ctr) return false;
         if (applied.cvr !== 'all' && s.cvrLabel !== applied.cvr) return false;
-        if (applied.aovMin !== '' && s.aov < Number(applied.aovMin)) return false;
-        if (applied.aovMax !== '' && s.aov > Number(applied.aovMax)) return false;
+        if (applied.basket !== 'all' && s.basketLabel !== applied.basket) return false;
         return true;
       })
     : [];
@@ -92,10 +89,7 @@ export function AdvancedFilter() {
     products.find(p => p.id === productId)?.name ?? 'غير معروف';
 
   // Count how many filters are active in the draft
-  const activeDraftCount = Object.entries(draft).filter(([k, v]) => {
-    if (k === 'aovMin' || k === 'aovMax') return v !== '';
-    return v !== 'all';
-  }).length;
+  const activeDraftCount = Object.entries(draft).filter(([, v]) => v !== 'all').length;
 
   if (isLoading) {
     return (
@@ -106,11 +100,11 @@ export function AdvancedFilter() {
   }
 
   return (
-    <div className="space-y-6 p-6" dir="rtl">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-6" dir="rtl">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
             <Filter className="w-7 h-7 text-blue-600" />
             تصفية متقدمة
           </h1>
@@ -200,26 +194,21 @@ export function AdvancedFilter() {
           </CardContent>
         </Card>
 
-        {/* AOV Range */}
+        {/* Basket Size */}
         <Card className="border-2 hover:border-blue-300 transition-colors">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-gray-700">AOV (ج.م)</CardTitle>
+            <CardTitle className="text-sm font-semibold text-gray-700">Basket Size</CardTitle>
           </CardHeader>
-          <CardContent className="flex gap-2">
-            <Input
-              type="number"
-              placeholder="من"
-              value={draft.aovMin}
-              onChange={e => setDraft(d => ({ ...d, aovMin: e.target.value }))}
-              className="text-sm"
-            />
-            <Input
-              type="number"
-              placeholder="إلى"
-              value={draft.aovMax}
-              onChange={e => setDraft(d => ({ ...d, aovMax: e.target.value }))}
-              className="text-sm"
-            />
+          <CardContent>
+            <Select value={draft.basket} onValueChange={v => setDraft(d => ({ ...d, basket: v }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="الكل" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">الكل</SelectItem>
+                {uniqueBaskets.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </CardContent>
         </Card>
       </div>

@@ -233,7 +233,7 @@ export default function AdminPanel() {
   return (
     <div className="min-h-screen bg-slate-950 text-white" dir="rtl">
       {/* Header */}
-      <header className="bg-slate-900 border-b border-slate-800 px-6 py-4">
+      <header className="bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-3 sm:py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -267,10 +267,10 @@ export default function AdminPanel() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
             <Card className="bg-slate-900 border-slate-800">
               <CardContent className="pt-4 pb-4">
                 <div className="flex items-center gap-3">
@@ -278,7 +278,7 @@ export default function AdminPanel() {
                     <Users className="w-5 h-5 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-white">{stats.totalUsers}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-white">{stats.totalUsers}</p>
                     <p className="text-xs text-slate-400">إجمالي المستخدمين</p>
                   </div>
                 </div>
@@ -291,7 +291,7 @@ export default function AdminPanel() {
                     <Clock className="w-5 h-5 text-amber-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-white">{stats.pendingUsers}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-white">{stats.pendingUsers}</p>
                     <p className="text-xs text-slate-400">قيد المراجعة</p>
                   </div>
                 </div>
@@ -304,7 +304,7 @@ export default function AdminPanel() {
                     <CheckCircle className="w-5 h-5 text-green-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-white">{stats.activeUsers}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-white">{stats.activeUsers}</p>
                     <p className="text-xs text-slate-400">مفعّلون</p>
                   </div>
                 </div>

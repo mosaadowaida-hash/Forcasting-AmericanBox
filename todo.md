@@ -246,3 +246,15 @@
 - [x] Add "عرض السيناريوهات" button that triggers filtering on click
 - [x] Default behavior: no filters selected = show all scenarios
 - [x] Filtering only runs when button is clicked (not on every input change)
+
+## Phase 14: Core Engine Fix + Responsive + Filter Fix
+- [x] Restore Basket Size filter in AdvancedFilter (replace AOV range filter)
+- [x] Analyze Core Engine: why profit is constant when Basket Size / AOV changes
+- [x] Fix Core Engine: profit must change when Basket Size changes (AOV = price × basket)
+- [x] Verify CPA Delivered still correct after fix
+- [x] Recalculate all existing scenarios with fixed engine
+- [x] Responsive: fix Dashboard page for mobile/tablet
+- [x] Responsive: fix AdvancedFilter page for mobile/tablet
+- [x] Responsive: fix AdminPanel page for mobile/tablet
+- [x] Responsive: fix Login/Signup pages for mobile
+- [x] Responsive: fix AppLayout sidebar for mobile (hamburger menu)

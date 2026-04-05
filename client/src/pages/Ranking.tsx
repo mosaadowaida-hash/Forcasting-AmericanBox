@@ -30,16 +30,16 @@ export function Ranking() {
   }
 
   return (
-    <div className="space-y-6 p-6" dir="rtl">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-6" dir="rtl">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-3xl font-bold">ترتيب المنتجات</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">ترتيب المنتجات</h1>
           <p className="text-gray-600 mt-2">{ranking.length} منتج مرتب حسب الأداء</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">ترتيب حسب:</span>
+          <span className="text-sm text-gray-600 hidden sm:inline">ترتيب حسب:</span>
           <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
-            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-40 sm:w-48"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="profitabilityRate">معدل الربحية</SelectItem>
               <SelectItem value="medianProfit">متوسط الربح</SelectItem>
@@ -53,7 +53,7 @@ export function Ranking() {
         {sortedRanking.map((item, idx) => (
           <Card key={item.product.id} className={`hover:shadow-lg transition-shadow ${idx < 3 ? 'border-l-4' : ''} ${idx === 0 ? 'border-l-yellow-500' : idx === 1 ? 'border-l-gray-400' : idx === 2 ? 'border-l-amber-700' : ''}`}>
             <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 items-center">
                 <div className="flex items-center gap-3">
                   <div className={`text-2xl font-bold ${idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-gray-400' : idx === 2 ? 'text-amber-700' : 'text-blue-600'}`}>
                     {idx < 3 ? <Trophy className="w-6 h-6 inline" /> : null} #{idx + 1}

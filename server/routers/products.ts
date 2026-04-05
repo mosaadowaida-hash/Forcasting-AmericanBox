@@ -137,14 +137,18 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
           // Revenue per delivered order = AOV (full price, delivery already in cpaDelivered)
           const revenuePerOrder = aov;
 
-          // Profit = margin - cpaDashboard - shipping (based on dashboard CPA as in original)
-          const profit = Math.round(price * ACTUAL_MARGIN / 100 - cpaDashboard - shippingCost);
+          // Gross margin amount = AOV × margin%  (basket multiplies the revenue AND the margin)
+          const grossMargin = Math.round(aov * ACTUAL_MARGIN / 100);
+
+          // Profit = gross margin - cpaDashboard - shipping
+          // Using cpaDashboard (not cpaDelivered) as the ad-cost metric, consistent with original logic
+          const profit = Math.round(grossMargin - cpaDashboard - shippingCost);
 
           // COGS = revenue - cpaDelivered - profit
           const cogs = revenuePerOrder - cpaDelivered - profit;
 
-          // Break-even CPA = price × margin%
-          const breakEvenCpa = Math.round(price * ACTUAL_MARGIN / 100);
+          // Break-even CPA = AOV × margin%  (the max you can spend on ads and still break even)
+          const breakEvenCpa = Math.round(aov * ACTUAL_MARGIN / 100);
 
           // ROAS = AOV / cpaDashboard
           const roas = round2(aov / cpaDashboard);

@@ -286,18 +286,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6 p-6" dir="rtl">
-      <div className="flex justify-between items-center flex-wrap gap-3">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-6" dir="rtl">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-3xl font-bold">Ads Forecasting Pro</h1>
-          <p className="text-gray-600 mt-1">{products.length} منتج | {products.length * 144} سيناريو</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Ads Forecasting Pro</h1>
+          <p className="text-gray-600 mt-1 text-sm">{products.length} منتج | {products.length * 144} سيناريو</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowExportDialog(true)} className="gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setShowExportDialog(true)} className="gap-2 text-sm">
             <Download className="w-4 h-4" /> تحميل السيناريوهات
           </Button>
-          <Button onClick={() => { resetForm(); setShowAddDialog(true); }} className="gap-2">
-            <Plus className="w-4 h-4" /> إضافة منتج جديد
+          <Button onClick={() => { resetForm(); setShowAddDialog(true); }} className="gap-2 text-sm">
+            <Plus className="w-4 h-4" /> إضافة منتج
           </Button>
         </div>
       </div>
@@ -320,14 +320,14 @@ export default function Dashboard() {
 
       {selectedProduct && stats && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Card>
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
                 <CardTitle className="text-sm text-gray-600">إجمالي السيناريوهات</CardTitle>
                 <BarChart3 className="w-4 h-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.count}</div>
+                <div className="text-xl sm:text-2xl font-bold">{stats.count}</div>
                 <p className="text-xs text-gray-500">3 CPM × 4 CTR × 3 CVR × 4 Basket</p>
               </CardContent>
             </Card>
@@ -337,7 +337,7 @@ export default function Dashboard() {
                 <TrendingUp className="w-4 h-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">{stats.profitable} ({stats.profitablePercentage}%)</div>
+                <div className="text-xl sm:text-2xl font-bold text-green-600">{stats.profitable} ({stats.profitablePercentage}%)</div>
                 <p className="text-xs text-gray-500">من إجمالي {stats.count} سيناريو</p>
               </CardContent>
             </Card>
@@ -347,7 +347,7 @@ export default function Dashboard() {
                 <DollarSign className="w-4 h-4 text-yellow-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.avgProfit} ج.م</div>
+                <div className="text-xl sm:text-2xl font-bold">{stats.avgProfit} ج.م</div>
                 <p className="text-xs text-gray-500">الأقصى: {stats.maxProfit} | الأدنى: {stats.minProfit}</p>
               </CardContent>
             </Card>
@@ -357,7 +357,7 @@ export default function Dashboard() {
                 <TrendingDown className="w-4 h-4 text-purple-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.avgRoas}x</div>
+                <div className="text-xl sm:text-2xl font-bold">{stats.avgRoas}x</div>
                 <p className="text-xs text-gray-500">العائد على الإنفاق الإعلاني</p>
               </CardContent>
             </Card>
@@ -374,7 +374,7 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 <div><p className="text-sm text-gray-600">الاسم</p><p className="font-semibold">{selectedProduct.name}</p></div>
                 <div><p className="text-sm text-gray-600">النوع</p><p className="font-semibold">{selectedProduct.type === 'product' ? 'منتج عادي' : 'باندل'}</p></div>
                 <div><p className="text-sm text-gray-600">السعر الأصلي</p><p className="font-semibold">{selectedProduct.originalPrice} ج.م</p></div>
@@ -401,7 +401,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <Card>
               <CardHeader><CardTitle className="text-sm">توزيع الربح والخسارة</CardTitle></CardHeader>
               <CardContent>
@@ -452,7 +452,8 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="min-w-[700px] px-4 sm:px-0">
                 <table className="w-full text-sm">
                   <thead className="border-b bg-gray-50">
                     <tr>
@@ -489,6 +490,7 @@ export default function Dashboard() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             </CardContent>
           </Card>

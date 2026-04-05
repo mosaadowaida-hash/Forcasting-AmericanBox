@@ -168,7 +168,7 @@ export default function Signup() {
       <div className="w-full max-w-md">
         {/* ── STEP 1: Account Info ── */}
         {step === "account" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-8">
             <h1 className="text-2xl font-bold text-white mb-1">إنشاء حساب جديد</h1>
             <p className="text-slate-400 text-sm mb-6">الخطوة 1 من 2 — بيانات الحساب</p>
 
@@ -261,7 +261,7 @@ export default function Signup() {
 
         {/* ── STEP 2: Payment ── */}
         {step === "payment" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-8">
             <h1 className="text-2xl font-bold text-white mb-1">اختر طريقة الدفع</h1>
             <p className="text-slate-400 text-sm mb-2">الخطوة 2 من 2 — الاشتراك الشهري</p>
 
@@ -428,7 +428,7 @@ export default function Signup() {
 
         {/* ── STEP 3: Done ── */}
         {step === "done" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-8 text-center">
             <div className="w-16 h-16 bg-green-950 border border-green-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-green-400" />
             </div>
