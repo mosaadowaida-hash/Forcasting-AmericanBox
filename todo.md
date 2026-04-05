@@ -237,3 +237,12 @@
 - [x] Add Payment Mix selector in Edit Product form
 - [x] Show current paymentMix in product details
 - [x] Validate: at least one payment method must be selected
+
+## Phase 13: Advanced Filter Page Updates
+- [x] Remove Status filter from AdvancedFilter page
+- [x] Remove Profit Range filter from AdvancedFilter page
+- [x] Remove ROAS Range filter from AdvancedFilter page
+- [x] Keep: Product, CPM, CTR, CVR, AOV filters
+- [x] Add "عرض السيناريوهات" button that triggers filtering on click
+- [x] Default behavior: no filters selected = show all scenarios
+- [x] Filtering only runs when button is clicked (not on every input change)
