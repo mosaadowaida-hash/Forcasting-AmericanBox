@@ -1,20 +1,16 @@
-import { useRef } from "react";
-
-type noop = (...args: any[]) => any;
+import { useRef, useCallback } from 'react';
 
 /**
- * usePersistFn instead of useCallback to reduce cognitive load
+ * Hook that returns a stable function reference that always calls the latest version.
+ * Useful for callbacks passed to event handlers or effects that shouldn't trigger re-renders.
  */
-export function usePersistFn<T extends noop>(fn: T) {
+export function usePersistFn<T extends (...args: any[]) => any>(fn: T): T {
   const fnRef = useRef<T>(fn);
   fnRef.current = fn;
 
-  const persistFn = useRef<T>(null);
-  if (!persistFn.current) {
-    persistFn.current = function (this: unknown, ...args) {
-      return fnRef.current!.apply(this, args);
-    } as T;
-  }
+  const persistFn = useCallback((...args: any[]) => {
+    return fnRef.current(...args);
+  }, []) as T;
 
-  return persistFn.current!;
+  return persistFn;
 }

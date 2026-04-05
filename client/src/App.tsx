@@ -1,59 +1,42 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { LocalProductsProvider } from "./contexts/LocalProductsContext";
-import Home from "./pages/Home";
-import ComprehensiveDashboard from "./pages/ComprehensiveDashboard";
-import DynamicProductsDashboard from "./pages/DynamicProductsDashboard";
+import { AppLayout } from "./components/AppLayout";
+import Dashboard from "./pages/Dashboard";
 import { Overview } from "./pages/Overview";
 import { Ranking } from "./pages/Ranking";
 import { Analysis } from "./pages/Analysis";
 import { AdvancedFilter } from "./pages/AdvancedFilter";
-import SupabaseDashboard from "./pages/SupabaseDashboard";
-import { WorkingDashboard } from "./pages/WorkingDashboard";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/dashboard" component={ComprehensiveDashboard} />
-      <Route path="/dynamic-dashboard" component={DynamicProductsDashboard} />
-      <Route path="/overview" component={Overview} />
-      <Route path="/ranking" component={Ranking} />
-      <Route path="/analysis" component={Analysis} />
-      <Route path="/advanced-filter" component={AdvancedFilter} />
-      <Route path="/supabase-dashboard" component={SupabaseDashboard} />
-      <Route path="/working-dashboard" component={WorkingDashboard} />
-      <Route path="/404" component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <AppLayout>
+      <Switch>
+        <Route path="/">{() => <Redirect to="/dashboard" />}</Route>
+        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/overview" component={Overview} />
+        <Route path="/ranking" component={Ranking} />
+        <Route path="/analysis" component={Analysis} />
+        <Route path="/advanced-filter" component={AdvancedFilter} />
+        <Route path="/404" component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    </AppLayout>
   );
 }
-
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
   return (
     <ErrorBoundary>
-      <LocalProductsProvider>
-        <ThemeProvider
-          defaultTheme="light"
-          // switchable
-        >
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </ThemeProvider>
-      </LocalProductsProvider>
+      <ThemeProvider defaultTheme="light">
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

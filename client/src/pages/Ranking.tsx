@@ -1,76 +1,100 @@
-import { useAllProducts } from '@/hooks/useAllProducts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { productRanking } from '@/data/comprehensiveData';
-import { useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
+import { Card, CardContent } from '@/components/ui/card';
+import { useState, useMemo } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Trophy, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
+
+type SortBy = 'profitabilityRate' | 'medianProfit' | 'medianRoas';
 
 export function Ranking() {
-  const { allProducts, getProductStats } = useAllProducts();
+  const { data: ranking = [], isLoading } = trpc.products.getRanking.useQuery();
+  const [sortBy, setSortBy] = useState<SortBy>('profitabilityRate');
 
-  const rankedProducts = useMemo(() => {
-    return allProducts
-      .map((product, index) => {
-        const stats = getProductStats(product.id);
-        const rankData = productRanking.find(r => r.item_name === product.name);
+  const sortedRanking = useMemo(() => {
+    return [...ranking].sort((a, b) => {
+      if (sortBy === 'profitabilityRate') return b.profitabilityRate - a.profitabilityRate;
+      if (sortBy === 'medianProfit') return b.medianProfit - a.medianProfit;
+      return b.medianRoas - a.medianRoas;
+    });
+  }, [ranking, sortBy]);
 
-        return {
-          rank: index + 1,
-          product,
-          stats,
-          rankData,
-        };
-      })
-      .sort((a, b) => {
-        const aRate = a.stats?.profitabilityRate || 0;
-        const bRate = b.stats?.profitabilityRate || 0;
-        return bRate - aRate;
-      });
-  }, [allProducts, getProductStats]);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div>
-        <h1 className="text-3xl font-bold">ترتيب المنتجات</h1>
-        <p className="text-gray-600 mt-2">المنتجات مرتبة حسب معدل الربحية</p>
+    <div className="space-y-6 p-6" dir="rtl">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">ترتيب المنتجات</h1>
+          <p className="text-gray-600 mt-2">{ranking.length} منتج مرتب حسب الأداء</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">ترتيب حسب:</span>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
+            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="profitabilityRate">معدل الربحية</SelectItem>
+              <SelectItem value="medianProfit">متوسط الربح</SelectItem>
+              <SelectItem value="medianRoas">متوسط ROAS</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {rankedProducts.map((item, idx) => (
-          <Card key={item.product.id} className="hover:shadow-lg transition-shadow">
+      <div className="space-y-3">
+        {sortedRanking.map((item, idx) => (
+          <Card key={item.product.id} className={`hover:shadow-lg transition-shadow ${idx < 3 ? 'border-l-4' : ''} ${idx === 0 ? 'border-l-yellow-500' : idx === 1 ? 'border-l-gray-400' : idx === 2 ? 'border-l-amber-700' : ''}`}>
             <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">#{idx + 1}</div>
-                  <div className="text-sm text-gray-600">{item.product.name}</div>
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+                <div className="flex items-center gap-3">
+                  <div className={`text-2xl font-bold ${idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-gray-400' : idx === 2 ? 'text-amber-700' : 'text-blue-600'}`}>
+                    {idx < 3 ? <Trophy className="w-6 h-6 inline" /> : null} #{idx + 1}
+                  </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <div className="font-semibold">{item.product.name}</div>
                   <div className="text-xs text-gray-500">
-                    {item.product.is_dynamic ? '(ديناميكي)' : '(ثابت)'}
+                    <span className={`px-2 py-0.5 rounded ${item.product.type === 'product' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {item.product.type === 'product' ? 'منتج' : 'باندل'}
+                    </span>
+                    <span className="mr-2">{item.product.originalPrice} ج.م</span>
                   </div>
                 </div>
 
-                <div>
-                  <div className="text-xs text-gray-600">معدل الربحية</div>
-                  <div className="text-xl font-bold text-green-600">
-                    {item.stats?.profitabilityRate.toFixed(1)}%
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-xs text-gray-600">
+                    <TrendingUp className="w-3 h-3" /> معدل الربحية
+                  </div>
+                  <div className={`text-xl font-bold ${item.profitabilityRate > 50 ? 'text-green-600' : item.profitabilityRate > 25 ? 'text-yellow-600' : 'text-red-600'}`}>
+                    {item.profitabilityRate.toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-gray-500">{item.profitableScenarios}/{item.totalScenarios}</div>
+                </div>
+
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-xs text-gray-600">
+                    <DollarSign className="w-3 h-3" /> متوسط الربح
+                  </div>
+                  <div className={`text-xl font-bold ${item.medianProfit > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {item.medianProfit.toFixed(0)} ج.م
                   </div>
                 </div>
 
-                <div>
-                  <div className="text-xs text-gray-600">السيناريوهات الرابحة</div>
-                  <div className="text-lg font-semibold">
-                    {item.stats?.profitableScenarios} / {item.stats?.totalScenarios}
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-xs text-gray-600">
+                    <BarChart3 className="w-3 h-3" /> متوسط ROAS
                   </div>
-                </div>
-
-                <div>
-                  <div className="text-xs text-gray-600">متوسط الربح</div>
-                  <div className="text-lg font-semibold text-green-600">
-                    {item.stats?.medianProfit.toFixed(0)} ج.م
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-xs text-gray-600">متوسط ROAS</div>
-                  <div className="text-lg font-semibold">
-                    {item.stats?.medianRoas.toFixed(2)}x
+                  <div className="text-xl font-bold text-purple-600">
+                    {item.medianRoas.toFixed(2)}x
                   </div>
                 </div>
               </div>
