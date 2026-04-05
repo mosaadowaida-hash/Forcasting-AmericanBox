@@ -2,7 +2,56 @@ import { describe, expect, it } from "vitest";
 import { appRouter } from "../routers";
 import type { TrpcContext } from "../_core/context";
 
-const mockContext: TrpcContext = {
+// Mock user context - American Box user (id=78) who owns the 42 products
+const mockUserContext: TrpcContext = {
+  user: {
+    id: 78,
+    openId: "americanbox-local-user",
+    name: "American Box",
+    email: "americanbox149@gmail.com",
+    passwordHash: null,
+    loginMethod: "email",
+    role: "user",
+    status: "active",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    lastSignedIn: new Date(),
+    activatedAt: new Date(),
+    suspendedAt: null,
+  },
+  req: {
+    protocol: "https",
+    headers: {},
+  } as any,
+  res: {} as any,
+};
+
+// Admin user context
+const mockAdminContext: TrpcContext = {
+  user: {
+    id: 1,
+    openId: "local-marketer.a.mosaad@gmail.com",
+    name: "Ahmed Mosaad",
+    email: "marketer.a.mosaad@gmail.com",
+    passwordHash: null,
+    loginMethod: "email",
+    role: "admin",
+    status: "active",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    lastSignedIn: new Date(),
+    activatedAt: new Date(),
+    suspendedAt: null,
+  },
+  req: {
+    protocol: "https",
+    headers: {},
+  } as any,
+  res: {} as any,
+};
+
+// Unauthenticated context
+const mockPublicContext: TrpcContext = {
   user: null,
   req: {
     protocol: "https",
@@ -14,25 +63,27 @@ const mockContext: TrpcContext = {
 describe("Products Router", () => {
   let caller: ReturnType<typeof appRouter.createCaller>;
 
-  it("should list all 42 products from MySQL", async () => {
-    caller = appRouter.createCaller(mockContext);
+  it("should list all 42 products for American Box user", async () => {
+    caller = appRouter.createCaller(mockUserContext);
     const products = await caller.products.list();
     expect(Array.isArray(products)).toBe(true);
     expect(products.length).toBe(42);
     expect(products[0]).toHaveProperty("id");
     expect(products[0]).toHaveProperty("name");
     expect(products[0]).toHaveProperty("originalPrice");
+    // All products should belong to user 78
+    expect(products.every(p => p.userId === 78)).toBe(true);
   });
 
-  it("should get all 6048 scenarios", async () => {
-    caller = appRouter.createCaller(mockContext);
+  it("should get all 6048 scenarios for American Box user", async () => {
+    caller = appRouter.createCaller(mockUserContext);
     const scenarios = await caller.products.getAllScenarios();
     expect(Array.isArray(scenarios)).toBe(true);
     expect(scenarios.length).toBe(6048); // 42 products * 144 scenarios each
   });
 
   it("should get 144 scenarios for a specific product", async () => {
-    caller = appRouter.createCaller(mockContext);
+    caller = appRouter.createCaller(mockUserContext);
     const products = await caller.products.list();
     expect(products.length).toBeGreaterThan(0);
 
@@ -45,7 +96,7 @@ describe("Products Router", () => {
   });
 
   it("should have correct CPM/CTR/CVR/Basket combinations", async () => {
-    caller = appRouter.createCaller(mockContext);
+    caller = appRouter.createCaller(mockUserContext);
     const products = await caller.products.list();
     const scenarios = await caller.products.getScenarios(products[0].id);
 
@@ -66,7 +117,7 @@ describe("Products Router", () => {
   });
 
   it("should have correct scenario fields with proper values", async () => {
-    caller = appRouter.createCaller(mockContext);
+    caller = appRouter.createCaller(mockUserContext);
     const products = await caller.products.list();
     const scenarios = await caller.products.getScenarios(products[0].id);
     const scenario = scenarios[0];
@@ -104,19 +155,18 @@ describe("Products Router", () => {
   });
 
   it("should add a new product with 144 calculated scenarios", async () => {
-    caller = appRouter.createCaller(mockContext);
+    caller = appRouter.createCaller(mockUserContext);
 
     const newProduct = await caller.products.create({
       name: "Test Vitest Product",
       type: "product",
       originalPrice: 3000,
-      discount2: 10,
-      discount3: 15,
     });
 
     expect(newProduct).toHaveProperty("id");
     expect(newProduct.name).toBe("Test Vitest Product");
     expect(newProduct.originalPrice).toBe(3000);
+    expect(newProduct.userId).toBe(78); // Should belong to American Box
 
     // Verify 144 scenarios were created
     const scenarios = await caller.products.getScenarios(newProduct.id);
@@ -135,15 +185,13 @@ describe("Products Router", () => {
   });
 
   it("should update a product and recalculate scenarios", async () => {
-    caller = appRouter.createCaller(mockContext);
+    caller = appRouter.createCaller(mockUserContext);
 
     // Create a test product
     const product = await caller.products.create({
       name: "Test Update Product",
       type: "product",
       originalPrice: 2000,
-      discount2: 5,
-      discount3: 10,
     });
 
     // Get original scenarios
@@ -169,5 +217,17 @@ describe("Products Router", () => {
 
     // Clean up
     await caller.products.delete(product.id);
+  });
+
+  it("should reject unauthenticated access to protected routes", async () => {
+    const publicCaller = appRouter.createCaller(mockPublicContext);
+    await expect(publicCaller.products.list()).rejects.toThrow();
+  });
+
+  it("should not allow user to access other user's products", async () => {
+    // Admin user (id=1) has no products, so should get empty list
+    const adminCaller = appRouter.createCaller(mockAdminContext);
+    const adminProducts = await adminCaller.products.list();
+    expect(adminProducts.length).toBe(0);
   });
 });

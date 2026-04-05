@@ -57,3 +57,72 @@
 - [x] Remove old unused pages (ComprehensiveDashboard, DynamicProducts, WorkingDashboard, SupabaseDashboard)
 - [x] Remove old unused hooks and services
 - [x] 0 TypeScript errors, 0 LSP errors
+
+## Phase 8: Authentication System (Login/Signup + Admin Panel)
+
+### DB Schema Updates
+- [x] Add status field to users table (pending/active/suspended)
+- [x] Add passwordHash field to users table
+- [x] Add activatedAt and suspendedAt timestamp fields to users table
+- [x] Add userId foreign key to products table (multi-tenant isolation)
+- [x] Run migration SQL to update existing tables
+
+### Backend Auth Procedures
+- [x] auth.signup: Create account with email/password (status=pending)
+- [x] auth.login: Email/password login with status check (pending/suspended rejection)
+- [x] auth.me: Return current user info
+- [x] auth.logout: Clear session cookie
+- [x] auth.changePassword: Change own password (authenticated)
+- [x] Add bcrypt password hashing utility
+
+### Backend Admin Procedures
+- [x] admin.listUsers: List all users with status/dates
+- [x] admin.approveUser: Set status=active + activatedAt
+- [x] admin.rejectUser: Delete pending user
+- [x] admin.suspendUser: Set status=suspended + suspendedAt
+- [x] admin.reactivateUser: Set status=active, clear suspendedAt
+- [x] admin.updateUser: Update name/email/password for any user
+- [x] admin.deleteUser: Delete user + their products/scenarios
+- [x] admin.listAllProducts: List products for all users with owner info
+- [x] admin.deleteProduct: Delete any product (admin only)
+- [x] admin.getStats: Dashboard stats (total users/products/scenarios)
+
+### Multi-tenant Product Isolation
+- [x] Update products.list to filter by current user (userId)
+- [x] Update products.create to attach userId to new products
+- [x] Update products.getScenarios to verify product ownership
+- [x] Update products.update to verify product ownership
+- [x] Update products.delete to verify product ownership
+- [x] Update products.getOverviewStats to filter by userId
+- [x] Update products.getRanking to filter by userId
+- [x] Update products.getAllScenarios to filter by userId
+
+### Frontend Pages
+- [x] Create /login page (email + password form)
+- [x] Create /signup page (name + email + password form with pending notice)
+- [x] Create /pending page (waiting for admin approval message)
+- [x] Create /admin route (admin-only panel)
+- [x] Admin: Users management tab (list, approve, reject, suspend, reactivate, edit, delete)
+- [x] Admin: Products management tab (view all users' products, delete)
+- [x] Admin: Stats cards (total users/pending/active/products)
+- [x] Update AppLayout to show user info + logout button + admin link
+- [x] Add route guards: redirect unauthenticated to /login
+- [x] Add route guard: redirect pending/suspended users to /pending
+- [x] Add admin route guard: redirect non-admins to /dashboard
+
+### Default Accounts Setup
+- [x] Create admin account (marketer.a.mosaad@gmail.com / Generate5598@Go)
+- [x] Create American Box account (americanbox149@gmail.com / Amrcnbxquiz26)
+- [x] Migrate existing 42 products to American Box account (userId assignment)
+
+### Testing
+- [x] 27/27 vitest tests passing
+- [x] Test: auth system password hashing/verification
+- [x] Test: user status logic (pending/active/suspended)
+- [x] Test: role logic (admin/user)
+- [x] Test: getUserByEmail mock
+- [x] Test: admin user management logic
+- [x] Test: multi-tenant data isolation
+- [x] Test: products list with user context (42 products for American Box)
+- [x] Test: unauthenticated access rejection
+- [x] Test: admin sees only their own products (0 for admin user)

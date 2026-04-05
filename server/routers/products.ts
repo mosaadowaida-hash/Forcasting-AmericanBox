@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../_core/trpc";
+import { TRPCError } from "@trpc/server";
+import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { products, scenarios, Product, InsertScenario } from "../../drizzle/schema";
-import { eq, desc, asc, sql } from "drizzle-orm";
+import { eq, asc, and } from "drizzle-orm";
 
 // ============================================================
 // CONSTANTS - Verified against original 6,048 scenarios
@@ -62,21 +63,6 @@ function round2(n: number): number {
 
 /**
  * Generate all 144 scenarios for a product.
- * 
- * VERIFIED formulas (reverse-engineered from original 6,048 scenarios):
- * - AOV = price × 1.296 × basket_multiplier
- * - Revenue = AOV × 0.885
- * - CPC = CPM / (CTR × 1000)
- * - CPA_dashboard = CPC / CVR
- * - CPA_delivered = CPA_dashboard × 1.13
- * - COGS = Revenue × COGS_RATIO (varies: ~0.605 for products, ~0.63 for bundles)
- *   + shipping (100 EGP for products with price ≤ 2600)
- * - Profit = Revenue - COGS - CPA_delivered
- * - Break-even CPA = price × 0.315
- * - ROAS = AOV / CPA_dashboard
- * - Delivered ROAS = AOV / CPA_delivered (NOT revenue/cpa_d)
- * - Profit margin = Profit / AOV × 100
- * - Status = Profit > 0 ? "ربح" : "خسارة"
  */
 function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
   const results: Omit<InsertScenario, "id">[] = [];
@@ -95,41 +81,17 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
           const cvr = cvrLevel.value;
           const basket = basketLevel.value;
 
-          // CPC = CPM / (CTR × 1000)
           const cpc = round2(cpm / (ctr * 1000));
-
-          // CPA Dashboard = CPC / CVR
           const cpaDashboard = Math.round(cpc / cvr);
-
-          // CPA Delivered = CPA Dashboard × 1.13
           const cpaDelivered = Math.round(cpaDashboard * CPA_DELIVERY_FACTOR);
-
-          // AOV = baseAOV × basket
           const aov = Math.round(baseAov * basket);
-
-          // Revenue per order = AOV × delivery rate
           const revenuePerOrder = Math.round(aov * DELIVERY_RATE);
-
-          // Profit = price × margin/100 - CPA_dashboard - shipping
-          // This is the verified formula that matches original data
           const profit = Math.round(price * ACTUAL_MARGIN / 100 - cpaDashboard - shippingCost);
-
-          // COGS = Revenue - CPA_delivered - Profit (derived to keep equation balanced)
           const cogs = revenuePerOrder - cpaDelivered - profit;
-
-          // Break-even CPA = price × actual_margin / 100
           const breakEvenCpa = Math.round(price * ACTUAL_MARGIN / 100);
-
-          // ROAS = AOV / CPA Dashboard
           const roas = round2(aov / cpaDashboard);
-
-          // Delivered ROAS = AOV / CPA Delivered (verified: NOT revenue/cpa_d)
           const deliveredRoas = round2(aov / cpaDelivered);
-
-          // Profit margin = profit / AOV × 100
           const profitMargin = round2(aov > 0 ? (profit / aov) * 100 : 0);
-
-          // Status
           const status = profit > 0 ? "ربح" : "خسارة";
 
           results.push({
@@ -148,7 +110,7 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
             aov,
             revenuePerOrder,
             cogs,
-            shipping: 0, // Shipping is embedded in COGS, stored as 0 in DB
+            shipping: 0,
             roas,
             deliveredRoas,
             breakEvenCpa,
@@ -165,57 +127,87 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
 }
 
 // ============================================================
-// tRPC ROUTER - Using MySQL/Drizzle
+// tRPC ROUTER - Multi-tenant: each user sees only their data
 // ============================================================
 
 export const productsRouter = router({
-  // Get all products
-  list: publicProcedure.query(async () => {
+  // Get all products for the current user
+  list: protectedProcedure.query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
-    return await db.select().from(products).orderBy(asc(products.id));
+    return await db.select().from(products)
+      .where(eq(products.userId, ctx.user.id))
+      .orderBy(asc(products.id));
   }),
 
-  // Get product by ID
-  getById: publicProcedure.input(z.number()).query(async ({ input }) => {
+  // Get product by ID (must belong to current user)
+  getById: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) return null;
-    const result = await db.select().from(products).where(eq(products.id, input)).limit(1);
+    const result = await db.select().from(products)
+      .where(and(eq(products.id, input), eq(products.userId, ctx.user.id)))
+      .limit(1);
     return result[0] ?? null;
   }),
 
-  // Get all scenarios for a product
-  getScenarios: publicProcedure.input(z.number()).query(async ({ input }) => {
+  // Get all scenarios for a product (must belong to current user)
+  getScenarios: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) return [];
-    return await db.select().from(scenarios).where(eq(scenarios.productId, input)).orderBy(asc(scenarios.id));
+    // Verify product belongs to user
+    const product = await db.select().from(products)
+      .where(and(eq(products.id, input), eq(products.userId, ctx.user.id)))
+      .limit(1);
+    if (!product[0]) return [];
+    return await db.select().from(scenarios)
+      .where(eq(scenarios.productId, input))
+      .orderBy(asc(scenarios.id));
   }),
 
-  // Get all scenarios across all products
-  getAllScenarios: publicProcedure.query(async () => {
+  // Get all scenarios across all user's products
+  getAllScenarios: protectedProcedure.query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
-    return await db.select().from(scenarios).orderBy(asc(scenarios.id));
+    const userProducts = await db.select({ id: products.id }).from(products)
+      .where(eq(products.userId, ctx.user.id));
+    if (userProducts.length === 0) return [];
+    const productIds = userProducts.map(p => p.id);
+    // Fetch scenarios for all user's products
+    const allScenarios = await db.select().from(scenarios).orderBy(asc(scenarios.id));
+    return allScenarios.filter(s => productIds.includes(s.productId));
   }),
 
-  // Get overview stats
-  getOverviewStats: publicProcedure.query(async () => {
+  // Get overview stats for current user's products
+  getOverviewStats: protectedProcedure.query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return null;
 
-    const allProducts = await db.select().from(products);
-    const allScenarios = await db.select().from(scenarios);
+    const userProducts = await db.select().from(products).where(eq(products.userId, ctx.user.id));
+    if (userProducts.length === 0) {
+      return {
+        totalProducts: 0,
+        totalScenarios: 0,
+        profitableScenarios: 0,
+        profitabilityRate: 0,
+        medianProfit: 0,
+        avgRoas: 0,
+      };
+    }
 
-    const totalProducts = allProducts.length;
-    const totalScenarios = allScenarios.length;
-    const profitableScenarios = allScenarios.filter(s => s.netProfitPerOrder > 0).length;
+    const productIds = userProducts.map(p => p.id);
+    const allScenarios = await db.select().from(scenarios).orderBy(asc(scenarios.id));
+    const userScenarios = allScenarios.filter(s => productIds.includes(s.productId));
+
+    const totalProducts = userProducts.length;
+    const totalScenarios = userScenarios.length;
+    const profitableScenarios = userScenarios.filter(s => s.netProfitPerOrder > 0).length;
     const profitabilityRate = totalScenarios > 0 ? (profitableScenarios / totalScenarios) * 100 : 0;
 
-    const profits = allScenarios.map(s => s.netProfitPerOrder).sort((a, b) => a - b);
+    const profits = userScenarios.map(s => s.netProfitPerOrder).sort((a, b) => a - b);
     const medianProfit = profits.length > 0 ? profits[Math.floor(profits.length / 2)] : 0;
 
-    const avgRoas = allScenarios.length > 0
-      ? allScenarios.reduce((sum, s) => sum + s.roas, 0) / allScenarios.length
+    const avgRoas = userScenarios.length > 0
+      ? userScenarios.reduce((sum, s) => sum + s.roas, 0) / userScenarios.length
       : 0;
 
     return {
@@ -228,24 +220,30 @@ export const productsRouter = router({
     };
   }),
 
-  // Get ranking data for all products
-  getRanking: publicProcedure.query(async () => {
+  // Get ranking data for current user's products
+  getRanking: protectedProcedure.query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
 
-    const allProducts = await db.select().from(products).orderBy(asc(products.id));
-    const allScenarios = await db.select().from(scenarios);
+    const userProducts = await db.select().from(products)
+      .where(eq(products.userId, ctx.user.id))
+      .orderBy(asc(products.id));
+    if (userProducts.length === 0) return [];
+
+    const productIds = userProducts.map(p => p.id);
+    const allScenarios = await db.select().from(scenarios).orderBy(asc(scenarios.id));
+    const userScenarios = allScenarios.filter(s => productIds.includes(s.productId));
 
     // Group scenarios by product
-    const scenariosByProduct = new Map<number, typeof allScenarios>();
-    for (const s of allScenarios) {
+    const scenariosByProduct = new Map<number, typeof userScenarios>();
+    for (const s of userScenarios) {
       if (!scenariosByProduct.has(s.productId)) {
         scenariosByProduct.set(s.productId, []);
       }
       scenariosByProduct.get(s.productId)!.push(s);
     }
 
-    return allProducts.map(product => {
+    return userProducts.map(product => {
       const productScenarios = scenariosByProduct.get(product.id) || [];
       const totalScenarios = productScenarios.length;
       const profitableScenarios = productScenarios.filter(s => s.netProfitPerOrder > 0).length;
@@ -268,8 +266,8 @@ export const productsRouter = router({
     }).sort((a, b) => b.profitabilityRate - a.profitabilityRate);
   }),
 
-  // Create a new product and calculate 144 scenarios
-  create: publicProcedure
+  // Create a new product for current user and calculate 144 scenarios
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
@@ -280,12 +278,13 @@ export const productsRouter = router({
         bundleDiscount: z.number().min(0).max(100).optional().default(0),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
-      if (!db) throw new Error("Database not available");
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      // Insert product
+      // Insert product with userId
       const result = await db.insert(products).values({
+        userId: ctx.user.id,
         name: input.name,
         type: input.type,
         originalPrice: input.originalPrice,
@@ -295,14 +294,10 @@ export const productsRouter = router({
       });
 
       const productId = Number(result[0].insertId);
-
-      // Get the created product
       const [createdProduct] = await db.select().from(products).where(eq(products.id, productId));
 
       // Generate 144 scenarios
       const scenarioData = generateScenarios(createdProduct);
-
-      // Insert in batches of 50
       for (let i = 0; i < scenarioData.length; i += 50) {
         const batch = scenarioData.slice(i, i + 50);
         await db.insert(scenarios).values(batch as InsertScenario[]);
@@ -311,8 +306,8 @@ export const productsRouter = router({
       return createdProduct;
     }),
 
-  // Update product and recalculate 144 scenarios
-  update: publicProcedure
+  // Update product (must belong to current user) and recalculate 144 scenarios
+  update: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -324,13 +319,19 @@ export const productsRouter = router({
         bundleDiscount: z.number().min(0).max(100).optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
-      if (!db) throw new Error("Database not available");
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
       const { id, ...updates } = input;
 
-      // Build update object (only include provided fields)
+      // Verify ownership
+      const [existing] = await db.select().from(products)
+        .where(and(eq(products.id, id), eq(products.userId, ctx.user.id)))
+        .limit(1);
+      if (!existing) throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
+
+      // Build update object
       const updateObj: Record<string, any> = {};
       if (updates.name !== undefined) updateObj.name = updates.name;
       if (updates.type !== undefined) updateObj.type = updates.type;
@@ -343,16 +344,11 @@ export const productsRouter = router({
         await db.update(products).set(updateObj).where(eq(products.id, id));
       }
 
-      // Get updated product
       const [updatedProduct] = await db.select().from(products).where(eq(products.id, id));
 
-      // Delete old scenarios
+      // Delete old scenarios and regenerate
       await db.delete(scenarios).where(eq(scenarios.productId, id));
-
-      // Generate new 144 scenarios
       const scenarioData = generateScenarios(updatedProduct);
-
-      // Insert in batches of 50
       for (let i = 0; i < scenarioData.length; i += 50) {
         const batch = scenarioData.slice(i, i + 50);
         await db.insert(scenarios).values(batch as InsertScenario[]);
@@ -361,14 +357,18 @@ export const productsRouter = router({
       return updatedProduct;
     }),
 
-  // Delete product and its scenarios
-  delete: publicProcedure.input(z.number()).mutation(async ({ input }) => {
+  // Delete product (must belong to current user) and its scenarios
+  delete: protectedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
     const db = await getDb();
-    if (!db) throw new Error("Database not available");
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-    // Delete scenarios first (foreign key)
+    // Verify ownership
+    const [existing] = await db.select().from(products)
+      .where(and(eq(products.id, input), eq(products.userId, ctx.user.id)))
+      .limit(1);
+    if (!existing) throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
+
     await db.delete(scenarios).where(eq(scenarios.productId, input));
-    // Delete product
     await db.delete(products).where(eq(products.id, input));
 
     return { success: true };

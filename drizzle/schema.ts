@@ -1,18 +1,23 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, double, json } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, double } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
+ * Supports both OAuth-based login and email/password login.
  */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
+  passwordHash: varchar("passwordHash", { length: 255 }), // null for OAuth users
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  status: mysqlEnum("status", ["pending", "active", "suspended"]).default("pending").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  activatedAt: timestamp("activatedAt"),
+  suspendedAt: timestamp("suspendedAt"),
 });
 
 export type User = typeof users.$inferSelect;
@@ -20,9 +25,11 @@ export type InsertUser = typeof users.$inferInsert;
 
 /**
  * Products table - stores all products and bundles
+ * Each product belongs to a user (multi-tenant isolation)
  */
 export const products = mysqlTable("products", {
   id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Foreign key to users.id
   name: varchar("name", { length: 255 }).notNull(),
   type: mysqlEnum("type", ["product", "bundle"]).default("product").notNull(),
   originalPrice: double("originalPrice").notNull(),

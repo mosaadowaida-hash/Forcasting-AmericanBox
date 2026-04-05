@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, products, scenarios } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -64,6 +64,12 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.lastSignedIn = new Date();
     }
 
+    // For OAuth users, set status to active automatically
+    if (!values.status) {
+      values.status = 'active';
+      updateSet.status = 'active';
+    }
+
     if (Object.keys(updateSet).length === 0) {
       updateSet.lastSignedIn = new Date();
     }
@@ -89,4 +95,65 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(users).orderBy(users.createdAt);
+}
+
+export async function updateUserStatus(
+  userId: number,
+  status: 'pending' | 'active' | 'suspended',
+  timestamps: { activatedAt?: Date; suspendedAt?: Date | null } = {}
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const updateData: Record<string, unknown> = { status };
+  if (timestamps.activatedAt !== undefined) updateData.activatedAt = timestamps.activatedAt;
+  if (timestamps.suspendedAt !== undefined) updateData.suspendedAt = timestamps.suspendedAt;
+  
+  await db.update(users).set(updateData as any).where(eq(users.id, userId));
+}
+
+export async function updateUserProfile(
+  userId: number,
+  data: { name?: string; email?: string; passwordHash?: string }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users).set(data as any).where(eq(users.id, userId));
+}
+
+export async function deleteUserAndData(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Get all products for this user
+  const userProducts = await db.select({ id: products.id }).from(products).where(eq(products.userId, userId));
+  
+  // Delete scenarios for all user's products
+  for (const product of userProducts) {
+    await db.delete(scenarios).where(eq(scenarios.productId, product.id));
+  }
+  
+  // Delete products
+  await db.delete(products).where(eq(products.userId, userId));
+  
+  // Delete user
+  await db.delete(users).where(eq(users.id, userId));
+}
