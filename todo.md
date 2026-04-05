@@ -126,3 +126,13 @@
 - [x] Test: products list with user context (42 products for American Box)
 - [x] Test: unauthenticated access rejection
 - [x] Test: admin sees only their own products (0 for admin user)
+
+## Phase 9: Landing Page + Remove Manus Branding
+- [x] Remove "Made by Manus" / Manus branding from all pages (Login, Signup, Pending, App)
+- [x] Build external Conversion Landing Page at /
+- [x] Landing Page: Hero section with strong headline + subheadline (Performance Marketing copy)
+- [x] Landing Page: Features/benefits section (3-4 value propositions)
+- [x] Landing Page: Social proof / stats section
+- [x] Landing Page: CTA buttons (Login + Sign Up)
+- [x] Landing Page: Professional design with dark/gradient theme
+- [x] Update routing so / shows Landing Page, /dashboard redirects to login if unauthenticated

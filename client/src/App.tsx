@@ -14,12 +14,12 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Pending from "./pages/Pending";
 import AdminPanel from "./pages/AdminPanel";
+import LandingPage from "./pages/LandingPage";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 
 // Auth guard: wraps protected routes
 function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) {
-  const [, setLocation] = useLocation();
   const { data: user, isLoading } = trpc.auth.me.useQuery(undefined, {
     retry: false,
     staleTime: 30_000,
@@ -46,9 +46,12 @@ function ProtectedRoute({ children, adminOnly = false }: { children: React.React
   // Suspended → show suspended message
   if (user.status === "suspended") {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-        <div className="text-center">
-          <p className="text-red-400 text-lg font-medium mb-2">تم إيقاف حسابك</p>
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4" dir="rtl">
+        <div className="text-center bg-slate-900 border border-red-900/40 rounded-2xl p-8 max-w-sm">
+          <div className="w-12 h-12 bg-red-950 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-400 text-xl">⛔</span>
+          </div>
+          <p className="text-red-400 text-lg font-bold mb-2">تم إيقاف حسابك</p>
           <p className="text-slate-400 text-sm">يرجى التواصل مع المسؤول لإعادة التفعيل</p>
         </div>
       </div>
@@ -63,7 +66,7 @@ function ProtectedRoute({ children, adminOnly = false }: { children: React.React
   return <>{children}</>;
 }
 
-// Public-only route: redirect to dashboard if already logged in
+// Public-only route: redirect to dashboard if already logged in and active
 function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading } = trpc.auth.me.useQuery(undefined, {
     retry: false,
@@ -88,6 +91,9 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
 function Router() {
   return (
     <Switch>
+      {/* Landing page at root — always visible */}
+      <Route path="/" component={LandingPage} />
+
       {/* Public auth routes */}
       <Route path="/login">
         {() => (
@@ -111,11 +117,6 @@ function Router() {
             <AdminPanel />
           </ProtectedRoute>
         )}
-      </Route>
-
-      {/* Root redirect */}
-      <Route path="/">
-        {() => <Redirect to="/dashboard" />}
       </Route>
 
       {/* Protected app routes */}
