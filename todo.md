@@ -160,41 +160,41 @@
 ## Phase 11: Subscription System + Auth Fix + UI Fixes
 
 ### Bug Fix: Logout Redirect to Manus Auth
-- [ ] Remove Manus OAuth logout redirect from AppLayout/auth system
-- [ ] Ensure logout clears session cookie and redirects to /login (internal only)
-- [ ] Remove any external auth provider references from logout flow
+- [x] Remove Manus OAuth logout redirect from AppLayout/auth system
+- [x] Ensure logout clears session cookie and redirects to /login (internal only)
+- [x] Remove any external auth provider references from logout flow
 
 ### DB: Payments Table + Subscription Fields
-- [ ] Create separate `payments` table (id, userId, paymentMethod, proofImageUrl, paymentDate, paymentStatus, createdAt)
-- [ ] Add `subscriptionExpiresAt` field to users table
-- [ ] Add `subscriptionStatus` field to users table (active/expired/pending)
-- [ ] Run migration SQL
+- [x] Create separate `payments` table (id, userId, paymentMethod, proofImageUrl, paymentDate, paymentStatus, createdAt)
+- [x] Add `subscriptionExpiresAt` field to users table
+- [x] Add `subscriptionStatus` field to users table (active/expired/pending)
+- [x] Run migration SQL
 
 ### Backend: Subscription System
-- [ ] auth.submitPayment: save to payments table (not users table directly)
-- [ ] admin.listPayments: list all payments for a user (payment history)
-- [ ] admin.verifyPayment: approve payment → set subscriptionExpiresAt = now + 30 days, status=active
-- [ ] admin.rejectPayment: reject payment → keep status=pending
-- [ ] Cron/check logic: auto-suspend users with subscriptionExpiresAt < now
-- [ ] auth.me: include subscriptionExpiresAt and daysRemaining in response
-- [ ] Login: check subscription expiry, block expired users with renewal prompt
+- [x] auth.submitPayment: save to payments table (not users table directly)
+- [x] admin.listPayments: list all payments for a user (payment history)
+- [x] admin.verifyPayment: approve payment → set subscriptionExpiresAt = now + 30 days, status=active
+- [x] admin.rejectPayment: reject payment → keep status=pending
+- [x] Cron/check logic: auto-suspend users with subscriptionExpiresAt < now
+- [x] auth.me: include subscriptionExpiresAt and daysRemaining in response
+- [x] Login: check subscription expiry, block expired users with renewal prompt
 
 ### Frontend: Admin Panel Updates
-- [ ] Admin: show full payment history per user (all payments table)
-- [ ] Admin: payment proof image opens in full-size modal on click
-- [ ] Admin: show subscription expiry date per user
-- [ ] Admin: verify/reject each payment individually
+- [x] Admin: show full payment history per user (all payments table)
+- [x] Admin: payment proof image opens in full-size modal on click
+- [x] Admin: show subscription expiry date per user
+- [x] Admin: verify/reject each payment individually
 
 ### Frontend: Expired Subscription Page
-- [ ] Create /renew page for expired users (PayPal button + InstaPay upload)
-- [ ] Show "اشتراكك انتهى" message with renewal options
-- [ ] Route guard: redirect expired users to /renew instead of /dashboard
+- [x] Create /renew page for expired users (PayPal button + InstaPay upload)
+- [x] Show "اشتراكك انتهى" message with renewal options
+- [x] Route guard: redirect expired users to /renew instead of /dashboard
 
 ### Frontend: Warning Banner (28 days)
-- [ ] Show warning banner in dashboard when subscription expires in ≤ 2 days
+- [x] Show warning banner in dashboard when subscription expires in ≤ 2 days
 
 ### Landing Page Fixes
-- [ ] Change price from $34 to $29/month everywhere
-- [ ] Change "ابدأ مجاناً" button to "ابدأ الآن باشتراك 29$"
-- [ ] Update stats section text as requested
-- [ ] Fix Login page brand name to "Ads Forecasting Pro"
+- [x] Change price from $34 to $29/month everywhere
+- [x] Change "ابدأ مجاناً" button to "ابدأ الآن باشتراك 29$"
+- [x] Update stats section text as requested
+- [x] Fix Login page brand name to "Ads Forecasting Pro"

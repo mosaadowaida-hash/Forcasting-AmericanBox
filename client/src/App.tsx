@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch, Redirect, useLocation } from "wouter";
+import { Route, Switch, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AppLayout } from "./components/AppLayout";
@@ -13,10 +13,32 @@ import { AdvancedFilter } from "./pages/AdvancedFilter";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Pending from "./pages/Pending";
+import Renew from "./pages/Renew";
 import AdminPanel from "./pages/AdminPanel";
 import LandingPage from "./pages/LandingPage";
 import { trpc } from "@/lib/trpc";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
+import { Link } from "wouter";
+
+// Subscription warning banner — shown when ≤ 2 days remain
+function SubscriptionWarningBanner({ daysRemaining }: { daysRemaining: number }) {
+  if (daysRemaining > 2) return null;
+  return (
+    <div className="w-full bg-amber-900/60 border-b border-amber-700/60 px-4 py-2.5 flex items-center justify-center gap-3" dir="rtl">
+      <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+      <span className="text-amber-200 text-sm font-medium">
+        {daysRemaining <= 0
+          ? "اشتراكك انتهى — يرجى التجديد الآن لتجنب إيقاف حسابك"
+          : `اشتراكك سينتهي خلال ${daysRemaining} ${daysRemaining === 1 ? "يوم" : "أيام"} — `}
+        {daysRemaining > 0 && (
+          <Link href="/renew" className="text-amber-300 underline hover:text-amber-100 font-semibold">
+            جدّد الآن
+          </Link>
+        )}
+      </span>
+    </div>
+  );
+}
 
 // Auth guard: wraps protected routes
 function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) {
@@ -43,19 +65,9 @@ function ProtectedRoute({ children, adminOnly = false }: { children: React.React
     return <Pending />;
   }
 
-  // Suspended → show suspended message
+  // Suspended (expired subscription) → redirect to /renew
   if (user.status === "suspended") {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4" dir="rtl">
-        <div className="text-center bg-slate-900 border border-red-900/40 rounded-2xl p-8 max-w-sm">
-          <div className="w-12 h-12 bg-red-950 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-red-400 text-xl">⛔</span>
-          </div>
-          <p className="text-red-400 text-lg font-bold mb-2">تم إيقاف حسابك</p>
-          <p className="text-slate-400 text-sm">يرجى التواصل مع المسؤول لإعادة التفعيل</p>
-        </div>
-      </div>
-    );
+    return <Redirect to="/renew" />;
   }
 
   // Admin-only route check
@@ -63,7 +75,15 @@ function ProtectedRoute({ children, adminOnly = false }: { children: React.React
     return <Redirect to="/dashboard" />;
   }
 
-  return <>{children}</>;
+  // Show subscription warning banner if ≤ 2 days remain
+  const daysRemaining = (user as any).daysRemaining ?? 999;
+
+  return (
+    <>
+      {daysRemaining <= 2 && <SubscriptionWarningBanner daysRemaining={daysRemaining} />}
+      {children}
+    </>
+  );
 }
 
 // Public-only route: redirect to dashboard if already logged in and active
@@ -109,6 +129,9 @@ function Router() {
           </PublicOnlyRoute>
         )}
       </Route>
+
+      {/* Renewal page — for expired/suspended users */}
+      <Route path="/renew" component={Renew} />
 
       {/* Admin panel */}
       <Route path="/admin">
