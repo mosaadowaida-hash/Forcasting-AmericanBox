@@ -9,8 +9,8 @@ import { eq, asc, and } from "drizzle-orm";
 // CONSTANTS - Verified against original 6,048 scenarios
 // ============================================================
 
-// AOV = price × 1.296 (verified: all 42 products have this exact ratio)
-const AOV_RATIO = 1.296;
+// AOV = price × basket_size (no inflation factor)
+// Fixed: AOV should never exceed price × basket_size
 
 // Revenue delivery rate = ~0.885 (verified: range 0.8846-0.8853)
 const DELIVERY_RATE = 0.885;
@@ -67,7 +67,7 @@ function round2(n: number): number {
 function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
   const results: Omit<InsertScenario, "id">[] = [];
   const price = product.originalPrice;
-  const baseAov = Math.round(price * AOV_RATIO);
+  // AOV base = price (basket multiplier applied per scenario below)
 
   // Shipping: 100 EGP for individual products with price ≤ 2600
   const shippingCost = (product.type === "product" && price <= SHIPPING_THRESHOLD) ? SHIPPING_COST : 0;
@@ -84,7 +84,8 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
           const cpc = round2(cpm / (ctr * 1000));
           const cpaDashboard = Math.round(cpc / cvr);
           const cpaDelivered = Math.round(cpaDashboard * CPA_DELIVERY_FACTOR);
-          const aov = Math.round(baseAov * basket);
+          // AOV = price × basket_size (no inflation)
+          const aov = Math.round(price * basket);
           const revenuePerOrder = Math.round(aov * DELIVERY_RATE);
           const profit = Math.round(price * ACTUAL_MARGIN / 100 - cpaDashboard - shippingCost);
           const cogs = revenuePerOrder - cpaDelivered - profit;

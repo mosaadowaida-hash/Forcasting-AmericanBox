@@ -14,6 +14,7 @@ import {
   Star,
   Users,
   LayoutDashboard,
+  ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -86,6 +87,120 @@ function FeatureCard({
   );
 }
 
+// ─── Testimonials data ────────────────────────────────────────────────────────
+const testimonials = [
+  {
+    text: "أول مرة في حياتي أشغل حملة وأنا عارف بالضبط هشتغل على أنهي سيناريو — وفّرت على نفسي آلاف الجنيهات.",
+    author: "American Box",
+    role: "عميل موثّق",
+    stars: 5,
+  },
+  {
+    text: "قبل ما أستخدم الأداة كنت بشغّل حملات وأنا مش عارف إيه الـ CPA المقبول. دلوقتي بحسب كل سيناريو قبل ما أصرف جنيه واحد.",
+    author: "محمد أحمد",
+    role: "Performance Marketer",
+    stars: 5,
+  },
+  {
+    text: "الأداة غيّرت طريقة تفكيري في التسعير. بدل ما أخمّن، دلوقتي عندي 144 سيناريو لكل منتج وأعرف بالضبط متى أكون في ربح.",
+    author: "سارة علي",
+    role: "Media Buyer",
+    stars: 5,
+  },
+  {
+    text: "استثمرت في الأداة وعوّضت تكلفتها في أول حملة شغّلتها بناءً على السيناريوهات. الـ ROI على الاشتراك ممتاز.",
+    author: "خالد محمود",
+    role: "E-commerce Owner",
+    stars: 5,
+  },
+];
+
+// ─── Testimonial Slider ───────────────────────────────────────────────────────
+function TestimonialSlider() {
+  const [current, setCurrent] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const goTo = (index: number) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrent(index);
+      setIsAnimating(false);
+    }, 200);
+  };
+
+  const prev = () => goTo((current - 1 + testimonials.length) % testimonials.length);
+  const next = () => goTo((current + 1) % testimonials.length);
+
+  // Auto-advance every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((c) => (c + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const t = testimonials[current];
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl sm:text-4xl font-black text-white mb-2">ماذا يقول عملاؤنا</h2>
+        <p className="text-slate-400">آراء حقيقية من مستخدمين فعليين</p>
+      </div>
+
+      <div className="relative bg-slate-900/60 border border-slate-800 rounded-2xl p-8 sm:p-10">
+        {/* Stars */}
+        <div className="flex justify-center gap-1 mb-6">
+          {[...Array(t.stars)].map((_, i) => (
+            <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+          ))}
+        </div>
+
+        {/* Quote */}
+        <blockquote
+          className={`text-xl sm:text-2xl font-bold text-white text-center leading-relaxed mb-6 transition-opacity duration-200 ${isAnimating ? "opacity-0" : "opacity-100"}`}
+        >
+          "{t.text}"
+        </blockquote>
+
+        {/* Author */}
+        <p className={`text-slate-500 text-center text-sm transition-opacity duration-200 ${isAnimating ? "opacity-0" : "opacity-100"}`}>
+          — {t.author} · {t.role}
+        </p>
+
+        {/* Navigation arrows */}
+        <button
+          onClick={prev}
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full flex items-center justify-center transition-colors"
+          aria-label="السابق"
+        >
+          <ChevronRight className="w-5 h-5 text-slate-300" />
+        </button>
+        <button
+          onClick={next}
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full flex items-center justify-center transition-colors"
+          aria-label="التالي"
+        >
+          <ChevronLeft className="w-5 h-5 text-slate-300" />
+        </button>
+      </div>
+
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mt-5">
+        {testimonials.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${i === current ? "bg-blue-400 w-6" : "bg-slate-700 hover:bg-slate-500"}`}
+            aria-label={`الانتقال إلى التقييم ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Landing Page ────────────────────────────────────────────────────────
 export default function LandingPage() {
   const statsRef = useInView(0.2);
@@ -133,20 +248,20 @@ export default function LandingPage() {
             <span className="text-blue-300 text-xs font-semibold tracking-wide uppercase">أداة الـ Performance Marketers الأولى عربياً</span>
           </div>
 
-          {/* Headline */}
+          {/* Headline - Updated */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight mb-6 tracking-tight">
-            <span className="text-white">اعرف قبل ما تصرف</span>
+            <span className="text-white">اعرف قبل ما تصرف على الإعلانات</span>
             <br />
             <span className="bg-gradient-to-l from-blue-400 via-blue-300 to-indigo-400 bg-clip-text text-transparent">
-              هل حملتك هتكسب أو تخسر؟
+              مدى قوة تسعيرك وما هي سيناريوهات الربح والخسارة
             </span>
           </h1>
 
-          {/* Sub-headline */}
+          {/* Sub-headline - Updated */}
           <p className="text-slate-300 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto mb-10">
             <strong className="text-white">Ads Forecasting Pro</strong> يحسب لك <strong className="text-white">144 سيناريو</strong> لكل منتج —
             بناءً على CPM وCTR وCVR وحجم السلة —
-            فتعرف بالضبط متى تكون في <span className="text-green-400 font-semibold">ربح</span> ومتى في <span className="text-red-400 font-semibold">خسارة</span>، قبل ما تصرف جنيه واحد.
+            هتعرف بالضبط متى يكون إعلانك <span className="text-green-400 font-semibold">رابحًا</span> ومتى يكون <span className="text-red-400 font-semibold">خاسرًا</span> بناءً على تكلفة الـ CPA المتوقعة لكل سيناريو.
           </p>
 
           {/* CTA Buttons */}
@@ -171,11 +286,11 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Trust signals */}
+          {/* Trust signals - Updated (removed "لا يوجد بطاقة ائتمان") */}
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-slate-500 text-sm">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-green-500" /> لا يوجد بطاقة ائتمان</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-green-500" /> بياناتك معزولة وآمنة</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-green-500" /> نتائج فورية بدون تعقيد</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-green-500" /> CPA Delivered بدقة</span>
           </div>
         </div>
 
@@ -190,7 +305,7 @@ export default function LandingPage() {
                 <div className="w-3 h-3 rounded-full bg-green-500/60" />
               </div>
               <div className="flex-1 mx-4 bg-slate-700/60 rounded-md h-6 flex items-center px-3">
-                <span className="text-slate-400 text-xs" dir="ltr">campsimdash.manus.space/dashboard</span>
+                <span className="text-slate-400 text-xs" dir="ltr">adsforcasting.pro/dashboard</span>
               </div>
             </div>
             {/* Mock dashboard content */}
@@ -252,14 +367,16 @@ export default function LandingPage() {
             <span className="text-red-400">وطلعت بالخسارة؟</span>
           </h2>
           <p className="text-slate-400 text-lg leading-relaxed mb-8">
-            المشكلة مش في الإعلان — المشكلة إنك بتشغّل الحملة <strong className="text-white">وانت مش عارف الأرقام</strong> اللي بتحكم الربح والخسارة.
+            {/* Updated: "المشكلة ليست في الإعلان" */}
+            المشكلة ليست في الإعلان — المشكلة إنك بتشغّل الحملة <strong className="text-white">وانت مش عارف الأرقام</strong> اللي بتحكم الربح والخسارة.
             CPM عالي + CTR منخفض = خسارة مضمونة. لكن كام بالضبط؟ ومتى بتبدأ تكسب؟
           </p>
           <div className="grid sm:grid-cols-3 gap-4 text-right">
             {[
               { pain: "بتخمّن الـ ROAS", fix: "شوف الـ ROAS الفعلي لكل سيناريو قبل ما تشغّل" },
               { pain: "مش عارف break-even", fix: "احسب نقطة التعادل بالضبط لكل منتج" },
-              { pain: "بتقارن بالحدس", fix: "قارن 42 منتج في ثواني بالأرقام الحقيقية" },
+              // Updated: "قارن جميع منتجاتك في ثواني بسيناريوهات حقيقية"
+              { pain: "بتقارن بالحدس", fix: "قارن جميع منتجاتك في ثواني بسيناريوهات حقيقية" },
             ].map((item) => (
               <div key={item.pain} className="bg-slate-900/60 border border-slate-800 rounded-xl p-4">
                 <div className="flex items-start gap-2 mb-2">
@@ -280,8 +397,9 @@ export default function LandingPage() {
       <section ref={featuresRef.ref} className="py-20 px-4 sm:px-6 bg-slate-900/20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
+            {/* Updated: "كل ما تحتاجه في مكان واحد" */}
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-              كل اللي تحتاجه في مكان واحد
+              كل ما تحتاجه في مكان واحد
             </h2>
             <p className="text-slate-400 text-lg max-w-xl mx-auto">
               مش مجرد أرقام — ده نظام تفكير كامل للـ Performance Marketer المحترف
@@ -379,33 +497,80 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIAL / SOCIAL PROOF ── */}
+      {/* ── TESTIMONIALS SLIDER ── */}
       <section className="py-16 px-4 sm:px-6 bg-slate-900/30 border-y border-slate-800/60">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <div className="flex justify-center gap-1 mb-3">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />)}
+        <TestimonialSlider />
+      </section>
+
+      {/* ── PRICING ── */}
+      <section className="py-20 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">سعر واضح. بدون مفاجآت.</h2>
+          <p className="text-slate-400 text-lg mb-12">اشتراك شهري واحد يشمل كل الميزات</p>
+
+          <div className="bg-gradient-to-b from-blue-950/60 to-slate-900/60 border border-blue-800/60 rounded-3xl p-8 sm:p-12 max-w-md mx-auto relative overflow-hidden">
+            {/* Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-blue-600/15 blur-3xl rounded-full" />
+
+            <div className="relative">
+              <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-600/40 rounded-full px-3 py-1 mb-6">
+                <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                <span className="text-blue-300 text-xs font-semibold">الخطة الاحترافية</span>
+              </div>
+
+              <div className="mb-6">
+                <span className="text-6xl font-black text-white">$34</span>
+                <span className="text-slate-400 text-lg mr-2">/ شهرياً</span>
+              </div>
+
+              <ul className="space-y-3 text-right mb-8">
+                {[
+                  "144 سيناريو لكل منتج",
+                  "عدد غير محدود من المنتجات",
+                  "تصفية متقدمة وتحليل شامل",
+                  "بياناتك معزولة وآمنة",
+                  "دعم فني متواصل",
+                  "تحديثات مستمرة",
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center gap-3 text-slate-300 text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link href="/signup">
+                <Button
+                  size="lg"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-base py-6 rounded-xl shadow-lg shadow-blue-900/40 hover:shadow-blue-800/60 hover:scale-105 transition-all gap-2"
+                >
+                  <span>ابدأ الآن</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+
+              <p className="text-slate-500 text-xs mt-4">
+                الدفع عبر InstaPay أو PayPal · التفعيل بعد مراجعة الأدمن
+              </p>
             </div>
-            <blockquote className="text-xl sm:text-2xl font-bold text-white max-w-2xl mx-auto leading-relaxed">
-              "أول مرة في حياتي أشغّل حملة وأنا عارف بالضبط هشتغل على أنهي سيناريو — وفّرت على نفسي آلاف الجنيهات."
-            </blockquote>
-            <p className="text-slate-500 mt-4 text-sm">— American Box · عميل موثّق</p>
           </div>
         </div>
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="py-24 px-4 sm:px-6 relative overflow-hidden">
+      <section className="py-24 px-4 sm:px-6 relative overflow-hidden bg-slate-900/20 border-t border-slate-800/60">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-600/8 rounded-full blur-[100px]" />
         </div>
         <div className="relative max-w-2xl mx-auto text-center">
+          {/* Updated: "جاهز تشتغل بالأرقام مش بالحظ" (no question mark) */}
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
             جاهز تشتغل بالأرقام<br />
-            <span className="text-blue-400">مش بالخمسة؟</span>
+            <span className="text-blue-400">مش بالحظ</span>
           </h2>
+          {/* Updated: "سجل حسابك الآن وابدأ حلّل منتجاتك في دقائق" */}
           <p className="text-slate-400 text-lg mb-8">
-            سجّل حسابك دلوقتي وابدأ تحلّل منتجاتك في دقائق.
+            سجل حسابك الآن وابدأ حلّل منتجاتك في دقائق.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup">
@@ -413,7 +578,8 @@ export default function LandingPage() {
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-blue-900/40 hover:shadow-blue-800/60 hover:scale-105 transition-all gap-2 w-full sm:w-auto"
               >
-                <span>سجّل حسابك مجاناً</span>
+                {/* Updated: "سجل حسابك الآن وابدأ حلّل منتجاتك في دقائق" */}
+                <span>سجل حسابك الآن وابدأ حلّل منتجاتك في دقائق</span>
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
