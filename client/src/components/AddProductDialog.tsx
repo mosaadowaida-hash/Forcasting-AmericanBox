@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocalProducts } from '@/hooks/useLocalProducts';
+import { useLocalProductsContext } from '@/contexts/LocalProductsContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,7 @@ interface AddProductDialogProps {
 }
 
 export function AddProductDialog({ open, onOpenChange, onProductAdded }: AddProductDialogProps) {
-  const { addProduct } = useLocalProducts();
+  const { addProduct } = useLocalProductsContext();
   const [productType, setProductType] = useState<'product' | 'bundle'>('product');
   const [productName, setProductName] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
