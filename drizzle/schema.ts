@@ -18,15 +18,37 @@ export const users = mysqlTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
   activatedAt: timestamp("activatedAt"),
   suspendedAt: timestamp("suspendedAt"),
-  // Payment fields
+  // Subscription fields
+  subscriptionExpiresAt: timestamp("subscriptionExpiresAt"), // null = no active subscription
+  subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "expired", "pending"]).default("pending"),
+  // Legacy single payment fields (kept for backward compat, new payments go to payments table)
   paymentMethod: mysqlEnum("paymentMethod", ["instapay", "paypal"]),
-  paymentProofImage: text("paymentProofImage"), // S3 URL for InstaPay proof
+  paymentProofImage: text("paymentProofImage"),
   paymentStatus: mysqlEnum("paymentStatus", ["pending", "verified", "rejected"]),
   paymentSubmittedAt: timestamp("paymentSubmittedAt"),
 });
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+/**
+ * Payments table - stores full payment history per user (one row per payment attempt)
+ */
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  paymentMethod: mysqlEnum("paymentMethod", ["instapay", "paypal"]).notNull(),
+  proofImageUrl: text("proofImageUrl"), // S3 URL for InstaPay proof image
+  paymentStatus: mysqlEnum("paymentStatus", ["pending", "verified", "rejected"]).default("pending").notNull(),
+  paymentDate: timestamp("paymentDate").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"), // when admin approved/rejected
+  reviewedBy: int("reviewedBy"), // admin user id
+  notes: text("notes"), // optional admin notes
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Payment = typeof payments.$inferSelect;
+export type InsertPayment = typeof payments.$inferInsert;
 
 /**
  * Products table - stores all products and bundles

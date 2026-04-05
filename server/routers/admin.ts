@@ -2,8 +2,12 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../_core/trpc";
-import { getDb, getAllUsers, updateUserStatus, updateUserProfile, deleteUserAndData } from "../db";
-import { users, products, scenarios } from "../../drizzle/schema";
+import {
+  getDb, getAllUsers, updateUserStatus, updateUserProfile, deleteUserAndData,
+  getPaymentsByUserId, updatePaymentStatus, getAllPayments,
+  activateSubscription, getSubscriptionInfo,
+} from "../db";
+import { users, products, scenarios, payments } from "../../drizzle/schema";
 import { eq, asc } from "drizzle-orm";
 import { sdk } from "../_core/sdk";
 import { getSessionCookieOptions } from "../_core/cookies";
@@ -22,29 +26,38 @@ export const adminRouter = router({
   // USER MANAGEMENT
   // ============================================================
 
-  // List all users (including payment info)
+  // List all users (including subscription info)
   listUsers: adminProcedure.query(async () => {
     const allUsers = await getAllUsers();
-    return allUsers.map(u => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      role: u.role,
-      status: u.status,
-      loginMethod: u.loginMethod,
-      createdAt: u.createdAt,
-      activatedAt: u.activatedAt,
-      suspendedAt: u.suspendedAt,
-      lastSignedIn: u.lastSignedIn,
-      // Payment info
-      paymentMethod: u.paymentMethod,
-      paymentProofImage: u.paymentProofImage,
-      paymentStatus: u.paymentStatus,
-      paymentSubmittedAt: u.paymentSubmittedAt,
-    }));
+    return allUsers.map(u => {
+      const subInfo = getSubscriptionInfo(u as any);
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        status: u.status,
+        loginMethod: u.loginMethod,
+        createdAt: u.createdAt,
+        activatedAt: u.activatedAt,
+        suspendedAt: u.suspendedAt,
+        lastSignedIn: u.lastSignedIn,
+        // Subscription
+        subscriptionExpiresAt: u.subscriptionExpiresAt,
+        subscriptionStatus: u.subscriptionStatus,
+        daysRemaining: subInfo.daysRemaining,
+        isExpiringSoon: subInfo.isExpiringSoon,
+        isExpired: subInfo.isExpired,
+        // Legacy payment fields
+        paymentMethod: u.paymentMethod,
+        paymentProofImage: u.paymentProofImage,
+        paymentStatus: u.paymentStatus,
+        paymentSubmittedAt: u.paymentSubmittedAt,
+      };
+    });
   }),
 
-  // Approve a pending user (also marks payment as verified)
+  // Approve a user and activate their subscription for 30 days
   approveUser: adminProcedure
     .input(z.object({ userId: z.number() }))
     .mutation(async ({ input }) => {
@@ -54,31 +67,85 @@ export const adminRouter = router({
       const [user] = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
       if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
-      await db.update(users).set({
-        status: "active",
-        activatedAt: new Date(),
-        paymentStatus: "verified",
-      }).where(eq(users.id, input.userId));
+      // Activate subscription for 30 days
+      const expiresAt = await activateSubscription(input.userId);
 
-      return { success: true };
+      // Also update legacy payment status
+      await db.update(users).set({ paymentStatus: "verified" }).where(eq(users.id, input.userId));
+
+      // Mark the latest pending payment as verified
+      const userPayments = await getPaymentsByUserId(input.userId);
+      const pendingPayment = userPayments.filter(p => p.paymentStatus === "pending").pop();
+      if (pendingPayment) {
+        await updatePaymentStatus(pendingPayment.id, "verified", 0); // 0 = system
+      }
+
+      return { success: true, subscriptionExpiresAt: expiresAt };
     }),
 
-  // Reject a pending user's payment (keeps account but marks payment rejected)
-  rejectPayment: adminProcedure
-    .input(z.object({ userId: z.number() }))
-    .mutation(async ({ input }) => {
+  // Verify a specific payment and activate subscription
+  verifyPayment: adminProcedure
+    .input(z.object({
+      paymentId: z.number(),
+      userId: z.number(),
+      notes: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      const [user] = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
-      if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      // Mark payment as verified
+      await updatePaymentStatus(input.paymentId, "verified", ctx.user.id, input.notes);
 
-      await db.update(users).set({
-        paymentStatus: "rejected",
-      }).where(eq(users.id, input.userId));
+      // Activate subscription for 30 days
+      const expiresAt = await activateSubscription(input.userId);
+
+      // Update legacy fields
+      await db.update(users).set({ paymentStatus: "verified" }).where(eq(users.id, input.userId));
+
+      return { success: true, subscriptionExpiresAt: expiresAt };
+    }),
+
+  // Reject a specific payment
+  rejectPayment: adminProcedure
+    .input(z.object({
+      paymentId: z.number().optional(),
+      userId: z.number(),
+      notes: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      if (input.paymentId) {
+        await updatePaymentStatus(input.paymentId, "rejected", ctx.user.id, input.notes);
+      }
+
+      // Update legacy fields
+      await db.update(users).set({ paymentStatus: "rejected" }).where(eq(users.id, input.userId));
 
       return { success: true };
     }),
+
+  // Get payment history for a specific user
+  getUserPayments: adminProcedure
+    .input(z.object({ userId: z.number() }))
+    .query(async ({ input }) => {
+      return await getPaymentsByUserId(input.userId);
+    }),
+
+  // Get all payments across all users
+  listAllPayments: adminProcedure.query(async () => {
+    const allPayments = await getAllPayments();
+    const allUsers = await getAllUsers();
+    const userMap = new Map(allUsers.map(u => [u.id, { name: u.name, email: u.email }]));
+
+    return allPayments.map(p => ({
+      ...p,
+      userName: userMap.get(p.userId)?.name ?? "Unknown",
+      userEmail: userMap.get(p.userId)?.email ?? "Unknown",
+    }));
+  }),
 
   // Reject a pending user (delete them)
   rejectUser: adminProcedure
@@ -114,7 +181,7 @@ export const adminRouter = router({
       return { success: true };
     }),
 
-  // Reactivate a suspended user
+  // Reactivate a suspended user (extends subscription by 30 days)
   reactivateUser: adminProcedure
     .input(z.object({ userId: z.number() }))
     .mutation(async ({ input }) => {
@@ -124,8 +191,8 @@ export const adminRouter = router({
       const [user] = await db.select().from(users).where(eq(users.id, input.userId)).limit(1);
       if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
-      await updateUserStatus(input.userId, "active", { suspendedAt: null });
-      return { success: true };
+      const expiresAt = await activateSubscription(input.userId);
+      return { success: true, subscriptionExpiresAt: expiresAt };
     }),
 
   // Update user email and/or password
@@ -183,7 +250,6 @@ export const adminRouter = router({
   // IMPERSONATION - Admin views dashboard as a specific user
   // ============================================================
 
-  // Get a session token for a specific user (impersonation)
   impersonateUser: adminProcedure
     .input(z.object({ userId: z.number() }))
     .mutation(async ({ input, ctx }) => {
@@ -199,12 +265,10 @@ export const adminRouter = router({
         throw new TRPCError({ code: "BAD_REQUEST", message: "Can only impersonate active users" });
       }
 
-      // Create a session token for the target user
       const sessionToken = await sdk.createSessionToken(user.openId, {
         name: user.name || user.email || "",
       });
 
-      // Set session cookie to impersonate the user
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.cookie(COOKIE_NAME, sessionToken, cookieOptions);
 
@@ -212,10 +276,9 @@ export const adminRouter = router({
     }),
 
   // ============================================================
-  // PRODUCT MANAGEMENT (Admin can see/manage all products)
+  // PRODUCT MANAGEMENT
   // ============================================================
 
-  // List all products across all users
   listAllProducts: adminProcedure.query(async () => {
     const db = await getDb();
     if (!db) return [];
@@ -231,7 +294,6 @@ export const adminRouter = router({
     }));
   }),
 
-  // Delete any product (admin only)
   deleteProduct: adminProcedure
     .input(z.object({ productId: z.number() }))
     .mutation(async ({ input }) => {
@@ -247,7 +309,6 @@ export const adminRouter = router({
       return { success: true };
     }),
 
-  // Get products for a specific user (admin view)
   getUserProducts: adminProcedure
     .input(z.object({ userId: z.number() }))
     .query(async ({ input }) => {
@@ -256,7 +317,6 @@ export const adminRouter = router({
       return await db.select().from(products).where(eq(products.userId, input.userId)).orderBy(asc(products.id));
     }),
 
-  // Get scenarios for a specific product (admin view)
   getProductScenarios: adminProcedure
     .input(z.object({ productId: z.number() }))
     .query(async ({ input }) => {
@@ -265,7 +325,7 @@ export const adminRouter = router({
       return await db.select().from(scenarios).where(eq(scenarios.productId, input.productId)).orderBy(asc(scenarios.id));
     }),
 
-  // Get stats for all users (admin dashboard)
+  // Get stats for admin dashboard
   getStats: adminProcedure.query(async () => {
     const db = await getDb();
     if (!db) return null;
@@ -273,11 +333,18 @@ export const adminRouter = router({
     const allUsers = await getAllUsers();
     const allProducts = await db.select().from(products);
     const allScenarios = await db.select().from(scenarios);
+    const allPaymentsData = await getAllPayments();
 
     const pendingUsers = allUsers.filter(u => u.status === "pending").length;
     const activeUsers = allUsers.filter(u => u.status === "active").length;
     const suspendedUsers = allUsers.filter(u => u.status === "suspended").length;
-    const pendingPayments = allUsers.filter(u => u.paymentStatus === "pending" && u.paymentMethod != null).length;
+    const pendingPayments = allPaymentsData.filter(p => p.paymentStatus === "pending").length;
+
+    // Users expiring soon (≤ 2 days)
+    const expiringSoon = allUsers.filter(u => {
+      const info = getSubscriptionInfo(u as any);
+      return info.isExpiringSoon;
+    }).length;
 
     return {
       totalUsers: allUsers.length,
@@ -285,6 +352,7 @@ export const adminRouter = router({
       activeUsers,
       suspendedUsers,
       pendingPayments,
+      expiringSoon,
       totalProducts: allProducts.length,
       totalScenarios: allScenarios.length,
     };

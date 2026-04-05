@@ -41,6 +41,9 @@ import {
   Smartphone,
   UserCheck,
   DollarSign,
+  History,
+  ZoomIn,
+  AlertTriangle,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -103,6 +106,10 @@ export default function AdminPanel() {
   // Payment proof viewer
   const [proofImageUrl, setProofImageUrl] = useState<string | null>(null);
 
+  // Payment history modal
+  const [paymentHistoryUser, setPaymentHistoryUser] = useState<{ id: number; name: string | null; email: string | null } | null>(null);
+  const [selectedUserIdForPayments, setSelectedUserIdForPayments] = useState<number | null>(null);
+
   // Impersonation confirmation
   const [impersonateUser, setImpersonateUser] = useState<{ id: number; name: string | null; email: string | null } | null>(null);
 
@@ -110,6 +117,11 @@ export default function AdminPanel() {
   const { data: stats } = trpc.admin.getStats.useQuery();
   const { data: users = [], refetch: refetchUsers } = trpc.admin.listUsers.useQuery();
   const { data: allProducts = [], refetch: refetchProducts } = trpc.admin.listAllProducts.useQuery();
+  const { data: allPaymentsData = [] } = trpc.admin.listAllPayments.useQuery();
+  const { data: userPaymentsData = [] } = trpc.admin.getUserPayments.useQuery(
+    { userId: selectedUserIdForPayments! },
+    { enabled: selectedUserIdForPayments !== null }
+  );
 
   // Mutations
   const approveMutation = trpc.admin.approveUser.useMutation({
@@ -173,6 +185,30 @@ export default function AdminPanel() {
     onSuccess: () => setLocation("/login"),
   });
 
+  const verifyPaymentMutation = trpc.admin.verifyPayment.useMutation({
+    onSuccess: () => {
+      toast.success("تم قبول الدفعة وتفعيل الاشتراك لمدة 30 يوم");
+      refetchUsers();
+      if (selectedUserIdForPayments) utils.admin.getUserPayments.invalidate({ userId: selectedUserIdForPayments });
+      utils.admin.listAllPayments.invalidate();
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const rejectSinglePaymentMutation = trpc.admin.rejectPayment.useMutation({
+    onSuccess: () => {
+      toast.success("تم رفض الدفعة");
+      if (selectedUserIdForPayments) utils.admin.getUserPayments.invalidate({ userId: selectedUserIdForPayments });
+      utils.admin.listAllPayments.invalidate();
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const openPaymentHistory = (user: { id: number; name: string | null; email: string | null }) => {
+    setPaymentHistoryUser(user);
+    setSelectedUserIdForPayments(user.id);
+  };
+
   const openEditUser = (user: { id: number; name: string | null; email: string | null }) => {
     setEditUser({ id: user.id, name: user.name || "", email: user.email || "" });
     setEditName(user.name || "");
@@ -192,6 +228,7 @@ export default function AdminPanel() {
 
   const pendingUsers = users.filter(u => u.status === "pending");
   const pendingPayments = users.filter(u => u.paymentStatus === "pending" && u.paymentMethod != null);
+  const expiringSoonUsers = users.filter(u => (u as any).isExpiringSoon);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white" dir="rtl">
@@ -316,12 +353,24 @@ export default function AdminPanel() {
           </Card>
         )}
         {pendingUsers.length > 0 && (
-          <Card className="bg-amber-900/10 border-amber-700/50 mb-6">
+          <Card className="bg-amber-900/10 border-amber-700/50 mb-4">
             <CardContent className="pt-4 pb-4">
               <div className="flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0" />
                 <p className="text-amber-300 text-sm">
                   يوجد <span className="font-bold">{pendingUsers.length}</span> طلب تسجيل جديد في انتظار المراجعة
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        {expiringSoonUsers.length > 0 && (
+          <Card className="bg-orange-900/10 border-orange-700/50 mb-6">
+            <CardContent className="pt-4 pb-4">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                <p className="text-orange-300 text-sm">
+                  <span className="font-bold">{expiringSoonUsers.length}</span> مستخدم اشتراكه ينتهي خلال يومين أو أقل
                 </p>
               </div>
             </CardContent>
@@ -334,6 +383,10 @@ export default function AdminPanel() {
             <TabsTrigger value="users" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400">
               <Users className="w-4 h-4 ml-1" />
               إدارة المستخدمين ({users.length})
+            </TabsTrigger>
+            <TabsTrigger value="payments" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400">
+              <CreditCard className="w-4 h-4 ml-1" />
+              سجل المدفوعات ({allPaymentsData.length})
             </TabsTrigger>
             <TabsTrigger value="products" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400">
               <Package className="w-4 h-4 ml-1" />
@@ -356,6 +409,7 @@ export default function AdminPanel() {
                         <TableHead className="text-slate-400 text-right">البريد الإلكتروني</TableHead>
                         <TableHead className="text-slate-400 text-right">الدور</TableHead>
                         <TableHead className="text-slate-400 text-right">حالة الحساب</TableHead>
+                        <TableHead className="text-slate-400 text-right">الاشتراك</TableHead>
                         <TableHead className="text-slate-400 text-right">حالة الدفع</TableHead>
                         <TableHead className="text-slate-400 text-right">إثبات الدفع</TableHead>
                         <TableHead className="text-slate-400 text-right">تاريخ التسجيل</TableHead>
@@ -380,6 +434,21 @@ export default function AdminPanel() {
                             </Badge>
                           </TableCell>
                           <TableCell><StatusBadge status={user.status as UserStatus} /></TableCell>
+                          {/* Subscription column */}
+                          <TableCell>
+                            {(user as any).subscriptionExpiresAt ? (
+                              <div className="text-xs">
+                                <p className={(user as any).isExpiringSoon ? "text-orange-400 font-semibold" : "text-slate-300"}>
+                                  {(user as any).daysRemaining !== null && (user as any).daysRemaining > 0
+                                    ? `${(user as any).daysRemaining} يوم`
+                                    : "منتهي"}
+                                </p>
+                                <p className="text-slate-500">{new Date((user as any).subscriptionExpiresAt).toLocaleDateString("ar-EG", { month: "short", day: "numeric" })}</p>
+                              </div>
+                            ) : (
+                              <span className="text-slate-600 text-xs">—</span>
+                            )}
+                          </TableCell>
                           <TableCell>
                             <PaymentBadge
                               status={user.paymentStatus as PaymentStatus | null}
@@ -469,6 +538,18 @@ export default function AdminPanel() {
                                   <Play className="w-4 h-4" />
                                 </Button>
                               )}
+                              {/* Payment History */}
+                              {user.role !== "admin" && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 w-7 p-0 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-900/20"
+                                  onClick={() => openPaymentHistory(user)}
+                                  title="سجل الدفعات"
+                                >
+                                  <History className="w-4 h-4" />
+                                </Button>
+                              )}
                               {/* Impersonate (active non-admin users only) */}
                               {user.status === "active" && user.role !== "admin" && (
                                 <Button
@@ -507,6 +588,92 @@ export default function AdminPanel() {
                           </TableCell>
                         </TableRow>
                       ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Payments Tab */}
+          <TabsContent value="payments">
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-white text-base">سجل جميع المدفوعات</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-800 hover:bg-transparent">
+                        <TableHead className="text-slate-400 text-right">المستخدم</TableHead>
+                        <TableHead className="text-slate-400 text-right">طريقة الدفع</TableHead>
+                        <TableHead className="text-slate-400 text-right">صورة الإثبات</TableHead>
+                        <TableHead className="text-slate-400 text-right">الحالة</TableHead>
+                        <TableHead className="text-slate-400 text-right">تاريخ الدفع</TableHead>
+                        <TableHead className="text-slate-400 text-right">الإجراءات</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(allPaymentsData as any[]).map((p) => (
+                        <TableRow key={p.id} className="border-slate-800 hover:bg-slate-800/50">
+                          <TableCell>
+                            <p className="text-white text-sm font-medium">{p.userName ?? "—"}</p>
+                            <p className="text-slate-500 text-xs" dir="ltr">{p.userEmail ?? "—"}</p>
+                          </TableCell>
+                          <TableCell className="text-slate-300 text-sm">
+                            {p.paymentMethod === "instapay" ? "InstaPay" : "PayPal"}
+                          </TableCell>
+                          <TableCell>
+                            {p.proofImageUrl ? (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 px-2 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 text-xs gap-1"
+                                onClick={() => setProofImageUrl(p.proofImageUrl)}
+                              >
+                                <ZoomIn className="w-3 h-3" />
+                                عرض الصورة
+                              </Button>
+                            ) : (
+                              <span className="text-slate-600 text-xs">—</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <PaymentBadge status={p.paymentStatus} method={p.paymentMethod} />
+                          </TableCell>
+                          <TableCell className="text-slate-400 text-xs">{formatDate(p.paymentDate)}</TableCell>
+                          <TableCell>
+                            {p.paymentStatus === "pending" && (
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 px-2 text-green-400 hover:text-green-300 hover:bg-green-900/20 text-xs gap-1"
+                                  onClick={() => verifyPaymentMutation.mutate({ paymentId: p.id, userId: p.userId })}
+                                  disabled={verifyPaymentMutation.isPending}
+                                >
+                                  <CheckCircle className="w-3 h-3" /> قبول
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 px-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 text-xs gap-1"
+                                  onClick={() => rejectSinglePaymentMutation.mutate({ paymentId: p.id, userId: p.userId })}
+                                  disabled={rejectSinglePaymentMutation.isPending}
+                                >
+                                  <XCircle className="w-3 h-3" /> رفض
+                                </Button>
+                              </div>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {allPaymentsData.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center text-slate-500 py-8">لا توجد مدفوعات بعد</TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </div>
@@ -705,6 +872,75 @@ export default function AdminPanel() {
               disabled={deleteUserMutation.isPending}
             >
               حذف نهائي
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment History Modal */}
+      <Dialog open={!!paymentHistoryUser} onOpenChange={() => { setPaymentHistoryUser(null); setSelectedUserIdForPayments(null); }}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-2xl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-cyan-400 flex items-center gap-2">
+              <History className="w-5 h-5" />
+              سجل دفعات: {paymentHistoryUser?.name}
+            </DialogTitle>
+            <DialogDescription className="text-slate-400 text-xs" dir="ltr">{paymentHistoryUser?.email}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+            {userPaymentsData.length === 0 ? (
+              <p className="text-center text-slate-500 py-8">لا توجد دفعات مسجلة</p>
+            ) : (
+              (userPaymentsData as any[]).map((p) => (
+                <div key={p.id} className="border border-slate-700 rounded-xl p-3 flex items-start justify-between gap-3 bg-slate-800/50">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <PaymentBadge status={p.paymentStatus} method={p.paymentMethod} />
+                      <span className="text-slate-500 text-xs">{formatDate(p.paymentDate)}</span>
+                    </div>
+                    {p.notes && <p className="text-xs text-slate-400">ملاحظة: {p.notes}</p>}
+                    {p.reviewedAt && <p className="text-xs text-slate-500">تمت المراجعة: {formatDate(p.reviewedAt)}</p>}
+                  </div>
+                  <div className="flex flex-col gap-1 flex-shrink-0">
+                    {p.proofImageUrl && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 px-2 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 text-xs gap-1"
+                        onClick={() => setProofImageUrl(p.proofImageUrl)}
+                      >
+                        <ZoomIn className="w-3 h-3" /> عرض
+                      </Button>
+                    )}
+                    {p.paymentStatus === "pending" && (
+                      <>
+                        <Button
+                          size="sm"
+                          className="h-7 text-xs bg-green-600 hover:bg-green-700"
+                          onClick={() => verifyPaymentMutation.mutate({ paymentId: p.id, userId: paymentHistoryUser!.id })}
+                          disabled={verifyPaymentMutation.isPending}
+                        >
+                          <CheckCircle className="w-3 h-3 ml-1" /> قبول
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs text-red-400 border-red-700 hover:bg-red-900/20"
+                          onClick={() => rejectSinglePaymentMutation.mutate({ paymentId: p.id, userId: paymentHistoryUser!.id })}
+                          disabled={rejectSinglePaymentMutation.isPending}
+                        >
+                          <XCircle className="w-3 h-3 ml-1" /> رفض
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setPaymentHistoryUser(null); setSelectedUserIdForPayments(null); }} className="border-slate-700 text-slate-300">
+              إغلاق
             </Button>
           </DialogFooter>
         </DialogContent>

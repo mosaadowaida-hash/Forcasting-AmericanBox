@@ -18,6 +18,14 @@ vi.mock("./db", () => ({
   deleteUserAndData: vi.fn(),
   getUserByOpenId: vi.fn(),
   upsertUser: vi.fn(),
+  // Payment & subscription helpers
+  getPaymentsByUserId: vi.fn().mockResolvedValue([]),
+  getAllPayments: vi.fn().mockResolvedValue([]),
+  updatePaymentStatus: vi.fn().mockResolvedValue(undefined),
+  activateSubscription: vi.fn().mockResolvedValue(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
+  getSubscriptionInfo: vi.fn().mockReturnValue({ daysRemaining: 30, isExpiringSoon: false, isExpired: false }),
+  createPaymentRecord: vi.fn().mockResolvedValue(999),
+  autoSuspendExpiredSubscriptions: vi.fn().mockResolvedValue(0),
 }));
 
 import * as db from "./db";
@@ -227,7 +235,7 @@ describe("auth.login", () => {
     const caller = appRouter.createCaller(makePublicContext());
     await expect(
       caller.auth.login({ email: "suspended@email.com", password: "password123" })
-    ).rejects.toThrow("suspended");
+    ).rejects.toThrow("ACCOUNT_SUSPENDED");
   });
 
   it("should successfully login an active user and return session", async () => {
@@ -312,12 +320,9 @@ describe("admin.approveUser", () => {
     const result = await caller.admin.approveUser({ userId: 5 });
 
     expect(result.success).toBe(true);
-    // Verify db.update was called (new implementation uses db.update directly)
-    expect(mockUpdateFn).toHaveBeenCalled();
-    expect(mockSet).toHaveBeenCalledWith(expect.objectContaining({
-      status: "active",
-      paymentStatus: "verified",
-    }));
+    // New implementation uses activateSubscription helper + db.update for paymentStatus
+    expect(db.activateSubscription).toHaveBeenCalledWith(5);
+    expect(result.subscriptionExpiresAt).toBeDefined();
   });
 
   it("should reject approving a non-existent user", async () => {

@@ -226,7 +226,7 @@ export default function LandingPage() {
             </Link>
             <Link href="/signup">
               <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4">
-                ابدأ مجاناً
+                ابدأ الآن باشتراك $29
               </Button>
             </Link>
           </div>
@@ -271,7 +271,7 @@ export default function LandingPage() {
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-base px-8 py-6 rounded-xl shadow-lg shadow-blue-900/40 transition-all hover:shadow-blue-800/60 hover:scale-105 gap-2 w-full sm:w-auto"
               >
-                <span>سجّل حسابك الآن</span>
+                <span>ابدأ الآن باشتراك $29</span>
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
@@ -353,8 +353,8 @@ export default function LandingPage() {
       <section ref={statsRef.ref} className="py-20 px-4 sm:px-6 border-y border-slate-800/60 bg-slate-900/30">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           <StatCard value={144} suffix="+" label="سيناريو لكل منتج" started={statsRef.inView} />
-          <StatCard value={6048} suffix="" label="سيناريو جاهز" started={statsRef.inView} />
-          <StatCard value={42} suffix="+" label="منتج محلل" started={statsRef.inView} />
+          <StatCard value={29} suffix="$" label="فقط شهرياً" started={statsRef.inView} />
+          <StatCard value={3} suffix="دقائق" label="وتعرف نتيجة حملتك" started={statsRef.inView} />
           <StatCard value={100} suffix="%" label="دقة الحسابات" started={statsRef.inView} />
         </div>
       </section>
@@ -519,7 +519,7 @@ export default function LandingPage() {
               </div>
 
               <div className="mb-6">
-                <span className="text-6xl font-black text-white">$34</span>
+                <span className="text-6xl font-black text-white">$29</span>
                 <span className="text-slate-400 text-lg mr-2">/ شهرياً</span>
               </div>
 
@@ -544,7 +544,7 @@ export default function LandingPage() {
                   size="lg"
                   className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-base py-6 rounded-xl shadow-lg shadow-blue-900/40 hover:shadow-blue-800/60 hover:scale-105 transition-all gap-2"
                 >
-                  <span>ابدأ الآن</span>
+                  <span>ابدأ الآن باشتراك $29</span>
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>

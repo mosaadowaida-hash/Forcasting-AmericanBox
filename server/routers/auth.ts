@@ -1,14 +1,17 @@
-import { z } from "zod";
+import z from "zod";
 import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
-import { getDb, getUserByEmail, getUserById } from "../db";
+import {
+  getDb, getUserByEmail, getUserById,
+  createPayment, getPaymentsByUserId,
+  getSubscriptionInfo, autoSuspendExpiredSubscriptions,
+} from "../db";
 import { users } from "../../drizzle/schema";
 import { sdk } from "../_core/sdk";
 import { getSessionCookieOptions } from "../_core/cookies";
 import { COOKIE_NAME } from "@shared/const";
 import { eq } from "drizzle-orm";
-import { ENV } from "../_core/env";
 import { storagePut } from "../storage";
 
 // Generate a unique openId for local (email/password) users
@@ -17,12 +20,20 @@ function generateLocalOpenId(email: string): string {
 }
 
 export const authRouter = router({
-  // Get current user info
+  // Get current user info (includes subscription info)
   me: publicProcedure.query(async (opts) => {
-    return opts.ctx.user ?? null;
+    if (!opts.ctx.user) return null;
+    const user = opts.ctx.user;
+    const subInfo = getSubscriptionInfo(user as any);
+    return {
+      ...user,
+      daysRemaining: subInfo.daysRemaining,
+      isExpiringSoon: subInfo.isExpiringSoon,
+      isExpired: subInfo.isExpired,
+    };
   }),
 
-  // Sign up with email and password (no payment yet - payment submitted separately)
+  // Sign up with email and password
   signup: publicProcedure
     .input(
       z.object({
@@ -35,19 +46,12 @@ export const authRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      // Check if email already exists
       const existing = await getUserByEmail(input.email);
       if (existing) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Email already registered",
-        });
+        throw new TRPCError({ code: "CONFLICT", message: "Email already registered" });
       }
 
-      // Hash password
       const passwordHash = await bcrypt.hash(input.password, 10);
-
-      // Create user with pending status
       const openId = generateLocalOpenId(input.email);
       const result = await db.insert(users).values({
         openId,
@@ -57,6 +61,7 @@ export const authRouter = router({
         loginMethod: "email",
         role: "user",
         status: "pending",
+        subscriptionStatus: "pending",
         lastSignedIn: new Date(),
       });
 
@@ -69,13 +74,12 @@ export const authRouter = router({
       };
     }),
 
-  // Submit payment info after signup
+  // Submit payment info (creates a record in payments table)
   submitPayment: publicProcedure
     .input(
       z.object({
         userId: z.number(),
         paymentMethod: z.enum(["instapay", "paypal"]),
-        // For instapay: base64 image data
         proofImageBase64: z.string().optional(),
         proofImageMimeType: z.string().optional(),
       })
@@ -99,6 +103,16 @@ export const authRouter = router({
         proofImageUrl = url;
       }
 
+      // Create a new payment record in the payments table
+      const paymentId = await createPayment({
+        userId: user.id,
+        paymentMethod: input.paymentMethod,
+        proofImageUrl: proofImageUrl ?? null,
+        paymentStatus: "pending",
+        paymentDate: new Date(),
+      });
+
+      // Also update legacy fields on users table for backward compat
       await db.update(users).set({
         paymentMethod: input.paymentMethod,
         paymentProofImage: proofImageUrl ?? null,
@@ -108,11 +122,17 @@ export const authRouter = router({
 
       return {
         success: true,
+        paymentId,
         message: "Payment submitted. Your account is under review and will be activated soon.",
       };
     }),
 
-  // Login with email and password
+  // Get own payment history
+  myPayments: protectedProcedure.query(async ({ ctx }) => {
+    return await getPaymentsByUserId(ctx.user.id);
+  }),
+
+  // Login with email and password (subscription-aware)
   login: publicProcedure
     .input(
       z.object({
@@ -124,48 +144,56 @@ export const authRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      // Find user by email
+      // Run auto-suspend check on each login
+      await autoSuspendExpiredSubscriptions();
+
       const user = await getUserByEmail(input.email);
       if (!user) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Invalid email or password",
-        });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
       }
 
-      // Check password
       if (!user.passwordHash) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "This account uses a different login method",
-        });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "This account uses a different login method" });
       }
 
       const passwordValid = await bcrypt.compare(input.password, user.passwordHash);
       if (!passwordValid) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
+      }
+
+      // Check subscription expiry for active users
+      const subInfo = getSubscriptionInfo(user as any);
+      if (user.status === "active" && subInfo.isExpired) {
+        // Auto-suspend this user
+        await db.update(users).set({
+          status: "suspended",
+          subscriptionStatus: "expired",
+          suspendedAt: new Date(),
+        }).where(eq(users.id, user.id));
+
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Invalid email or password",
+          code: "FORBIDDEN",
+          message: "SUBSCRIPTION_EXPIRED",
         });
       }
 
-      // Check account status - pending users CAN login but see pending screen
+      // Suspended users get a special message
       if (user.status === "suspended") {
+        const isExpired = user.subscriptionStatus === "expired";
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Your account has been suspended. Please contact the administrator.",
+          message: isExpired ? "SUBSCRIPTION_EXPIRED" : "ACCOUNT_SUSPENDED",
         });
       }
 
       // Update last signed in
       await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, user.id));
 
-      // Create session token using the existing SDK
+      // Create session token
       const sessionToken = await sdk.createSessionToken(user.openId, {
         name: user.name || user.email || "",
       });
 
-      // Set session cookie
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.cookie(COOKIE_NAME, sessionToken, cookieOptions);
 
@@ -178,6 +206,10 @@ export const authRouter = router({
           role: user.role,
           status: user.status,
           paymentStatus: user.paymentStatus,
+          subscriptionStatus: user.subscriptionStatus,
+          subscriptionExpiresAt: user.subscriptionExpiresAt,
+          daysRemaining: subInfo.daysRemaining,
+          isExpiringSoon: subInfo.isExpiringSoon,
         },
       };
     }),

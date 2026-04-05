@@ -1,6 +1,6 @@
-import { eq, and, ne } from "drizzle-orm";
+import { eq, and, ne, lt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, scenarios } from "../drizzle/schema";
+import { InsertUser, users, products, scenarios, payments, InsertPayment } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -154,6 +154,135 @@ export async function deleteUserAndData(userId: number) {
   // Delete products
   await db.delete(products).where(eq(products.userId, userId));
   
+  // Delete payments
+  await db.delete(payments).where(eq(payments.userId, userId));
+  
   // Delete user
   await db.delete(users).where(eq(users.id, userId));
+}
+
+// ============================================================
+// PAYMENT HISTORY HELPERS
+// ============================================================
+
+export async function createPayment(data: InsertPayment) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(payments).values(data);
+  const insertId = (result as any).insertId ?? (result as any)[0]?.insertId;
+  return Number(insertId);
+}
+
+export async function getPaymentsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(payments)
+    .where(eq(payments.userId, userId))
+    .orderBy(payments.createdAt);
+}
+
+export async function getPaymentById(paymentId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(payments).where(eq(payments.id, paymentId)).limit(1);
+  return result[0] ?? undefined;
+}
+
+export async function updatePaymentStatus(
+  paymentId: number,
+  status: 'pending' | 'verified' | 'rejected',
+  reviewedBy: number,
+  notes?: string
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(payments).set({
+    paymentStatus: status,
+    reviewedAt: new Date(),
+    reviewedBy,
+    notes: notes ?? null,
+  }).where(eq(payments.id, paymentId));
+}
+
+export async function getAllPayments() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(payments).orderBy(payments.createdAt);
+}
+
+// ============================================================
+// SUBSCRIPTION HELPERS
+// ============================================================
+
+/**
+ * Activate a user's subscription for 30 days from now.
+ * Sets status=active, subscriptionStatus=active, subscriptionExpiresAt=now+30days
+ */
+export async function activateSubscription(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 30);
+  
+  await db.update(users).set({
+    status: 'active',
+    subscriptionStatus: 'active',
+    subscriptionExpiresAt: expiresAt,
+    activatedAt: new Date(),
+    suspendedAt: null,
+  }).where(eq(users.id, userId));
+  
+  return expiresAt;
+}
+
+/**
+ * Auto-suspend all users whose subscriptionExpiresAt < now and status=active
+ * Returns list of suspended user IDs
+ */
+export async function autoSuspendExpiredSubscriptions(): Promise<number[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const now = new Date();
+  
+  // Find expired active users
+  const expiredUsers = await db.select({ id: users.id }).from(users)
+    .where(
+      and(
+        eq(users.status, 'active'),
+        lt(users.subscriptionExpiresAt, now)
+      )
+    );
+  
+  if (expiredUsers.length === 0) return [];
+  
+  // Suspend them
+  for (const user of expiredUsers) {
+    await db.update(users).set({
+      status: 'suspended',
+      subscriptionStatus: 'expired',
+      suspendedAt: now,
+    }).where(eq(users.id, user.id));
+  }
+  
+  return expiredUsers.map(u => u.id);
+}
+
+/**
+ * Get subscription info for a user: days remaining, status
+ */
+export function getSubscriptionInfo(user: { subscriptionExpiresAt: Date | null; subscriptionStatus: string | null; status: string }) {
+  const now = new Date();
+  
+  if (!user.subscriptionExpiresAt) {
+    return { daysRemaining: null, isExpired: false, isExpiringSoon: false };
+  }
+  
+  const msRemaining = user.subscriptionExpiresAt.getTime() - now.getTime();
+  const daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60 * 24));
+  const isExpired = daysRemaining <= 0;
+  const isExpiringSoon = daysRemaining > 0 && daysRemaining <= 2; // warn at 2 days
+  
+  return { daysRemaining, isExpired, isExpiringSoon };
 }

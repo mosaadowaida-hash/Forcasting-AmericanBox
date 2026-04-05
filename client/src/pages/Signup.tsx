@@ -25,7 +25,7 @@ type Step = "account" | "payment" | "done";
 type PaymentMethod = "instapay" | "paypal";
 
 const INSTAPAY_NUMBER = "01099425354";
-const SUBSCRIPTION_PRICE = 34;
+const SUBSCRIPTION_PRICE = 29;
 const PAYPAL_PAYMENT_URL = "https://www.paypal.com/ncp/payment/MZ98H57G7R852";
 
 export default function Signup() {
