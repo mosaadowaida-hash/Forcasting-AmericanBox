@@ -6,11 +6,11 @@ import { products, scenarios, Product, InsertScenario } from "../../drizzle/sche
 import { eq, asc, and } from "drizzle-orm";
 
 // ============================================================
-// CONSTANTS - Verified against original 6,048 scenarios
+// CONSTANTS
 // ============================================================
 
-// Actual margin = 31.5% (verified: all products)
-const ACTUAL_MARGIN = 31.5;
+// Default margin if not set per product
+const DEFAULT_MARGIN = 31.5;
 
 // Shipping cost = 100 EGP for individual products with price ≤ 2600
 const SHIPPING_THRESHOLD = 2600;
@@ -102,13 +102,19 @@ function round2(n: number): number {
  * - deliveredOrders = clicks × CVR × deliveryRate
  * - cpaDelivered = adSpend / deliveredOrders = cpaDashboard / deliveryRate
  * - AOV = price × basket_size
- * - profit = price × margin% - cpaDashboard - shipping
+ * - grossMargin = AOV × marginPercent%  (uses per-product margin)
+ * - profit = grossMargin - cpaDashboard - shipping
+ * - COGS = AOV × (1 - marginPercent%)  (correct: cost of goods = revenue minus margin)
+ * - breakEvenCpa = grossMargin - shipping  (max CPA before going to zero profit)
  */
 function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
   const results: Omit<InsertScenario, "id">[] = [];
   const price = product.originalPrice;
   const paymentMix = parsePaymentMix((product as any).paymentMix);
   const deliveryRate = calcDeliveryRate(paymentMix);
+
+  // Use per-product margin, fallback to default 31.5%
+  const marginPercent = (product as any).marginPercent ?? DEFAULT_MARGIN;
 
   // Shipping: 100 EGP for individual products with price ≤ 2600
   const shippingCost = (product.type === "product" && price <= SHIPPING_THRESHOLD) ? SHIPPING_COST : 0;
@@ -131,24 +137,24 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
           // CPA Delivered = cpaDashboard / deliveryRate  (actual cost per delivered order)
           const cpaDelivered = Math.round(cpaDashboard / deliveryRate);
 
-          // AOV = price × basket_size (no inflation)
+          // AOV = price × basket_size
           const aov = Math.round(price * basket);
 
-          // Revenue per delivered order = AOV (full price, delivery already in cpaDelivered)
+          // Revenue per delivered order = AOV
           const revenuePerOrder = aov;
 
-          // Gross margin amount = AOV × margin%  (basket multiplies the revenue AND the margin)
-          const grossMargin = Math.round(aov * ACTUAL_MARGIN / 100);
+          // Gross margin = AOV × marginPercent%  (uses per-product margin)
+          const grossMargin = Math.round(aov * marginPercent / 100);
 
-          // Profit = gross margin - cpaDashboard - shipping
-          // Using cpaDashboard (not cpaDelivered) as the ad-cost metric, consistent with original logic
+          // COGS = AOV × (1 - marginPercent%)  — correct cost-of-goods formula
+          const cogs = Math.round(aov * (1 - marginPercent / 100));
+
+          // Profit = grossMargin - cpaDashboard - shipping
+          // (cpaDashboard = ad spend per order placed; delivery risk is shown via cpaDelivered)
           const profit = Math.round(grossMargin - cpaDashboard - shippingCost);
 
-          // COGS = revenue - cpaDelivered - profit
-          const cogs = revenuePerOrder - cpaDelivered - profit;
-
-          // Break-even CPA = AOV × margin%  (the max you can spend on ads and still break even)
-          const breakEvenCpa = Math.round(aov * ACTUAL_MARGIN / 100);
+          // Break-even CPA = grossMargin - shipping  (the max CPA at which profit = 0)
+          const breakEvenCpa = Math.round(grossMargin - shippingCost);
 
           // ROAS = AOV / cpaDashboard
           const roas = round2(aov / cpaDashboard);
@@ -156,7 +162,7 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
           // Delivered ROAS = AOV / cpaDelivered
           const deliveredRoas = round2(aov / cpaDelivered);
 
-          // Profit margin = profit / AOV × 100
+          // Profit margin % = profit / AOV × 100
           const profitMargin = round2(aov > 0 ? (profit / aov) * 100 : 0);
 
           const status = profit > 0 ? "ربح" : "خسارة";
@@ -177,7 +183,7 @@ function generateScenarios(product: Product): Omit<InsertScenario, "id">[] {
             aov,
             revenuePerOrder,
             cogs,
-            shipping: 0,
+            shipping: shippingCost,  // store actual shipping cost (was incorrectly stored as 0)
             roas,
             deliveredRoas,
             breakEvenCpa,
@@ -436,6 +442,7 @@ export const productsRouter = router({
         name: z.string().min(1),
         type: z.enum(["product", "bundle"]),
         originalPrice: z.number().positive(),
+        marginPercent: z.number().min(1).max(99).optional().default(31.5),
         discountTwoItems: z.number().min(0).max(100).optional().default(10),
         discountThreeItems: z.number().min(0).max(100).optional().default(15),
         bundleDiscount: z.number().min(0).max(100).optional().default(0),
@@ -451,6 +458,7 @@ export const productsRouter = router({
         name: input.name,
         type: input.type,
         originalPrice: input.originalPrice,
+        marginPercent: input.marginPercent,
         discountTwoItems: input.discountTwoItems,
         discountThreeItems: input.discountThreeItems,
         bundleDiscount: input.bundleDiscount,
@@ -478,6 +486,7 @@ export const productsRouter = router({
         name: z.string().min(1).optional(),
         type: z.enum(["product", "bundle"]).optional(),
         originalPrice: z.number().positive().optional(),
+        marginPercent: z.number().min(1).max(99).optional(),
         discountTwoItems: z.number().min(0).max(100).optional(),
         discountThreeItems: z.number().min(0).max(100).optional(),
         bundleDiscount: z.number().min(0).max(100).optional(),
@@ -501,6 +510,7 @@ export const productsRouter = router({
       if (updates.name !== undefined) updateObj.name = updates.name;
       if (updates.type !== undefined) updateObj.type = updates.type;
       if (updates.originalPrice !== undefined) updateObj.originalPrice = updates.originalPrice;
+      if (updates.marginPercent !== undefined) updateObj.marginPercent = updates.marginPercent;
       if (updates.discountTwoItems !== undefined) updateObj.discountTwoItems = updates.discountTwoItems;
       if (updates.discountThreeItems !== undefined) updateObj.discountThreeItems = updates.discountThreeItems;
       if (updates.bundleDiscount !== undefined) updateObj.bundleDiscount = updates.bundleDiscount;

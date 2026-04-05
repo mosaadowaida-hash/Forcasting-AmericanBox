@@ -258,3 +258,15 @@
 - [x] Responsive: fix AdminPanel page for mobile/tablet
 - [x] Responsive: fix Login/Signup pages for mobile
 - [x] Responsive: fix AppLayout sidebar for mobile (hamburger menu)
+
+## Phase 15: Calculation Audit + Per-Product Margin
+- [x] Add `marginPercent` field to products table in schema (default 31.5)
+- [x] Run DB migration to add margin column
+- [x] Update Core Engine: use product.marginPercent instead of hardcoded 31.5
+- [x] Fix COGS formula: COGS = AOV × (1 - margin%) instead of revenue - cpaDelivered - profit
+- [x] Fix break-even CPA: breakEvenCpa = gross_margin - shipping (not just gross_margin)
+- [x] Fix shipping column: store actual shippingCost value (not 0)
+- [x] Add marginPercent input to Add Product form (default 31.5, range 1-99)
+- [x] Add marginPercent input to Edit Product form
+- [x] Recalculate all 6048 existing scenarios with their correct margins (default 31.5 for existing)
+- [x] Update tests to verify per-product margin works correctly

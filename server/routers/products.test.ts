@@ -328,6 +328,106 @@ describe("Products Router", () => {
     ).rejects.toThrow();
   });
 
+  it("should use per-product marginPercent in profit, COGS, and break-even calculations", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+
+    // Create product with 40% margin
+    const highMarginProduct = await caller.products.create({
+      name: "Test High Margin 40%",
+      type: "product",
+      originalPrice: 2000,
+      marginPercent: 40,
+      paymentMix: ["cod"],
+    });
+    const highScenarios = await caller.products.getScenarios(highMarginProduct.id);
+
+    // Create product with 20% margin (same price)
+    const lowMarginProduct = await caller.products.create({
+      name: "Test Low Margin 20%",
+      type: "product",
+      originalPrice: 2000,
+      marginPercent: 20,
+      paymentMix: ["cod"],
+    });
+    const lowScenarios = await caller.products.getScenarios(lowMarginProduct.id);
+
+    // Same CPM/CTR/CVR/Basket scenario (first one)
+    const highS = highScenarios[0];
+    const lowS = lowScenarios[0];
+
+    // Both have same AOV (same price + basket)
+    expect(highS.aov).toBe(lowS.aov);
+
+    // Higher margin = higher profit
+    expect(highS.netProfitPerOrder).toBeGreaterThan(lowS.netProfitPerOrder);
+
+    // COGS should be correct: AOV × (1 - margin%)
+    const expectedHighCogs = Math.round(highS.aov * (1 - 40 / 100));
+    const expectedLowCogs = Math.round(lowS.aov * (1 - 20 / 100));
+    expect(highS.cogs).toBe(expectedHighCogs);
+    expect(lowS.cogs).toBe(expectedLowCogs);
+
+    // Higher margin = lower COGS
+    expect(highS.cogs).toBeLessThan(lowS.cogs);
+
+    // Break-even CPA = gross_margin - shipping
+    // price=2000, type=product, price <= 2600 → shipping=100
+    const highGrossMargin = Math.round(highS.aov * 40 / 100);
+    const lowGrossMargin = Math.round(lowS.aov * 20 / 100);
+    expect(highS.breakEvenCpa).toBe(highGrossMargin - 100);
+    expect(lowS.breakEvenCpa).toBe(lowGrossMargin - 100);
+
+    // Shipping column should store actual shipping cost (100 for product ≤ 2600)
+    expect(highS.shipping).toBe(100);
+    expect(lowS.shipping).toBe(100);
+
+    // Clean up
+    await caller.products.delete(highMarginProduct.id);
+    await caller.products.delete(lowMarginProduct.id);
+  });
+
+  it("should store shipping=0 for bundles and products with price > 2600", async () => {
+    caller = appRouter.createCaller(mockUserContext);
+
+    // Bundle (no shipping)
+    const bundleProduct = await caller.products.create({
+      name: "Test Bundle No Shipping",
+      type: "bundle",
+      originalPrice: 1500,
+      marginPercent: 30,
+      paymentMix: ["cod"],
+    });
+    const bundleScenarios = await caller.products.getScenarios(bundleProduct.id);
+    expect(bundleScenarios[0].shipping).toBe(0);
+
+    // Product with price > 2600 (no shipping)
+    const expensiveProduct = await caller.products.create({
+      name: "Test Expensive No Shipping",
+      type: "product",
+      originalPrice: 3000,
+      marginPercent: 30,
+      paymentMix: ["cod"],
+    });
+    const expensiveScenarios = await caller.products.getScenarios(expensiveProduct.id);
+    expect(expensiveScenarios[0].shipping).toBe(0);
+
+    // Product with price ≤ 2600 (shipping = 100)
+    const cheapProduct = await caller.products.create({
+      name: "Test Cheap With Shipping",
+      type: "product",
+      originalPrice: 1200,
+      marginPercent: 30,
+      paymentMix: ["cod"],
+    });
+    const cheapScenarios = await caller.products.getScenarios(cheapProduct.id);
+    expect(cheapScenarios[0].shipping).toBe(100);
+
+    // Clean up
+    await caller.products.delete(bundleProduct.id);
+    await caller.products.delete(expensiveProduct.id);
+    await caller.products.delete(cheapProduct.id);
+  }, 20000); // 20s timeout - creates 3 products × 144 scenarios each
+
   it("should reject unauthenticated access to protected routes", async () => {
     const publicCaller = appRouter.createCaller(mockPublicContext);
     await expect(publicCaller.products.list()).rejects.toThrow();

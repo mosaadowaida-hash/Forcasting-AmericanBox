@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `marginPercent` double DEFAULT 31.5 NOT NULL;

@@ -63,6 +63,8 @@ export const products = mysqlTable("products", {
   discountTwoItems: double("discountTwoItems").default(10),
   discountThreeItems: double("discountThreeItems").default(15),
   bundleDiscount: double("bundleDiscount").default(0),
+  // Profit margin percentage (e.g. 31.5 = 31.5%). Set by user per product.
+  marginPercent: double("marginPercent").default(31.5).notNull(),
   // Payment Mix: JSON array of selected methods e.g. ["cod","instapay","card"]
   paymentMix: text("paymentMix").default('["cod"]').notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

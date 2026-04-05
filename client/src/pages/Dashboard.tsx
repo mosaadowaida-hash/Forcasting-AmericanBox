@@ -119,7 +119,7 @@ export default function Dashboard() {
 
   const [formData, setFormData] = useState({
     name: '', type: 'product' as 'product' | 'bundle',
-    originalPrice: 0, discountTwoItems: 10, discountThreeItems: 15, bundleDiscount: 0,
+    originalPrice: 0, marginPercent: 31.5, discountTwoItems: 10, discountThreeItems: 15, bundleDiscount: 0,
     paymentMix: ['cod'] as PaymentMethod[],
   });
 
@@ -223,7 +223,7 @@ export default function Dashboard() {
   });
 
   function resetForm() {
-    setFormData({ name: '', type: 'product', originalPrice: 0, discountTwoItems: 10, discountThreeItems: 15, bundleDiscount: 0, paymentMix: ['cod'] });
+    setFormData({ name: '', type: 'product', originalPrice: 0, marginPercent: 31.5, discountTwoItems: 10, discountThreeItems: 15, bundleDiscount: 0, paymentMix: ['cod'] });
   }
 
   function openEditDialog() {
@@ -232,6 +232,7 @@ export default function Dashboard() {
       name: selectedProduct.name,
       type: selectedProduct.type as 'product' | 'bundle',
       originalPrice: selectedProduct.originalPrice,
+      marginPercent: (selectedProduct as any).marginPercent ?? 31.5,
       discountTwoItems: selectedProduct.discountTwoItems ?? 10,
       discountThreeItems: selectedProduct.discountThreeItems ?? 15,
       bundleDiscount: selectedProduct.bundleDiscount ?? 0,
@@ -514,6 +515,16 @@ export default function Dashboard() {
               </Select>
             </div>
             <div><label className="text-sm font-medium">السعر الأصلي (ج.م)</label><Input type="number" value={formData.originalPrice || ''} onChange={(e) => setFormData({ ...formData, originalPrice: parseFloat(e.target.value) || 0 })} /></div>
+            <div>
+              <label className="text-sm font-medium">هامش الربح (%)</label>
+              <Input
+                type="number" min="1" max="99" step="0.5"
+                value={formData.marginPercent}
+                onChange={(e) => setFormData({ ...formData, marginPercent: parseFloat(e.target.value) || 31.5 })}
+                placeholder="مثال: 31.5"
+              />
+              <p className="text-xs text-gray-500 mt-1">نسبة الربح الصافي من سعر البيع — تؤثر على حساب الربح في جميع السيناريوهات</p>
+            </div>
             {formData.type === 'product' ? (
               <div className="grid grid-cols-2 gap-4">
                 <div><label className="text-sm font-medium">خصم القطعتين (%)</label><Input type="number" value={formData.discountTwoItems} onChange={(e) => setFormData({ ...formData, discountTwoItems: parseFloat(e.target.value) || 0 })} /></div>
@@ -550,6 +561,16 @@ export default function Dashboard() {
               </Select>
             </div>
             <div><label className="text-sm font-medium">السعر الأصلي (ج.م)</label><Input type="number" value={formData.originalPrice || ''} onChange={(e) => setFormData({ ...formData, originalPrice: parseFloat(e.target.value) || 0 })} /></div>
+            <div>
+              <label className="text-sm font-medium">هامش الربح (%)</label>
+              <Input
+                type="number" min="1" max="99" step="0.5"
+                value={formData.marginPercent}
+                onChange={(e) => setFormData({ ...formData, marginPercent: parseFloat(e.target.value) || 31.5 })}
+                placeholder="مثال: 31.5"
+              />
+              <p className="text-xs text-gray-500 mt-1">نسبة الربح الصافي من سعر البيع — تؤثر على حساب الربح في جميع السيناريوهات</p>
+            </div>
             {formData.type === 'product' ? (
               <div className="grid grid-cols-2 gap-4">
                 <div><label className="text-sm font-medium">خصم القطعتين (%)</label><Input type="number" value={formData.discountTwoItems} onChange={(e) => setFormData({ ...formData, discountTwoItems: parseFloat(e.target.value) || 0 })} /></div>
