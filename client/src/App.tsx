@@ -12,6 +12,8 @@ import { Overview } from "./pages/Overview";
 import { Ranking } from "./pages/Ranking";
 import { Analysis } from "./pages/Analysis";
 import { AdvancedFilter } from "./pages/AdvancedFilter";
+import { SupabaseDashboard } from "./pages/SupabaseDashboard";
+import { WorkingDashboard } from "./pages/WorkingDashboard";
 
 
 function Router() {
@@ -24,6 +26,8 @@ function Router() {
       <Route path="/ranking" component={Ranking} />
       <Route path="/analysis" component={Analysis} />
       <Route path="/advanced-filter" component={AdvancedFilter} />
+      <Route path="/supabase-dashboard" component={SupabaseDashboard} />
+      <Route path="/working-dashboard" component={WorkingDashboard} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

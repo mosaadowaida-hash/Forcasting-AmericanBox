@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AddProductDialog } from "@/components/AddProductDialog";
 import { ProductManagementDialog } from "@/components/ProductManagementDialog";
 import { useLocalProducts } from "@/hooks/useLocalProducts";
@@ -39,10 +39,18 @@ export default function ComprehensiveDashboard() {
   const uniqueBaskets = useMemo(() => Array.from(new Set(productScenarios.map(s => s.basket_label))), [productScenarios]);
 
   // Initialize with first values
-  const [selectedCPM, setSelectedCPM] = useState(uniqueCPMs[0] || "");
-  const [selectedCTR, setSelectedCTR] = useState(uniqueCTRs[0] || "");
-  const [selectedCVR, setSelectedCVR] = useState(uniqueCVRs[0] || "");
-  const [selectedBasket, setSelectedBasket] = useState(uniqueBaskets[0] || "");
+  const [selectedCPM, setSelectedCPM] = useState("");
+  const [selectedCTR, setSelectedCTR] = useState("");
+  const [selectedCVR, setSelectedCVR] = useState("");
+  const [selectedBasket, setSelectedBasket] = useState("");
+
+  // Set defaults when unique values change
+  useEffect(() => {
+    if (!selectedCPM && uniqueCPMs.length > 0) setSelectedCPM(uniqueCPMs[0]);
+    if (!selectedCTR && uniqueCTRs.length > 0) setSelectedCTR(uniqueCTRs[0]);
+    if (!selectedCVR && uniqueCVRs.length > 0) setSelectedCVR(uniqueCVRs[0]);
+    if (!selectedBasket && uniqueBaskets.length > 0) setSelectedBasket(uniqueBaskets[0]);
+  }, [uniqueCPMs, uniqueCTRs, uniqueCVRs, uniqueBaskets, selectedCPM, selectedCTR, selectedCVR, selectedBasket]);
 
   // Filter to get exactly ONE scenario that matches all criteria
   const filteredScenarios = useMemo(() => productScenarios.filter(s =>
